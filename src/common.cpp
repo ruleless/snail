@@ -77,7 +77,7 @@ int traverseDir(const char *pathname, FileHandler handler)
 				continue;
 			}
 			
-			strncpy(ptr, ent->d_name, NAME_PATH-(int)ptr+(int)subpath);
+			strncpy(ptr, ent->d_name, NAME_PATH-(int)(ptr-subpath));
 			*(ptr+strlen(ent->d_name)) = '\0';
 			traverseDir(subpath, handler);
 

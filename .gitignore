@@ -1,4 +1,5 @@
 *.o
+/lib
 main
 temp
 tmp

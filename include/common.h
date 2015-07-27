@@ -23,6 +23,11 @@
 #define NAME_MAX 255
 #endif
 
+// 安全删除和释放
+#define SafeDelete(ptr)      if ((ptr)) {delete (ptr); (ptr) = 0;}
+#define SafeDeleteArray(ptr) if ((ptr)) {delete[] (ptr); (ptr) = 0;}
+#define SafeRelease(ptr)     if ((ptr)) {(ptr)->Release(); (ptr) = 0;}
+
 /* 输出错误信息并退出
  * @param msg: 错误信息
  * @param bErrno: 是否打印errno错误消息

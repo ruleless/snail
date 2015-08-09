@@ -7,7 +7,7 @@
 
 template<typename T, int N> class Queue
 {
-public:
+  public:
 	Queue()
 	{
 		memset(mQueue, 0, sizeof(mQueue));
@@ -67,7 +67,7 @@ public:
 		mFront = (mFront+1) % (N+1);
 		return true;
 	}
-private:
+  protected:
 	T mQueue[N+1];
 	int mFront;
 	int mRear;

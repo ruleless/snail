@@ -2,8 +2,8 @@
 #define __SENDER_H__
 
 #include "NetDef.h"
-#include "NetManager.h"
 
+class NetManager;
 class Sender : public Thread
 {
   public:

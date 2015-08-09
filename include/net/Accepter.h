@@ -2,8 +2,8 @@
 #define __ACCEPTER_H__
 
 #include "NetDef.h"
-#include "NetManager"
 
+class NetManager;
 class Accepter : public Thread
 {
   public:

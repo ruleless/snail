@@ -1,4 +1,5 @@
-#include "net/Accepter.h"
+#include "../../include/net/Accepter.h"
+#include "../../include/net/NetManager.h"
 
 Accepter::Accepter(NetManager *netMgr, int listenPort)
 		:mNetMgr(netMgr)

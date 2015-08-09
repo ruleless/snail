@@ -1,4 +1,5 @@
-#include "net/Sender.h"
+#include "../../include/net/Sender.h"
+#include "../../include/net/NetManager.h"
 
 Sender::Sender(NetManager *netMgr)
 		:mNetMgr(netMgr)
@@ -54,7 +55,7 @@ void Sender::run()
 		{
 			if (FD_ISSET(fd, &writeSet))
 			{
-				mNetMgr->_processOutput(fd);
+				mNetMgr->_flushOutputBuffer(fd);
 				--nready;
 			}
 		}

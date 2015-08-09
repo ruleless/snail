@@ -19,10 +19,11 @@ class NetManager
 	bool create();
 	void close();
 
+	// 此方法一般放在主业务逻辑线程中调用
 	void update();
 
 	// 新连接处理
-	void _pushNewConn(const struct NewConnInfo *newConn);
+	bool _pushNewConn(const struct NewConnInfo *newConn);
 	void _processNewConn();
 
 	// 数据接收
@@ -52,7 +53,7 @@ class NetManager
 	pthread_mutex_t mInputMutex[MAXFD];
 	
 	SockOutputStream* mOutputBuffer[MAXFD];
-	pthread_mutex_t mOutputBuffer[MAXFD];
+	pthread_mutex_t mOutputMutex[MAXFD];
 
 	Accepter *mAccepter;
 	Sender *mSender;

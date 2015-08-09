@@ -1,4 +1,5 @@
-#include "net/Receiver.h"
+#include "../../include/net/Receiver.h"
+#include "../../include/net/NetManager.h"
 
 Receiver::Receiver(NetManager *netMgr)
 		:mNetMgr(netMgr)

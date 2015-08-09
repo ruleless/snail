@@ -2,8 +2,8 @@
 #define __RECEIVER_H__
 
 #include "NetDef.h"
-#include "NetManager.h"
 
+class NetManager;
 class Receiver : public Thread
 {
   public:

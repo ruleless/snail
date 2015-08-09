@@ -24,7 +24,7 @@ void Thread::wait(void *status)
 {
 	if (mStatus != S_Ready)
 	{
-		pthread_join(mTID, status);
+		pthread_join(mTID, &status);
 		mStatus = S_Ready;
 	}
 }

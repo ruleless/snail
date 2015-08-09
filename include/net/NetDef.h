@@ -3,13 +3,18 @@
 
 #include <unistd.h>
 #include <pthread.h>
-#include <semaphore.h>
+#include <sys/socket.h>
+#include <sys/select.h>
 #include <sys/time.h>
+#include <netinet/in.h>
+#include <semaphore.h>
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "algorithm/Queue.h"
+#include "../algorithm/Queue.h"
+#include "../Thread.h"
 
 #define MAXFD 4096
 #define BUFFSIZE 1024

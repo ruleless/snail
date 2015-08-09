@@ -2,7 +2,6 @@
 #define __SOCKETOUTPUTSTREAM_H__
 
 #include "NetDef.h"
-#include "Queue.h"
 
 template<int N> class SocketOutputStream : public Queue<char, N>
 {

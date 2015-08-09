@@ -67,6 +67,13 @@ template<typename T, int N> class Queue
 		mFront = (mFront+1) % (N+1);
 		return true;
 	}
+
+	void clear()
+	{
+		memset(mQueue, 0, sizeof(mQueue));
+		mFront = 0;
+		mRear = 0;
+	}
   protected:
 	T mQueue[N+1];
 	int mFront;

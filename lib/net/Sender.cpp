@@ -1,5 +1,5 @@
-#include "../../include/net/Sender.h"
-#include "../../include/net/NetManager.h"
+#include "Sender.h"
+#include "NetManager.h"
 
 Sender::Sender(NetManager *netMgr)
 		:mNetMgr(netMgr)

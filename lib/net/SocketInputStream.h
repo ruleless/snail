@@ -29,21 +29,21 @@ template<int N> class SocketInputStream : public Queue<char, N>
 
 	void _fill()
 	{
-		if (N - size() <= 0)
+		if (N - this->size() <= 0)
 			return;
 
 		int n = 0;
-		if (mRear >= mFront)
+		if (this->mRear >= this->mFront)
 		{
-			n = read(mSockFd, mQueue+mRear, N+1-mRear);
+			n = read(mSockFd, this->mQueue+this->mRear, N+1-this->mRear);
 		}
 		else
 		{
-			n = read(mSockFd, mQueue+mRear, mFront-mRear-1);
+			n = read(mSockFd, this->mQueue+this->mRear, this->mFront-this->mRear-1);
 		}
 
 		if (n > 0)
-			mRear = (mRear+n) % (N+1);
+			this->mRear = (this->mRear+n) % (N+1);
 
 		if (mListener)
 		{
@@ -60,29 +60,29 @@ template<int N> class SocketInputStream : public Queue<char, N>
 
 	int batchRead(char *buff, int cap)
 	{
-		int n = min(size(), cap);
+		int n = min(this->size(), cap);
 		if (n > 0)
 		{
-			if (mFront > mRear)
+			if (this->mFront > this->mRear)
 			{
-				int right = min(n, N+1-mFront);
-				memcpy(buff, mQueue+mFront, right);
+				int right = min(n, N+1-this->mFront);
+				memcpy(buff, this->mQueue+this->mFront, right);
 
 				if (right != n)
 				{
-					memcpy(buff+right, mQueue, n-right);
+					memcpy(buff+right, this->mQueue, n-right);
 				}
 			}
 			else
 			{
-				memcpy(buff, mQueue+mFront, n);
+				memcpy(buff, this->mQueue+this->mFront, n);
 			}
 
-			mFront = (mFront+n) % (N+1);
+			this->mFront = (this->mFront+n) % (N+1);
 		}
 		return n;
 	}
-  private:
+  protected:
 	int mSockFd;
 	Listener *mListener;
 };

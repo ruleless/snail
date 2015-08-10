@@ -1,9 +1,10 @@
-#include "../../include/net/Accepter.h"
-#include "../../include/net/NetManager.h"
+#include "Accepter.h"
+#include "NetManager.h"
 
-Accepter::Accepter(NetManager *netMgr, int listenPort)
+Accepter::Accepter(NetManager *netMgr, int listenPort, int listenQ)
 		:mNetMgr(netMgr)
 		,mListenPort(listenPort)
+		,mListenQ(listenQ)
 		,mSockFd(-1)
 		,mbRun(false)
 {
@@ -29,13 +30,13 @@ bool Accepter::create()
 
 	if (bind(mSockFd, (const SA *)&addr, sizeof(addr)))
 	{
-		close(mSockFd);
+		::close(mSockFd);
 		return false;
 	}
 
 	if (listen(mSockFd, mListenQ) < 0)
 	{
-		close(mSockFd);
+		::close(mSockFd);
 		return false;
 	}
 
@@ -48,7 +49,7 @@ void Accepter::close()
 {
 	if (mbRun)
 	{
-		close(mSockFd);
+		::close(mSockFd);
 		mbRun = false;
 		wait(NULL);
 	}

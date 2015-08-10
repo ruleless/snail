@@ -1,4 +1,4 @@
-#include "../../include/net/NetManager.h"
+#include "NetManager.h"
 
 NetManager::NetManager()
 		:mMaxFd(-1)
@@ -16,7 +16,7 @@ NetManager::NetManager()
 	}
 }
 
-virtual NetManager::~NetManager()
+NetManager::~NetManager()
 {
 	SafeDelete(mAccepter);
 	SafeDelete(mSender);
@@ -68,7 +68,7 @@ void NetManager::close()
 	// 信号量销毁
 	mAcceptQueue.clear();
 	sem_destroy(&mQueFreeSize);
-	sem_init(&mQueCurSize);
+	sem_destroy(&mQueCurSize);
 
 	// 网络线程销毁
 	mAccepter->close();
@@ -104,16 +104,16 @@ void NetManager::_processNewConn()
 	if (fd >= 0 && fd < MAXFD)
 	{
 		mMaxFd = max(fd, mMaxFd);
-		FD_SET(fd, mFdSet);
+		FD_SET(fd, &mFdSet);
 		
 		_lockInputBuffer(fd);
 		SafeDelete(mInputBuffer[fd]);
-		mInputBuffer[fd] = new SockInputStream();
+		mInputBuffer[fd] = new SockInputStream(fd);
 		_unlockInputBuffer(fd);
 
 		_lockOutputBuffer(fd);
 		SafeDelete(mOutputBuffer[fd]);
-		mOutputBuffer[fd] = new SockOutputStream();
+		mOutputBuffer[fd] = new SockOutputStream(fd);
 		_unlockOutputBuffer(fd);
 	}
 

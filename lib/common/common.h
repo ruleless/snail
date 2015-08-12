@@ -11,7 +11,7 @@
 #endif
 
 #ifndef max
-#define max(a, b) ((a)<(b)?(a):(b))
+#define max(a, b) ((a)>(b)?(a):(b))
 #endif
 
 #define PRINT_INTVAL(val) printf("%s:%d\n", #val, val)

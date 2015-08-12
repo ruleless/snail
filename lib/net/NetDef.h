@@ -13,9 +13,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../common/common.h"
-#include "../algorithm/Queue.h"
-#include "../common/Thread.h"
+#include "common/common.h"
+#include "algorithm/Queue.h"
+#include "common/Thread.h"
 
 #define MAXFD 4096
 #define BUFFSIZE 1024

@@ -12,7 +12,7 @@ template<int N> class SocketOutputStream : public Queue<char, N>
 		Listener() {}
 		virtual ~Listener() {}
 
-		virtual void onWriteExcept(int fd);
+		virtual void onWriteExcept(int fd) = 0;
 	};
 	
     SocketOutputStream(int fd) : Queue<char, N>(), mSockFd(fd), mListener(NULL)
@@ -24,6 +24,11 @@ template<int N> class SocketOutputStream : public Queue<char, N>
 	void setListener(Listener *l)
 	{
 		mListener = l;
+	}
+
+	int getSockFd() const
+	{
+		return mSockFd;
 	}
 
 	void _flush()
@@ -56,6 +61,10 @@ template<int N> class SocketOutputStream : public Queue<char, N>
 		else
 		{
 			n = write(mSockFd, this->mQueue+this->mFront, this->size());
+			if (n > 0)
+			{
+				writeLen += n;
+			}
 		}
 
 		if (n != this->size() && mListener)

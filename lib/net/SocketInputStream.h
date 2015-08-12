@@ -27,6 +27,11 @@ template<int N> class SocketInputStream : public Queue<char, N>
 		mListener = l;
 	}
 
+	int getSockFd() const
+	{
+		return mSockFd;
+	}
+
 	void _fill()
 	{
 		if (N - this->size() <= 0)

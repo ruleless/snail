@@ -13,7 +13,7 @@ Receiver::~Receiver()
 
 bool Receiver::create()
 {
-	if (!mbRun)
+	if (mbRun)
 		return true;
 	
 	mbRun = true;

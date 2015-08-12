@@ -1,11 +1,8 @@
-INC_DIR:=./lib
-SRC_DIR:=./lib
+VPATH:=./common:./net:./algorithm
 
-VPATH:=$(SRC_DIR):$(SRC_DIR)/common:$(SRC_DIR)/net:$(SRC_DIR)/algorithm
-
-CC:=g++
-CXX:=g++
-CXXFLAGS:=-g -Wall -I ./lib
+CC:=clang++
+CXX:=clang++
+CXXFLAGS:=-g -Wall -I .
 SHARED:=-fPIC --shared
 
 .PHONY=all clean
@@ -17,10 +14,10 @@ libsnail.a:common.o Thread.o Accepter.o NetManager.o Receiver.o Sender.o
 
 common.o:common.cpp common.h
 Thread.o:Thread.cpp Thread.h
-Accepter.o:Accepter.cpp NetDef.h
-NetManager.o:NetManager.cpp NetDef.h
-Receiver.o:Receiver.cpp NetDef.h
-Sender.o:Sender.cpp NetDef.h
+Accepter.o:Accepter.cpp Accepter.h NetManager.h NetDef.h common.h
+NetManager.o:NetManager.cpp NetManager.h NetDef.h common.h SocketOutputStream.h SocketInputStream.h
+Receiver.o:Receiver.cpp Receiver.h NetManager.h NetDef.h common.h
+Sender.o:Sender.cpp Sender.h NetManager.h NetDef.h common.h
 
 clean:
 	-rm *.o *.a

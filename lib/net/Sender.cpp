@@ -51,7 +51,7 @@ void Sender::run()
 			select(0, NULL, NULL, NULL, &timeout);
 		}
 
-		for (int fd = 0; nready > 0 && fd < maxFd; ++fd)
+		for (int fd = 0; nready > 0 && fd <= maxFd; ++fd)
 		{
 			if (FD_ISSET(fd, &writeSet))
 			{

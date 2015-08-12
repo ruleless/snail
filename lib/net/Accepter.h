@@ -16,9 +16,9 @@ class Accepter : public Thread
   private:
 	NetManager *mNetMgr;
 	bool mbRun;
+	int mSockFd;
 	int mListenPort;
 	int mListenQ;
-	int mSockFd;
 };
 
 #endif

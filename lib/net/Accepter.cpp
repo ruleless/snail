@@ -3,10 +3,10 @@
 
 Accepter::Accepter(NetManager *netMgr, int listenPort, int listenQ)
 		:mNetMgr(netMgr)
+		,mbRun(false)
+		,mSockFd(-1)
 		,mListenPort(listenPort)
 		,mListenQ(listenQ)
-		,mSockFd(-1)
-		,mbRun(false)
 {
 }
 
@@ -71,7 +71,7 @@ void Accepter::run()
 		if (nready > 0)
 		{
 			struct sockaddr_in clientAddr;
-			socklen_t addrLen;
+			socklen_t addrLen = sizeof(clientAddr);
 			int connFd = accept(mSockFd, (SA *)&clientAddr, &addrLen);
 
 			if (connFd >= 0)

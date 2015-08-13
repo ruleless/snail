@@ -1,0 +1,37 @@
+#ifndef __TCPPACKETRECEIVER_H__
+#define __TCPPACKETRECEIVER_H__
+
+#include "common/common.h"
+#include "common/timer.h"
+#include "common/ObjectPool.h"
+#include "helper/debug_helper.h"
+#include "network/common.h"
+#include "network/interfaces.h"
+#include "network/TCPPacket.h"
+#include "network/PacketReceiver.h"
+
+class EndPoint;
+class Channel;
+class Address;
+class NetworkManager;
+class EventDispatcher;
+
+class TCPPacketReceiver : public PacketReceiver
+{
+public:
+	static ObjectPool<TCPPacketReceiver>& ObjPool();
+	static void destroyObjPool();
+	
+	TCPPacketReceiver():PacketReceiver(){}
+	TCPPacketReceiver(EndPoint &endpoint, NetworkManager &networkMgr);
+	~TCPPacketReceiver();
+
+	Reason processFilteredPacket(Channel *pChannel, Packet *pPacket);
+protected:
+	virtual bool processRecv(bool expectingPacket);
+	PacketReceiver::ERecvState checkSocketErrors(int len, bool expectingPacket);
+
+	virtual void onGetError(Channel *pChannel);
+};
+
+#endif // __TCPPACKETRECEIVER_H__

@@ -1,23 +1,3 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2012 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #ifndef KBE_NETWORK_BUNDLE_H
 #define KBE_NETWORK_BUNDLE_H
 
@@ -29,13 +9,10 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/event_dispatcher.h"
 #include "network/EndPoint.h"
 #include "network/common.h"
-#include "network/tcp_packet.h"
-#include "network/udp_packet.h"
+#include "network/TCPPacket.h"
+#include "network/UDPPacket.h"
 #include "network/interface_defs.h"
 
-namespace KBEngine { 
-namespace Network
-{
 class NetworkManager;
 class Channel;
 
@@ -129,7 +106,7 @@ public:
 
 	Packet* newPacket();
 	
-	INLINE MessageID messageID() const;
+	INLINE MessageID getMessageID() const;
 	INLINE int32 numMessages() const;
 
 protected:
@@ -511,9 +488,6 @@ private:
 	const Network::MessageHandler* pCurrMsgHandler_;
 
 };
-
-}
-}
 
 #ifdef _INLINE
 #include "bundle.inl"

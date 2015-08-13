@@ -28,7 +28,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 #include "network/common.h"
 #include "network/interfaces.h"
-#include "network/tcp_packet.h"
+#include "network/TCPPacket.h"
 #include "network/packet_sender.h"
 
 namespace KBEngine { 

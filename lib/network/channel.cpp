@@ -30,11 +30,11 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/bundle.h"
 #include "network/packet_reader.h"
 #include "network/network_interface.h"
-#include "network/tcp_packet_receiver.h"
+#include "network/TCPPacketReceiver.h"
 #include "network/tcp_packet_sender.h"
-#include "network/udp_packet_receiver.h"
-#include "network/tcp_packet.h"
-#include "network/udp_packet.h"
+#include "network/UDPPacketReceiver.h"
+#include "network/TCPPacket.h"
+#include "network/UDPPacket.h"
 #include "network/message_handler.h"
 #include "network/network_stats.h"
 
@@ -174,7 +174,7 @@ bool Channel::initialize(NetworkManager & networkInterface,
 	{
 		if(pPacketReceiver_)
 		{
-			if(pPacketReceiver_->type() == PacketReceiver::UDP_PACKET_RECEIVER)
+			if(pPacketReceiver_->type() == PacketReceiver::ReceiverType_UDP)
 			{
 				SAFE_RELEASE(pPacketReceiver_);
 				pPacketReceiver_ = new TCPPacketReceiver(*pEndPoint_, *pNetworkInterface_);
@@ -185,7 +185,7 @@ bool Channel::initialize(NetworkManager & networkInterface,
 			pPacketReceiver_ = new TCPPacketReceiver(*pEndPoint_, *pNetworkInterface_);
 		}
 
-		Assert(pPacketReceiver_->type() == PacketReceiver::TCP_PACKET_RECEIVER);
+		Assert(pPacketReceiver_->type() == PacketReceiver::ReceiverType_TCP);
 
 		// UDP²»ÐèÒª×¢²áÃèÊö·û
 		pNetworkInterface_->dispatcher().registerReadFileDescriptor(*pEndPoint_, pPacketReceiver_);
@@ -198,7 +198,7 @@ bool Channel::initialize(NetworkManager & networkInterface,
 	{
 		if(pPacketReceiver_)
 		{
-			if(pPacketReceiver_->type() == PacketReceiver::TCP_PACKET_RECEIVER)
+			if(pPacketReceiver_->type() == PacketReceiver::ReceiverType_TCP)
 			{
 				SAFE_RELEASE(pPacketReceiver_);
 				pPacketReceiver_ = new UDPPacketReceiver(*pEndPoint_, *pNetworkInterface_);
@@ -209,10 +209,10 @@ bool Channel::initialize(NetworkManager & networkInterface,
 			pPacketReceiver_ = new UDPPacketReceiver(*pEndPoint_, *pNetworkInterface_);
 		}
 
-		Assert(pPacketReceiver_->type() == PacketReceiver::UDP_PACKET_RECEIVER);
+		Assert(pPacketReceiver_->type() == PacketReceiver::ReceiverType_UDP);
 	}
 
-	pPacketReceiver_->pEndPoint(pEndPoint_);
+	pPacketReceiver_->setEndPoint(pEndPoint_);
 	if(pPacketSender_)
 		pPacketSender_->pEndPoint(pEndPoint_);
 

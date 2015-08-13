@@ -22,7 +22,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/memorystream.h"
 #include "common/memorystream_converter.h"
 #include "network/channel.h"
-#include "network/packet.h"
+#include "network/Packet.h"
 #include "common/base64.h"
 #include "common/sha1.h"
 

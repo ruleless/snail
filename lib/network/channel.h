@@ -30,7 +30,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/address.h"
 #include "network/event_dispatcher.h"
 #include "network/EndPoint.h"
-#include "network/packet.h"
+#include "network/Packet.h"
 #include "network/common.h"
 #include "network/bundle.h"
 #include "network/interfaces.h"

@@ -373,9 +373,9 @@ INLINE int EndPoint::send(const void * gramData, int gramSize)
 	return ::send(mSocket, (char*)gramData, gramSize, 0);
 }
 
-INLINE int EndPoint::recv(void * gramData, int gramSize)
+INLINE int EndPoint::recv(void *gramData, int gramSize)
 {
-	return ::recv(mSocket, (char*)gramData, gramSize, 0);
+	return ::recv(mSocket, (char *)gramData, gramSize, 0);
 }
 
 

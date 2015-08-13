@@ -27,7 +27,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/address.h"
 #include "network/event_dispatcher.h"
 #include "network/network_interface.h"
-#include "network/event_poller.h"
+#include "network/EventPoller.h"
 
 
 namespace KBEngine { 

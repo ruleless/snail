@@ -67,7 +67,7 @@ INLINE void Bundle::pCurrPacket(Packet* p)
 	pCurrPacket_ = p; 
 }
 
-INLINE MessageID Bundle::messageID() const 
+INLINE MessageID Bundle::getMessageID() const 
 { 
 	return currMsgID_; 
 }

@@ -22,7 +22,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_FIXED_NETWORK_MESSAGES_H
 
 #include "common/common.h"
-#include "common/singleton.h"
+#include "common/Singleton.h"
 #include "helper/debug_helper.h"
 #include "network/common.h"
 

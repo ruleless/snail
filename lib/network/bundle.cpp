@@ -201,7 +201,7 @@ int32 Bundle::onPacketAppend(int32 addsize, bool inseparable)
 Packet* Bundle::newPacket()
 {
 	MALLOC_PACKET(pCurrPacket_, isTCPPacket_);
-	pCurrPacket_->pBundle(this);
+	pCurrPacket_->setBundle(this);
 	return pCurrPacket_;
 }
 
@@ -271,7 +271,7 @@ void Bundle::newMessage(const MessageHandler& msgHandler)
 	Assert(pCurrPacket_ != NULL);
 	
 	(*this) << msgHandler.msgID;
-	pCurrPacket_->messageID(msgHandler.msgID);
+	pCurrPacket_->setMessageID(msgHandler.msgID);
 
 	// 此处对于非固定长度的消息来说需要先设置它的消息长度位为0， 到最后需要填充长度
 	if(msgHandler.msgLen == NETWORK_VARIABLE_MESSAGE)

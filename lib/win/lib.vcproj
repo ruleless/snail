@@ -104,10 +104,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="../"
 				PreprocessorDefinitions="WIN32"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -270,15 +270,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\listener_receiver.cpp"
+				RelativePath="..\network\Listener.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\listener_receiver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\listener_receiver.inl"
+				RelativePath="..\network\Listener.h"
 				>
 			</File>
 			<File
@@ -314,7 +310,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\packet.h"
+				RelativePath="..\network\Packet.h"
 				>
 			</File>
 			<File
@@ -338,18 +334,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\packet_receiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\packet_receiver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\packet_receiver.inl"
-				>
-			</File>
-			<File
 				RelativePath="..\network\packet_sender.cpp"
 				>
 			</File>
@@ -358,7 +342,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\packet_sender.inl"
+				RelativePath="..\network\PacketReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\network\PacketReceiver.h"
 				>
 			</File>
 			<File
@@ -367,30 +355,6 @@
 			</File>
 			<File
 				RelativePath="..\network\SelectPoller.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet.inl"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet_receiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet_receiver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet_receiver.inl"
 				>
 			</File>
 			<File
@@ -406,27 +370,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\udp_packet.cpp"
+				RelativePath="..\network\TCPPacket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\udp_packet.h"
+				RelativePath="..\network\TCPPacket.h"
 				>
 			</File>
 			<File
-				RelativePath="..\network\udp_packet.inl"
+				RelativePath="..\network\TCPPacketReceiver.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\udp_packet_receiver.cpp"
+				RelativePath="..\network\TCPPacketReceiver.h"
 				>
 			</File>
 			<File
-				RelativePath="..\network\udp_packet_receiver.h"
+				RelativePath="..\network\UDPPacket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\udp_packet_receiver.inl"
+				RelativePath="..\network\UDPPacket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\network\UDPPacketReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\network\UDPPacketReceiver.h"
 				>
 			</File>
 			<File
@@ -584,7 +556,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\singleton.h"
+				RelativePath="..\common\Singleton.h"
 				>
 			</File>
 			<File

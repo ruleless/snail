@@ -21,11 +21,11 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/profile.h"
 #include "encryption_filter.h"
 #include "helper/debug_helper.h"
-#include "network/tcp_packet.h"
-#include "network/udp_packet.h"
+#include "network/TCPPacket.h"
+#include "network/UDPPacket.h"
 #include "network/channel.h"
 #include "network/network_interface.h"
-#include "network/packet_receiver.h"
+#include "network/PacketReceiver.h"
 #include "network/packet_sender.h"
 
 namespace KBEngine { 

@@ -22,7 +22,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBENGINE_KEY_H
 
 #include "rsa.h"
-#include "common/singleton.h"
+#include "common/Singleton.h"
 
 namespace KBEngine
 {

@@ -27,7 +27,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/channel.h"
 #include "network/network_interface.h"
-#include "network/packet_receiver.h"
+#include "network/PacketReceiver.h"
 #include "network/packet_sender.h"
 
 namespace KBEngine { 

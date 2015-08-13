@@ -14,7 +14,7 @@ class Channel;
 class ChannelTimeOutHandler;
 class ChannelDeregisterHandler;
 class DelayedChannels;
-class ListenerReceiver;
+class Listener;
 class Packet;
 class EventDispatcher;
 class MessageHandlers;
@@ -36,7 +36,7 @@ public:
 	INLINE const Address & intaddr() const;
 
 	bool recreateListeningSocket(const char* pEndPointName, uint16 listeningPort_min, uint16 listeningPort_max, 
-		const char * listeningInterface, EndPoint* pEP, ListenerReceiver* pLR, uint32 rbuffer = 0, uint32 wbuffer = 0);
+		const char * listeningInterface, EndPoint* pEP, Listener* pLR, uint32 rbuffer = 0, uint32 wbuffer = 0);
 
 	bool registerChannel(Channel* pChannel);
 	bool deregisterChannel(Channel* pChannel);
@@ -98,8 +98,8 @@ private:
 
 	void *									pExtensionData_;
 	
-	ListenerReceiver *						pExtListenerReceiver_;
-	ListenerReceiver *						pIntListenerReceiver_;
+	Listener *						pExtListenerReceiver_;
+	Listener *						pIntListenerReceiver_;
 	
 	DelayedChannels * 						pDelayedChannels_;
 	

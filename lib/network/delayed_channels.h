@@ -23,7 +23,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/tasks.h"
 #include "common/smartpointer.h"
-#include "common/singleton.h"
+#include "common/Singleton.h"
 
 namespace KBEngine{
 namespace Network

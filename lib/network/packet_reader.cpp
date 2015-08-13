@@ -79,7 +79,7 @@ void PacketReader::processMessages(KBEngine::Network::MessageHandlers* pMsgHandl
 				}
 
 				(*pPacket) >> currMsgID_;
-				pPacket->messageID(currMsgID_);
+				pPacket->setMessageID(currMsgID_);
 			}
 
 			Network::MessageHandler* pMsgHandler = pMsgHandlers->find(currMsgID_);

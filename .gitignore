@@ -2,6 +2,10 @@
 *.ncb
 *.suo
 *.user
+/Obj
+/obj
+/lib/win/obj
+/lib/win/Obj
 main
 temp
 tmp

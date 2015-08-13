@@ -30,10 +30,10 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/EndPoint.h"
 #include "network/event_dispatcher.h"
 #include "network/network_interface.h"
-#include "network/event_poller.h"
+#include "network/EventPoller.h"
 #include "network/error_reporter.h"
-#include "network/tcp_packet.h"
-#include "network/udp_packet.h"
+#include "network/TCPPacket.h"
+#include "network/UDPPacket.h"
 
 namespace KBEngine { 
 namespace Network

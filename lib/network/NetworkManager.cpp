@@ -26,10 +26,10 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/address.h"
 #include "network/event_dispatcher.h"
-#include "network/packet_receiver.h"
-#include "network/listener_receiver.h"
+#include "network/PacketReceiver.h"
+#include "network/Listener.h"
 #include "network/channel.h"
-#include "network/packet.h"
+#include "network/Packet.h"
 #include "network/delayed_channels.h"
 #include "network/interfaces.h"
 #include "network/message_handler.h"
@@ -59,7 +59,7 @@ NetworkManager::NetworkManager(Network::EventDispatcher * pDispatcher,
 {
 	if(isExternal())
 	{
-		pExtListenerReceiver_ = new ListenerReceiver(extEndpoint_, Channel::EXTERNAL, *this);
+		pExtListenerReceiver_ = new Listener(extEndpoint_, Channel::EXTERNAL, *this);
 		this->recreateListeningSocket("EXTERNAL", htons(extlisteningPort_min), htons(extlisteningPort_max), 
 			extlisteningInterface, &extEndpoint_, pExtListenerReceiver_, extrbuffer, extwbuffer);
 
@@ -73,7 +73,7 @@ NetworkManager::NetworkManager(Network::EventDispatcher * pDispatcher,
 
 	if(intlisteningPort != -1)
 	{
-		pIntListenerReceiver_ = new ListenerReceiver(intEndpoint_, Channel::INTERNAL, *this);
+		pIntListenerReceiver_ = new Listener(intEndpoint_, Channel::INTERNAL, *this);
 		this->recreateListeningSocket("INTERNAL", intlisteningPort, intlisteningPort, 
 			intlisteningInterface, &intEndpoint_, pIntListenerReceiver_, intrbuffer, intwbuffer);
 	}
@@ -129,7 +129,7 @@ void NetworkManager::closeSocket()
 
 //-------------------------------------------------------------------------------------
 bool NetworkManager::recreateListeningSocket(const char* pEndPointName, uint16 listeningPort_min, uint16 listeningPort_max, 
-										const char * listeningInterface, EndPoint* pEP, ListenerReceiver* pLR, uint32 rbuffer, 
+										const char * listeningInterface, EndPoint* pEP, Listener* pLR, uint32 rbuffer, 
 										uint32 wbuffer)
 {
 	Assert(listeningInterface && pEP && pLR);

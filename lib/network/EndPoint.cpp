@@ -5,9 +5,9 @@
 #endif
 
 #include "network/bundle.h"
-#include "network/tcp_packet_receiver.h"
-#include "network/tcp_packet_sender.h"
-#include "network/udp_packet_receiver.h"
+#include "network/TCPPacketReceiver.h"
+#include "network/TCPPacketSender.h"
+#include "network/UDPPacketReceiver.h"
 
 #ifdef WIN32
 #include <Iphlpapi.h>

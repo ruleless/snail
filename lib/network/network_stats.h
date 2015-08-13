@@ -23,7 +23,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/interfaces.h"
 #include "common/common.h"
-#include "common/singleton.h"
+#include "common/Singleton.h"
 
 namespace KBEngine { 
 namespace Network

@@ -1,5 +1,7 @@
 *.o
-/lib
+*.ncb
+*.suo
+*.user
 main
 temp
 tmp

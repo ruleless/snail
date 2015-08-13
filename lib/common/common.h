@@ -23,6 +23,14 @@
 #define NAME_MAX 255
 #endif
 
+#ifdef _INLINE
+#define INLINE inline
+#else
+#define INLINE
+#endif
+
+#define Assert assert
+
 // 安全删除和释放
 #define SafeDelete(ptr)      if ((ptr)) {delete (ptr); (ptr) = 0;}
 #define SafeDeleteArray(ptr) if ((ptr)) {delete[] (ptr); (ptr) = 0;}

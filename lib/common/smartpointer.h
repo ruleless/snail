@@ -23,8 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/refcountable.h"
 
-namespace KBEngine { 
-
 template<class T>
 INLINE void incrementReferenceCount(const T& obj)
 {
@@ -257,5 +255,4 @@ public:
 	}
 };
 
-}
 #endif // KBE_SMARTPOINTER_H

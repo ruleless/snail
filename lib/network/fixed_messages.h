@@ -26,9 +26,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 #include "network/common.h"
 
-namespace KBEngine { 
-namespace Network
-{
 /*
 	用来对中间协议(前端与后端之间)进行强制约定。
 	没有使用到kbe整套协议自动绑定机制的前端可以使用此处来强制约定协议。
@@ -62,6 +59,4 @@ private:
 	bool _loaded;
 };
 
-}
-}
 #endif // KBE_FIXED_NETWORK_MESSAGES_H

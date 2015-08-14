@@ -19,14 +19,9 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "websocket_packet_reader.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/message_handler.h"
 #include "network/network_stats.h"
-
-namespace KBEngine { 
-namespace Network
-{
-
 
 //-------------------------------------------------------------------------------------
 WebSocketPacketReader::WebSocketPacketReader(Channel* pChannel):
@@ -46,11 +41,7 @@ void WebSocketPacketReader::reset()
 }
 
 //-------------------------------------------------------------------------------------
-void WebSocketPacketReader::processMessages(KBEngine::Network::MessageHandlers* pMsgHandlers, Packet* pPacket)
+void WebSocketPacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacket)
 {
 	PacketReader::processMessages(pMsgHandlers, pPacket);
-}
-
-//-------------------------------------------------------------------------------------
-} 
 }

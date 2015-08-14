@@ -1,13 +1,13 @@
 #include "Listener.h"
-#include "network/address.h"
+#include "network/Address.h"
 #include "network/bundle.h"
 #include "network/EndPoint.h"
-#include "network/event_dispatcher.h"
-#include "network/network_interface.h"
+#include "network/EventDispatcher.h"
+#include "network/NetworkManager.h"
 #include "network/PacketReceiver.h"
 #include "network/error_reporter.h"
 
-Listener::Listener(EndPoint &endpoint, Channel::Traits traits, NetworkManager &networkMgr)
+Listener::Listener(EndPoint &endpoint, Channel::ETraits traits, NetworkManager &networkMgr)
 :mEndpoint(endpoint)
 ,mTraits(traits),
 ,mNetworkManager(networkMgr)

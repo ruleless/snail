@@ -1,44 +1,20 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2012 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#ifndef KBE_NETWORKCHANCEL_H
-#define KBE_NETWORKCHANCEL_H
+#ifndef __CHANNEL_H__
+#define __CHANNEL_H__
 
 #include "common/common.h"
-#include "common/timer.h"
+#include "common/Timer.h"
 #include "common/smartpointer.h"
 #include "common/timestamp.h"
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
 #include "network/address.h"
-#include "network/event_dispatcher.h"
+#include "network/EventDispatcher.h"
 #include "network/EndPoint.h"
 #include "network/Packet.h"
 #include "network/common.h"
 #include "network/bundle.h"
-#include "network/interfaces.h"
+#include "network/NetworkDef.h"
 #include "network/packet_filter.h"
-
-namespace KBEngine { 
-namespace Network
-{
 
 class Bundle;
 class NetworkManager;
@@ -51,215 +27,169 @@ class Channel : public TimerHandler, public PoolObject
 public:
 	static ObjectPool<Channel>& ObjPool();
 	static void destroyObjPool();
-	void onReclaimObject();
+	virtual void onReclaimObject();
 	virtual size_t getPoolObjectBytes();
 
-	enum Traits
+	enum ETraits
 	{
-		/// This describes the properties of channel from server to server.
-		INTERNAL = 0,
-
-		/// This describes the properties of a channel from client to server.
-		EXTERNAL = 1,
+		Internal = 0,
+		External,
 	};
 	
-	enum ChannelTypes
+	enum EChannelTypes
 	{
-		/// 普通通道
-		CHANNEL_NORMAL = 0,
-
-		// 浏览器web通道
-		CHANNEL_WEB = 1,
+		Chanel_Normal = 0,
+		Chanel_Web,
 	};
 
-	typedef std::vector<Packet*> BufferedReceives;
-
-public:
 	Channel();
 
-	Channel(NetworkManager & networkInterface, 
-		const EndPoint * pEndPoint, 
-		Traits traits, 
-		ProtocolType pt = PROTOCOL_TCP, 
+	Channel(NetworkManager &networkInterface, 
+		const EndPoint *pEndPoint,
+		ETraits traits,
+		ProtocolType pt = Protocol_TCP, 
 		PacketFilterPtr pFilter = NULL, 
 		ChannelID id = CHANNEL_ID_NULL);
 
 	virtual ~Channel();
-	
-	static Channel * get(NetworkManager & networkInterface,
-			const Address& addr);
-	
-	static Channel * get(NetworkManager & networkInterface,
-			const EndPoint* pSocket);
-	
-	void startInactivityDetection( float inactivityPeriod,
-			float checkPeriod = 1.f );
-	
-	void stopInactivityDetection();
 
-	PacketFilterPtr pFilter() const { return pFilter_; }
-	void pFilter(PacketFilterPtr pFilter) { pFilter_ = pFilter; }
-
-	void destroy();
-	bool isDestroyed() const { return (flags_ & FLAG_DESTROYED) > 0; }
-
-	NetworkManager & networkInterface()			{ return *pNetworkInterface_; }
-	NetworkManager* pNetworkInterface()			{ return pNetworkInterface_; }
-	void pNetworkInterface(NetworkManager* pNetworkInterface) { pNetworkInterface_ = pNetworkInterface; }
-
-	INLINE const Address& addr() const;
-	void pEndPoint(const EndPoint* pEndPoint);
-	INLINE EndPoint * pEndPoint() const;
-
-	typedef std::vector<Bundle*> Bundles;
-	Bundles & bundles();
-	
-	int32 bundlesLength();
-
-	const Bundles & bundles() const;
-
-	void clearBundle();
-
-	bool sending() const { return (flags_ & FLAG_SENDING) > 0;}
-	void stopSend();
-
-	void send(Bundle * pBundle = NULL);
-	void delayedSend();
-
-
-	INLINE PacketReader* pPacketReader() const;
-	INLINE PacketSender* pPacketSender() const;
-	INLINE void pPacketSender(PacketSender* pPacketSender);
-	INLINE PacketReceiver* pPacketReceiver() const;
-
-	Traits traits() const { return traits_; }
-	bool isExternal() const { return traits_ == EXTERNAL; }
-	bool isInternal() const { return traits_ == INTERNAL; }
-		
-	void onPacketReceived(int bytes);
-	void onPacketSent(int bytes, bool sentCompleted);
-	void onSendCompleted();
-
-	const char * c_str() const;
-	ChannelID id() const	{ return id_; }
-	
-	uint32	numPacketsSent() const		{ return numPacketsSent_; }
-	uint32	numPacketsReceived() const	{ return numPacketsReceived_; }
-	uint32	numBytesSent() const		{ return numBytesSent_; }
-	uint32	numBytesReceived() const	{ return numBytesReceived_; }
-		
-	uint64 lastReceivedTime() const		{ return lastReceivedTime_; }
-	void updateLastReceivedTime()		{ lastReceivedTime_ = timestamp(); }
-		
-	void addReceiveWindow(Packet* pPacket);
-	
-	BufferedReceives& bufferedReceives(){ return bufferedReceives_; }
-		
-	void processPackets(KBEngine::Network::MessageHandlers* pMsgHandlers);
-
-	bool isCondemn() const { return (flags_ & FLAG_CONDEMN) > 0; }
-	void condemn();
-
-	bool hasHandshake() const { return (flags_ & FLAG_HANDSHAKE) > 0; }
-
-	ENTITY_ID proxyID() const { return proxyID_; }
-	void proxyID(ENTITY_ID pid){ proxyID_ = pid; }
-
-	const std::string& extra() const { return strextra_; }
-	void extra(const std::string& s){ strextra_ = s; }
-
-	COMPONENT_ID componentID() const{ return componentID_; }
-	void componentID(COMPONENT_ID cid){ componentID_ = cid; }
-
-	virtual void handshake();
-
-	KBEngine::Network::MessageHandlers* pMsgHandlers() const { return pMsgHandlers_; }
-	void pMsgHandlers(KBEngine::Network::MessageHandlers* pMsgHandlers) { pMsgHandlers_ = pMsgHandlers; }
-
-	bool waitSend();
+	const char* c_str() const;
+	ChannelID id() const { return mID; }
 
 	bool initialize(NetworkManager & networkInterface, 
 		const EndPoint * pEndPoint, 
-		Traits traits, 
-		ProtocolType pt = PROTOCOL_TCP, 
+		ETraits traits, 
+		ProtocolType pt = Protocol_TCP, 
 		PacketFilterPtr pFilter = NULL, 
 		ChannelID id = CHANNEL_ID_NULL);
 
 	bool finalise();
 
-private:
+	void destroy();
+	bool isDestroyed() const { return (mFlags & Flag_Destroyed) > 0; }
 
-	enum Flags
-	{
-		FLAG_SENDING	= 0x00000001,	// 发送信息中
-		FLAG_DESTROYED	= 0x00000002,	// 通道已经销毁
-		FLAG_HANDSHAKE	= 0x00000004,	// 已经握手过
-		FLAG_CONDEMN	= 0x00000008,	// 该频道已经变得不合法
-	};
-
-	enum TimeOutType
-	{
-		TIMEOUT_INACTIVITY_CHECK
-	};
-
-	virtual void handleTimeout(TimerHandle, void * pUser);
 	void clearState( bool warnOnDiscard = false );
-	EventDispatcher & dispatcher();
+	
+	void startInactivityDetection(float inactivityPeriod, float checkPeriod = 1.f);
+	void stopInactivityDetection();
 
-private:
-	NetworkManager * 			pNetworkInterface_;
-	Traits						traits_;
-	ProtocolType				protocoltype_;
+	PacketFilterPtr getFilter() const { return mpFilter; }
+	void setFilter(PacketFilterPtr pFilter) { mpFilter = pFilter; }
+
+	NetworkManager& getNetworkManager() { return *mpNetworkManager; }
+
+	const Address& addr() const { return mpEndPoint->addr(); }
+	EndPoint* pEndPoint() const { return mpEndPoint; }
+	void pEndPoint(const EndPoint* pEndPoint);
+
+	typedef std::vector<Bundle *> Bundles;
+	const Bundles& bundles() const { return mBundles; }
+	Bundles& bundles()             { return mBundles; }
+	int32 bundlesLength();
+	void clearBundle();
+
+	bool sending() const { return (mFlags & Flag_Sending) > 0;}
+	void send(Bundle * pBundle = NULL);
+	void stopSend();
+	void delayedSend();
+	void onSendCompleted();
+	void onPacketSent(int bytes, bool sentCompleted);
+
+	void onPacketReceived(int bytes);
+	void addReceiveWindow(Packet* pPacket);
+
+	void processPackets(MessageHandlers* pMsgHandlers);
+
+	PacketReader* pPacketReader() const { return mpPacketReader; }
+	PacketSender* pPacketSender() const { return mpPacketSender; }
+	void pPacketSender(PacketSender* pPacketSender) { mpPacketSender = pPacketSender; }
+	PacketReceiver* pPacketReceiver() const { return mpPacketReceiver; }
+
+	ETraits traits() const   { return mTraits; }
+	bool isExternal() const { return mTraits == External; }
+	bool isInternal() const { return mTraits == Internal; }
+	
+	uint32 numPacketsSent() const     { return mNumPacketsSent; }
+	uint32 numPacketsReceived() const { return mNumPacketsReceived; }
+	uint32 numBytesSent() const       { return mNumBytesSent; }
+	uint32 numBytesReceived() const   { return mNumBytesReceived; }
 		
-	ChannelID					id_;
-	
-	TimerHandle					inactivityTimerHandle_;
-	
-	uint64						inactivityExceptionPeriod_;
-	
-	uint64						lastReceivedTime_;
-	
-	Bundles						bundles_;
-	
-	BufferedReceives			bufferedReceives_;
+	uint64 lastReceivedTime() const { return mLastReceivedTime; }
+	void updateLastReceivedTime()   { mLastReceivedTime = timestamp(); }
 
-	PacketReader*				pPacketReader_;
+	bool isCondemn() const    { return (mFlags & Flag_Condemn) > 0; }
+	bool hasHandshake() const { return (mFlags & Flag_HandShake) > 0; }
+	void condemn();
+	virtual void handshake();
 
-	// Statistics
-	uint32						numPacketsSent_;
-	uint32						numPacketsReceived_;
-	uint32						numBytesSent_;
-	uint32						numBytesReceived_;
-	uint32						lastTickBytesReceived_;
-	uint32						lastTickBytesSent_;
+	ENTITY_ID proxyID() const { return proxyID_; }
+	void proxyID(ENTITY_ID pid){ proxyID_ = pid; }
 
-	PacketFilterPtr				pFilter_;
-	
-	EndPoint *					pEndPoint_;
-	PacketReceiver*				pPacketReceiver_;
-	PacketSender*				pPacketSender_;
+	const std::string& extra() const { return mStrExtra; }
+	void extra(const std::string& s){ mStrExtra = s; }
+
+	COMPONENT_ID componentID() const{ return mComponentID; }
+	void componentID(COMPONENT_ID cid){ mComponentID = cid; }
+
+	MessageHandlers* pMsgHandlers() const { return mpMsgHandlers; }
+	void pMsgHandlers(MessageHandlers* pMsgHandlers) { mpMsgHandlers = pMsgHandlers; }
+
+	bool waitSend();
+
+	virtual void onTimeout(TimerHandle, void * pUser);
+private:
+	enum EFlags
+	{
+		Flag_Sending	= 0x00000001,	// 发送信息中
+		Flag_Destroyed	= 0x00000002,	// 通道已经销毁
+		Flag_HandShake	= 0x00000004,	// 已经握手过
+		Flag_Condemn	= 0x00000008,	// 该频道已经变得不合法
+	};
+
+	enum ETimeOutType
+	{
+		Timeout_InactivityCheck,
+	};
+
+	typedef std::vector<Packet *> BufferedReceives;
+
+	BufferedReceives mBufferedReceives;
+
+	NetworkManager *mpNetworkManager;
+	ChannelID mID;
+	ETraits mTraits;
+	ProtocolType mProtocolType;
+
+	TimerHandle	mInactivityTimerHandle;
+	uint64 mInactivityExceptionPeriod;
+	uint64 mLastReceivedTime;
+
+	Bundles	mBundles;
+
+	EndPoint *mpEndPoint;
+	PacketFilterPtr	mpFilter;
+	PacketReader *mpPacketReader;
+	PacketReceiver *mpPacketReceiver;
+	PacketSender *mpPacketSender;
+
+	// 统计数据
+	uint32 mNumPacketsSent;
+	uint32 mNumPacketsReceived;
+	uint32 mNumBytesSent;
+	uint32 mNumBytesReceived;
+	uint32 mLastTickBytesReceived;
+	uint32 mLastTickBytesSent;
 
 	// 如果是外部通道且代理了一个前端则会绑定前端代理ID
-	ENTITY_ID					proxyID_;
+	ENTITY_ID proxyID_;
+	EChannelTypes mChannelType;
+	COMPONENT_ID mComponentID;
+	uint32 mFlags;
+
+	MessageHandlers *mpMsgHandlers;
 
 	// 扩展用
-	std::string					strextra_;
-
-	// 通道类别
-	ChannelTypes				channelType_;
-
-	COMPONENT_ID				componentID_;
-
-	// 支持指定某个通道使用某个消息handlers
-	KBEngine::Network::MessageHandlers* pMsgHandlers_;
-
-	uint32						flags_;
+	std::string	mStrExtra;
 };
 
-}
-}
-
-#ifdef _INLINE
-#include "channel.inl"
-#endif
-#endif // KBE_NETWORKCHANCEL_H
+#endif // __CHANNEL_H__

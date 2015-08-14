@@ -29,9 +29,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 
-namespace KBEngine
-{
-
 //-------------------------------------------------------------------------------------
 KBE_RSA::KBE_RSA(const std::string& pubkeyname, const std::string& prikeyname):
 rsa_public(0),
@@ -304,6 +301,3 @@ std::string KBE_RSA::decrypt(const std::string& instr)
 
 	return out;
 }
-
-//-------------------------------------------------------------------------------------
-} 

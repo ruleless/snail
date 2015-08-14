@@ -22,9 +22,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 #include "thread/threadguard.h"
 
-namespace KBEngine
-{
-
 Tasks::Tasks() : 
 	container_()
 {
@@ -68,6 +65,3 @@ void Tasks::process()
 			++iter;
 	}
 }
-
-//-------------------------------------------------------------------------------------
-} 

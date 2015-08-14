@@ -20,24 +20,16 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "tcp_packet_sender.h"
-#ifndef _INLINE
-#include "tcp_packet_sender.inl"
-#endif
-
-#include "network/address.h"
+#include "network/Address.h"
 #include "network/bundle.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/EndPoint.h"
-#include "network/event_dispatcher.h"
-#include "network/network_interface.h"
+#include "network/EventDispatcher.h"
+#include "network/NetworkManager.h"
 #include "network/EventPoller.h"
 #include "network/error_reporter.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
-
-namespace KBEngine { 
-namespace Network
-{
 
 //-------------------------------------------------------------------------------------
 static ObjectPool<TCPPacketSender> s_ObjPool("TCPPacketSender");
@@ -104,13 +96,13 @@ bool TCPPacketSender::processSend(Channel* pChannel)
 			if(reason != REASON_SUCCESS)
 				break; 
 			else
-				RECLAIM_PACKET((*iter)->isTCPPacket(), (*iter1));
+				reclaimPacket((*iter)->isTCPPacket(), (*iter1));
 		}
 
 		if(reason == REASON_SUCCESS)
 		{
 			pakcets.clear();
-			Network::Bundle::ObjPool().reclaimObject((*iter));
+			Bundle::ObjPool().reclaimObject((*iter));
 		}
 		else
 		{
@@ -170,8 +162,3 @@ Reason TCPPacketSender::processFilterPacket(Channel* pChannel, Packet * pPacket)
 
 	return checkSocketErrors(pEndpoint);
 }
-
-//-------------------------------------------------------------------------------------
-}
-}
-

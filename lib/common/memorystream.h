@@ -25,8 +25,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
 #include "common/memorystream_converter.h"
-	
-namespace KBEngine{
 
 class MemoryStreamException
 {
@@ -909,5 +907,4 @@ INLINE void MemoryStream::read_skip<std::string>()
 #define NEW_MEMORY_STREAM() MemoryStream::ObjPool().createObject()
 #define DELETE_MEMORY_STREAM(obj) { MemoryStream::ObjPool().reclaimObject(obj); obj = NULL; }
 
-}
 #endif

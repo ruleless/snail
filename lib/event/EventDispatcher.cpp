@@ -2,72 +2,72 @@
 #include "network/EventPoller.h"
 
 EventDispatcher::EventDispatcher()
-		:breakProcessing_(DispatcherStatus_Running)
-		,maxWait_(0.1)
-		,numTimerCalls_(0)
-		,accSpareTime_(0)
-		,oldSpareTime_(0)
-		,totSpareTime_(0)
-		,lastStatisticsGathered_(0)   
+		:mBreakProcessing(DispatcherStatus_Running)
+		,mMaxWait(0.1)
+		,mNumTimerCalls(0)
+		,mAccSpareTime(0)
+		,mOldSpareTime(0)
+		,mTotSpareTime(0)
+		,mLastStatisticsGathered(0)   
 {
-	pTasks_ = new Tasks();
-	pTimers_ = new Timers64();
-	pPoller_ = EventPoller::create();
+	mpTasks = new Tasks();
+	mpTimers = new Timers64();
+	mpPoller = EventPoller::create();
 }
 
 EventDispatcher::~EventDispatcher()
 {
-	SafeDelete(pTasks_);
-	SafeDelete(pPoller_);
+	SafeDelete(mpTasks);
+	SafeDelete(mpPoller);
 	
-	if (!pTimers_->empty())
+	if (!mpTimers->empty())
 	{
 		INFO_MSG(fmt::format("EventDispatcher()::~EventDispatcher: Num timers = {}\n",
-							 pTimers_->size()));
+							 mpTimers->size()));
 	}
 
-	pTimers_->clear(false);
-	SafeDelete(pTimers_);
+	mpTimers->clear(false);
+	SafeDelete(mpTimers);
 }
 
 bool EventDispatcher::registerReadFileDescriptor(int fd, InputNotificationHandler *handler)
 {
-	return pPoller_->registerForRead(fd, handler);
+	return mpPoller->registerForRead(fd, handler);
 }
 
 bool EventDispatcher::registerWriteFileDescriptor(int fd, OutputNotificationHandler *handler)
 {
-	return pPoller_->registerForWrite(fd, handler);
+	return mpPoller->registerForWrite(fd, handler);
 }
 
 bool EventDispatcher::deregisterReadFileDescriptor(int fd)
 {
-	return pPoller_->deregisterForRead(fd);
+	return mpPoller->deregisterForRead(fd);
 }
 
 bool EventDispatcher::deregisterWriteFileDescriptor(int fd)
 {
-	return pPoller_->deregisterForWrite(fd);
+	return mpPoller->deregisterForWrite(fd);
 }
 
 uint64 EventDispatcher::getSpareTime() const
 {
-	return pPoller_->spareTime();
+	return mpPoller->spareTime();
 }
 
 void EventDispatcher::clearSpareTime()
 {
-	accSpareTime_ += pPoller_->spareTime();
-	pPoller_->clearSpareTime();
+	mAccSpareTime += mpPoller->spareTime();
+	mpPoller->clearSpareTime();
 }
 
 double EventDispatcher::calculateWait() const
 {
-	double maxWait = maxWait_;
+	double maxWait = mMaxWait;
 
-	if (!pTimers_->empty())
+	if (!mpTimers->empty())
 	{
-		maxWait = std::min(maxWait, pTimers_->nextExp(timestamp()) / stampsPerSecondD());
+		maxWait = std::min(maxWait, mpTimers->nextExp(timestamp()) / stampsPerSecondD());
 	}
 
 	return maxWait;
@@ -82,29 +82,27 @@ TimerHandle EventDispatcher::addTimerCommon(int64 microseconds, TimerHandler *ha
 
 	uint64 interval = int64((((double)microseconds)/1000000.0) * stampsPerSecondD());
 
-	TimerHandle handle = pTimers_->add(timestamp() + interval,
-									   recurrent ? interval : 0,
-									   handler, arg);
+	TimerHandle handle = mpTimers->add(timestamp() + interval, recurrent ? interval : 0, handler, arg);
 	
 	return handle;
 }
 
 void EventDispatcher::addTask(Task *pTask)
 {
-	pTasks_->add(pTask);
+	mpTasks->add(pTask);
 }
 
 bool EventDispatcher::cancelTask(Task * pTask)
 {
-	return pTasks_->cancel(pTask);
+	return mpTasks->cancel(pTask);
 }
 
 void EventDispatcher::processUntilBreak()
 {
-	if(breakProcessing_ != DispatcherStatus_BreakProcessing)
-		breakProcessing_ = DispatcherStatus_Running;
+	if(mBreakProcessing != DispatcherStatus_BreakProcessing)
+		mBreakProcessing = DispatcherStatus_Running;
 
-	while(breakProcessing_ != DispatcherStatus_BreakProcessing)
+	while(mBreakProcessing != DispatcherStatus_BreakProcessing)
 	{
 		this->processOnce(true);
 	}
@@ -112,19 +110,19 @@ void EventDispatcher::processUntilBreak()
 
 int EventDispatcher::processOnce(bool shouldIdle)
 {
-	if(breakProcessing_ != DispatcherStatus_BreakProcessing)
-		breakProcessing_ = DispatcherStatus_Running;
+	if(mBreakProcessing != DispatcherStatus_BreakProcessing)
+		mBreakProcessing = DispatcherStatus_Running;
 
 	this->processTasks();
 
-	if(breakProcessing_ != DispatcherStatus_BreakProcessing)
+	if(mBreakProcessing != DispatcherStatus_BreakProcessing)
 	{
 		this->processTimers();
 	}
 
 	this->processStats();
 
-	if(breakProcessing_ != DispatcherStatus_BreakProcessing)
+	if(mBreakProcessing != DispatcherStatus_BreakProcessing)
 	{
 		return this->processNetwork(shouldIdle);
 	}
@@ -135,26 +133,26 @@ int EventDispatcher::processOnce(bool shouldIdle)
 int EventDispatcher::processNetwork(bool shouldIdle)
 {
 	double maxWait = shouldIdle ? this->calculateWait() : 0.0;
-	return pPoller_->processPendingEvents(maxWait);
+	return mpPoller->processPendingEvents(maxWait);
 }
 
 void EventDispatcher::processTasks()
 {
-	pTasks_->process();
+	mpTasks->process();
 }
 
 void EventDispatcher::processTimers()
 {
-	numTimerCalls_ += pTimers_->process(timestamp());
+	mNumTimerCalls += mpTimers->process(timestamp());
 }
 
 void EventDispatcher::processStats()
 {
-	if (timestamp() - lastStatisticsGathered_ >= stampsPerSecond())
+	if (timestamp() - mLastStatisticsGathered >= stampsPerSecond())
 	{
-		oldSpareTime_ = totSpareTime_;
-		totSpareTime_ = accSpareTime_ + pPoller_->spareTime();
+		mOldSpareTime = mTotSpareTime;
+		mTotSpareTime = mAccSpareTime + mpPoller->spareTime();
 
-		lastStatisticsGathered_ = timestamp();
+		mLastStatisticsGathered = timestamp();
 	}
 }

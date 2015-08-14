@@ -21,12 +21,8 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "xml/xml.h"	
 #include "resmgr/resmgr.h"	
 
-namespace KBEngine { 
 
-KBE_SINGLETON_INIT(Network::FixedMessages);
-
-namespace Network
-{
+KBE_SINGLETON_INIT(FixedMessages);
 
 //-------------------------------------------------------------------------------------
 FixedMessages::FixedMessages():
@@ -118,8 +114,4 @@ bool FixedMessages::isFixed(MessageID msgid)
 	}
 
 	return false;
-}
-
-//-------------------------------------------------------------------------------------
-}
 }

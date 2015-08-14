@@ -23,9 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/common.h"
 #include <math.h>
 
-namespace KBEngine
-{
-
 /**
  *	фзоч
  */
@@ -60,8 +57,5 @@ public:
 	uint32 days, hours, minutes, seconds;
 	uint32 secs_;
 };
-
-
-}
 
 #endif // KBE_DEADLINE_FORMAT_H

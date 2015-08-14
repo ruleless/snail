@@ -24,9 +24,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/task.h"
 #include "common/common.h"
 
-namespace KBEngine
-{
-
 /**
  *	ÈÎÎñÈÝÆ÷
  */
@@ -41,10 +38,8 @@ public:
 	void process();
 private:
 	
-	typedef std::vector<KBEngine::Task *> Container;
+	typedef std::vector<Task *> Container;
 	Container container_;
 };
-
-}
 
 #endif // KBE_TASKS_H

@@ -27,7 +27,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <iomanip>
 
-namespace KBEngine{ 
 /*---------------------------------------------------------------------------------
 	跨平台接口定义
 ---------------------------------------------------------------------------------*/
@@ -219,8 +218,6 @@ namespace strutil {
 
 	size_t utf8length(const std::string& utf8str);                    // set string to "" if invalid utf8 sequence
 	void utf8truncate(const std::string& utf8str, size_t len);
-}
-
 }
 
 #endif // KBE_STRUTIL_H

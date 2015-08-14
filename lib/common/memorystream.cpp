@@ -19,8 +19,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "memorystream.h"
-namespace KBEngine
-{
+
 static ObjectPool<MemoryStream> s_ObjPool("MemoryStream");
 //-------------------------------------------------------------------------------------
 ObjectPool<MemoryStream>& MemoryStream::ObjPool()
@@ -52,8 +51,3 @@ void MemoryStream::onReclaimObject()
 
 	clear(false);
 }
-
-//-------------------------------------------------------------------------------------
-} 
-
-

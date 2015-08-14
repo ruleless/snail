@@ -20,23 +20,14 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "bundle_broadcast.h"
-#ifndef _INLINE
-#include "bundle_broadcast.inl"
-#endif
-
-#include "network/address.h"
-#include "network/event_dispatcher.h"
-#include "network/network_interface.h"
+#include "network/Address.h"
+#include "network/EventDispatcher.h"
+#include "network/NetworkManager.h"
 #include "network/EventPoller.h"
 
-
-namespace KBEngine { 
-namespace Network
-{
-//-------------------------------------------------------------------------------------
 BundleBroadcast::BundleBroadcast(NetworkManager & networkInterface, 
 								   uint16 bindPort, uint32 recvWindowSize):
-	Bundle(NULL, Network::PROTOCOL_UDP),
+	Bundle(NULL, Protocol_UDP),
 	epListen_(),
 	networkInterface_(networkInterface),
 	recvWindowSize_(recvWindowSize),
@@ -62,7 +53,7 @@ BundleBroadcast::BundleBroadcast(NetworkManager & networkInterface,
 			if (epListen_.bind(htons(bindPort), htonl(INADDR_ANY)) != 0)
 			{
 				good_ = false;
-				KBEngine::sleep(10);
+				sleep(10);
 				count++;
 
 				if(count > 30)
@@ -116,7 +107,7 @@ bool BundleBroadcast::broadcast(uint16 port)
 	if(port == 0)
 		port = KBE_MACHINE_BRAODCAST_SEND_PORT;
 
-	epBroadcast_.addr(port, Network::BROADCAST);
+	epBroadcast_.addr(port, BROADCAST);
 
 	if(epBroadcast_.setbroadcast(true) != 0)
 	{
@@ -127,7 +118,7 @@ bool BundleBroadcast::broadcast(uint16 port)
 		return false;
 	}
 
-	epBroadcast_.sendto(this, htons(port), Network::BROADCAST);
+	epBroadcast_.sendto(this, htons(port), BROADCAST);
 	return true;
 }
 
@@ -230,8 +221,4 @@ bool BundleBroadcast::receive(MessageArgs* recvArgs, sockaddr_in* psin, int32 ti
 	}
 	
 	return true;
-}
-
-//-------------------------------------------------------------------------------------
-}
 }

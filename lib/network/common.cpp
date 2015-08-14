@@ -20,26 +20,22 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "common.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/bundle.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
 #include "network/message_handler.h"
 #include "network/TCPPacketReceiver.h"
 #include "network/UDPPacketReceiver.h"
-#include "network/address.h"
+#include "network/Address.h"
 #include "helper/watcher.h"
 
-namespace KBEngine { 
-namespace Network
-{
-
-float g_channelInternalTimeout = 60.f;
-float g_channelExternalTimeout = 60.f;
+float gChannelInternalTimeout = 60.f;
+float gChannelExternalTimeout = 60.f;
 
 int8 g_channelExternalEncryptType = 0;
 
-uint32 g_SOMAXCONN = 5;
+uint32 gListenQ = 5;
 
 // network stats
 uint64						g_numPacketsSent = 0;
@@ -53,9 +49,9 @@ uint32						g_extReceiveWindowMessagesOverflow = 256;
 uint32						g_intReceiveWindowBytesOverflow = 0;
 uint32						g_extReceiveWindowBytesOverflow = 65535;
 
-uint32						g_sendWindowMessagesOverflowCritical = 32;
-uint32						g_intSendWindowMessagesOverflow = 65535;
-uint32						g_extSendWindowMessagesOverflow = 256;
+uint32						gSendWindowMessagesOverflowCritical = 32;
+uint32						gIntSendWindowMessagesOverflow = 65535;
+uint32						gExtSendWindowMessagesOverflow = 256;
 uint32						g_intSendWindowBytesOverflow = 0;
 uint32						g_extSendWindowBytesOverflow = 65535;
 
@@ -94,6 +90,14 @@ void destroyObjPool()
 	UDPPacketReceiver::destroyObjPool();
 }
 
+void reclaimPacket(bool isTCPPacket, Packet *pPacket)
+{
+	if(isTCPPacket)
+		TCPPacket::ObjPool().reclaimObject(static_cast<TCPPacket*>(pPacket));
+	else
+		UDPPacket::ObjPool().reclaimObject(static_cast<UDPPacket*>(pPacket));
+}
+
 void finalise(void)
 {
 #ifdef ENABLE_WATCHERS
@@ -102,9 +106,5 @@ void finalise(void)
 
 	MessageHandlers::finalise();
 	
-	Network::destroyObjPool();
-}
-
-//-------------------------------------------------------------------------------------
-}
+	destroyObjPool();
 }

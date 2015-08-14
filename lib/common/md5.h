@@ -24,9 +24,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "openssl/md5.h"
 #include <string>
 
-namespace KBEngine
-{
-
 /**
  *	openssl md5µÄ·â×°
  */
@@ -60,8 +57,5 @@ private:
 	unsigned char bytes_[16];
 	bool isFinal_;
 };
-
-
-}
 
 #endif // KBENGINE_MD5_H

@@ -21,13 +21,9 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KBE_NETWORK_STATS_H
 #define KBE_NETWORK_STATS_H
 
-#include "network/interfaces.h"
+#include "network/NetworkDef.h"
 #include "common/common.h"
 #include "common/Singleton.h"
-
-namespace KBEngine { 
-namespace Network
-{
 
 class MessageHandler;
 
@@ -78,6 +74,4 @@ private:
 	std::vector<NetworkStatsHandler*> handlers_;
 };
 
-}
-}
 #endif // KBE_NETWORK_STATS_H

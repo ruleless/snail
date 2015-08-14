@@ -24,14 +24,11 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/common.h"
 #include "helper/debug_helper.h"
 #include "network/common.h"
-#include "network/interfaces.h"
+#include "network/NetworkDef.h"
 #include "message_handler.h"
 #include "network/bundle.h"
 #include "network/EndPoint.h"
 
-namespace KBEngine { 
-namespace Network
-{
 class NetworkManager;
 
 /*
@@ -49,7 +46,7 @@ public:
 	bool broadcast(uint16 port = 0);
 	bool receive(MessageArgs* recvArgs, sockaddr_in* psin = NULL, int32 timeout = 100000, bool showerr = true);
 
-	Network::EndPoint& epListen() { return epListen_; }
+	EndPoint& epListen() { return epListen_; }
 
 	void close();
 
@@ -57,17 +54,11 @@ public:
 
 	void itry(int8 i){ itry_ = i; }
 protected:
-	Network::EndPoint epListen_, epBroadcast_;
+	EndPoint epListen_, epBroadcast_;
 	NetworkManager & networkInterface_;
 	uint32 recvWindowSize_;
 	bool good_;
 	int8 itry_;
 };
 
-}
-}
-
-#ifdef _INLINE
-#include "bundle_broadcast.inl"
-#endif
 #endif // KBE_BUNDLE_BROADCAST_H

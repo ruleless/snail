@@ -23,14 +23,10 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "websocket_protocol.h"
 
 #include "network/bundle.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/TCPPacket.h"
-#include "network/network_interface.h"
+#include "network/NetworkManager.h"
 #include "network/PacketReceiver.h"
-
-namespace KBEngine { 
-namespace Network
-{
 
 //-------------------------------------------------------------------------------------
 WebSocketPacketFilter::WebSocketPacketFilter(Channel* pChannel):
@@ -114,7 +110,7 @@ Reason WebSocketPacketFilter::send(Channel * pChannel, PacketSender& sender, Pac
 	}
 
 	(*pRetTCPPacket).append(pPacket->data() + pPacket->rpos(), pPacket->length());
-	pRetTCPPacket->swap(*(static_cast<KBEngine::MemoryStream*>(pPacket)));
+	pRetTCPPacket->swap(*(static_cast<MemoryStream*>(pPacket)));
 	TCPPacket::ObjPool().reclaimObject(pRetTCPPacket);
 
 	pPacket->encrypted(true);
@@ -271,8 +267,4 @@ Reason WebSocketPacketFilter::recv(Channel * pChannel, PacketReceiver & receiver
 
 	TCPPacket::ObjPool().reclaimObject(static_cast<TCPPacket*>(pPacket));
 	return REASON_SUCCESS;
-}
-
-//-------------------------------------------------------------------------------------
-} 
 }

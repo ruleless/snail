@@ -25,14 +25,11 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "packet_filter.inl"
 #endif
 
-#include "network/channel.h"
-#include "network/network_interface.h"
+#include "network/Channel.h"
+#include "network/NetworkManager.h"
 #include "network/PacketReceiver.h"
 #include "network/packet_sender.h"
 
-namespace KBEngine { 
-namespace Network
-{
 //-------------------------------------------------------------------------------------
 Reason PacketFilter::send(Channel * pChannel, PacketSender& sender, Packet * pPacket)
 {
@@ -43,8 +40,4 @@ Reason PacketFilter::send(Channel * pChannel, PacketSender& sender, Packet * pPa
 Reason PacketFilter::recv(Channel * pChannel, PacketReceiver & receiver, Packet * pPacket)
 {
 	return receiver.processFilteredPacket(pChannel, pPacket);
-}
-
-//-------------------------------------------------------------------------------------
-} 
 }

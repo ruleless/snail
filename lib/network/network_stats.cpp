@@ -22,12 +22,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/watcher.h"
 #include "network/message_handler.h"
 
-namespace KBEngine { 
-
-KBE_SINGLETON_INIT(Network::NetworkStats);
-
-namespace Network
-{
+KBE_SINGLETON_INIT(NetworkStats);
 
 NetworkStats g_networkStats;
 
@@ -87,8 +82,4 @@ void NetworkStats::trackMessage(S_OP op, const MessageHandler& msgHandler, uint3
 		else
 			(*iter)->onRecvMessage(msgHandler, size);
 	}
-}
-
-//-------------------------------------------------------------------------------------
-}
 }

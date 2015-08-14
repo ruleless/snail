@@ -23,8 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 
 
-namespace KBEngine
-{
 KBE_SINGLETON_INIT(KBEKey);
 
 //-------------------------------------------------------------------------------------
@@ -81,6 +79,3 @@ bool KBEKey::isGood() const
 
 	return rsa_public != NULL && rsa_private != NULL;
 }
-
-//-------------------------------------------------------------------------------------
-} 

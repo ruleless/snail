@@ -26,10 +26,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/smartpointer.h"
 #include "common/refcountable.h"
 
-namespace KBEngine { 
-namespace Network
-{
-
 class Channel;
 class NetworkManager;
 class Packet;
@@ -49,9 +45,6 @@ public:
 };
 
 typedef SmartPointer<PacketFilter> PacketFilterPtr;
-
-}
-}
 
 #ifdef _INLINE
 #include "packet_filter.inl"

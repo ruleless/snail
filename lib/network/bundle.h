@@ -2,11 +2,11 @@
 #define KBE_NETWORK_BUNDLE_H
 
 #include "common/common.h"
-#include "common/timer.h"
+#include "common/Timer.h"
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
-#include "network/address.h"
-#include "network/event_dispatcher.h"
+#include "network/Address.h"
+#include "network/EventDispatcher.h"
 #include "network/EndPoint.h"
 #include "network/common.h"
 #include "network/TCPPacket.h"
@@ -35,7 +35,7 @@ class Channel;
 																											\
 			if(pPacket->length() == 0)																		\
 			{																								\
-				RECLAIM_PACKET(pPacket->isTCPPacket(), pPacket);											\
+				reclaimPacket(pPacket->isTCPPacket(), pPacket);											\
 				++reclaimCount;																				\
 			}																								\
 																											\
@@ -46,7 +46,7 @@ class Channel;
 			memcpy(((uint8*)&v) + currSize, pPacket->data() + pPacket->rpos(), pPacket->length());			\
 			currSize += pPacket->length();																	\
 			pPacket->done();																				\
-			RECLAIM_PACKET(pPacket->isTCPPacket(), pPacket);												\
+			reclaimPacket(pPacket->isTCPPacket(), pPacket);												\
 			++reclaimCount;																					\
 		}																									\
 	}																										\
@@ -72,7 +72,7 @@ public:
 
 	typedef std::vector<Packet*> Packets;
 	
-	Bundle(Channel * pChannel = NULL, ProtocolType pt = PROTOCOL_TCP);
+	Bundle(Channel * pChannel = NULL, ProtocolType pt = Protocol_TCP);
 	Bundle(const Bundle& bundle);
 	virtual ~Bundle();
 	
@@ -83,8 +83,8 @@ public:
 
 	INLINE MessageLength currMsgLength() const;
 	
-	INLINE void pCurrMsgHandler(const Network::MessageHandler* pMsgHandler);
-	INLINE const Network::MessageHandler* pCurrMsgHandler() const;
+	INLINE void pCurrMsgHandler(const MessageHandler* pMsgHandler);
+	INLINE const MessageHandler* pCurrMsgHandler() const;
 
 	/**
 		计算所有包包括当前还未写完的包的总长度
@@ -404,7 +404,7 @@ public:
 			{
 				if(pPacket->length() == 0)
 				{
-					RECLAIM_PACKET(pPacket->isTCPPacket(), pPacket);
+					reclaimPacket(pPacket->isTCPPacket(), pPacket);
 					++reclaimCount;
 				}
 
@@ -414,7 +414,7 @@ public:
 			{
 				Assert(pPacket->length() == 0);
 				++reclaimCount;
-				RECLAIM_PACKET(pPacket->isTCPPacket(), pPacket);
+				reclaimPacket(pPacket->isTCPPacket(), pPacket);
 			}
 		}
 
@@ -448,7 +448,7 @@ public:
 				pPacket->rpos(pPacket->rpos() + rsize - datas.size());
 				if(pPacket->length() == 0)
 				{
-					RECLAIM_PACKET(pPacket->isTCPPacket(), pPacket);
+					reclaimPacket(pPacket->isTCPPacket(), pPacket);
 					++reclaimCount;
 				}
 
@@ -458,7 +458,7 @@ public:
 			{
 				datas.append((char*)pPacket->data() + pPacket->rpos(), pPacket->length());
 				pPacket->done();
-				RECLAIM_PACKET(pPacket->isTCPPacket(), pPacket);
+				reclaimPacket(pPacket->isTCPPacket(), pPacket);
 				++reclaimCount;
 			}
 		}
@@ -485,7 +485,7 @@ private:
 	bool isTCPPacket_;
 	int32 packetMaxSize_;
 
-	const Network::MessageHandler* pCurrMsgHandler_;
+	const MessageHandler* pCurrMsgHandler_;
 
 };
 

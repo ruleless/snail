@@ -24,16 +24,10 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/common.h"
 #include "helper/debug_helper.h"
 
-namespace KBEngine{
-
 class MemoryStream;
 
-namespace Network
-{
-	class Channel;
-	class Packet;
-
-namespace websocket{
+class Channel;
+class Packet;
 
 
 /*	WebSocket FRC6544
@@ -77,7 +71,7 @@ public:
 	/**
 		websocket协议握手
 	*/
-	static bool handshake(Network::Channel* pChannel, MemoryStream* s);
+	static bool handshake(Channel* pChannel, MemoryStream* s);
 
 	/**
 		帧解析相关
@@ -89,9 +83,4 @@ public:
 	static bool decodingDatas(Packet* pPacket, uint8 msg_masked, uint32 msg_mask);
 };
 
-}
-}
-}
-
 #endif // KBE_WEBSOCKET_PROTOCOL_H
-

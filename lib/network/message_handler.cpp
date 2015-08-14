@@ -21,21 +21,18 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "message_handler.h"
 #include "common/md5.h"
-#include "network/channel.h"
-#include "network/network_interface.h"
+#include "network/Channel.h"
+#include "network/NetworkManager.h"
 #include "network/PacketReceiver.h"
 #include "network/fixed_messages.h"
 #include "helper/watcher.h"
 #include "xml/xml.h"
 #include "resmgr/resmgr.h"	
 
-namespace KBEngine { 
-namespace Network
-{
-Network::MessageHandlers* MessageHandlers::pMainMessageHandlers = 0;
+MessageHandlers* MessageHandlers::pMainMessageHandlers = 0;
 std::vector<MessageHandlers*>* g_pMessageHandlers;
 
-static Network::FixedMessages* g_fm;
+static FixedMessages* g_fm;
 
 //-------------------------------------------------------------------------------------
 MessageHandlers::MessageHandlers():
@@ -43,11 +40,11 @@ msgHandlers_(),
 msgID_(1),
 exposedMessages_()
 {
-	g_fm = Network::FixedMessages::getSingletonPtr();
+	g_fm = FixedMessages::getSingletonPtr();
 	if(g_fm == NULL)
-		g_fm = new Network::FixedMessages;
+		g_fm = new FixedMessages;
 
-	Network::FixedMessages::getSingleton().loadConfig("server/messages_fixed.xml");
+	FixedMessages::getSingleton().loadConfig("server/messages_fixed.xml");
 	messageHandlers().push_back(this);
 }
 
@@ -76,7 +73,7 @@ recv_count(0)
 //-------------------------------------------------------------------------------------
 MessageHandler::~MessageHandler()
 {
-	SAFE_RELEASE(pArgs);
+	SafeDelete(pArgs);
 }
 
 //-------------------------------------------------------------------------------------
@@ -321,8 +318,8 @@ std::vector<MessageHandlers*>& MessageHandlers::messageHandlers()
 //-------------------------------------------------------------------------------------
 void MessageHandlers::finalise(void)
 {
-	SAFE_RELEASE(g_fm);
-	SAFE_RELEASE(g_pMessageHandlers);
+	SafeDelete(g_fm);
+	SafeDelete(g_pMessageHandlers);
 }
 
 //-------------------------------------------------------------------------------------
@@ -330,8 +327,4 @@ bool MessageHandlers::pushExposedMessage(std::string msgname)
 {
 	exposedMessages_.push_back(msgname);
 	return true;
-}
-
-//-------------------------------------------------------------------------------------
-} 
 }

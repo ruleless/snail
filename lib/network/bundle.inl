@@ -18,11 +18,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-namespace KBEngine { 
-namespace Network
-{
-
 INLINE bool Bundle::empty() const
 {
 	return packetsSize() == 0;
@@ -42,12 +37,12 @@ INLINE MessageLength Bundle::currMsgLength() const
 	return currMsgLength_; 
 }
 	
-INLINE void Bundle::pCurrMsgHandler(const Network::MessageHandler* pMsgHandler)
+INLINE void Bundle::pCurrMsgHandler(const MessageHandler* pMsgHandler)
 { 
 	pCurrMsgHandler_ = pMsgHandler; 
 }
 
-INLINE const Network::MessageHandler* Bundle::pCurrMsgHandler() const
+INLINE const MessageHandler* Bundle::pCurrMsgHandler() const
 {
 	return pCurrMsgHandler_;
 }
@@ -80,6 +75,4 @@ INLINE int32 Bundle::numMessages() const
 INLINE void Bundle::finiCurrPacket(){ 
 	packets_.push_back(pCurrPacket_); 
 	pCurrPacket_ = NULL; 
-}
-}
 }

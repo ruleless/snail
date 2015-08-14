@@ -1,10 +1,10 @@
 #include "UDPPacketReceiver.h"
-#include "network/address.h"
+#include "network/Address.h"
 #include "network/bundle.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/EndPoint.h"
-#include "network/event_dispatcher.h"
-#include "network/network_interface.h"
+#include "network/EventDispatcher.h"
+#include "network/NetworkManager.h"
 #include "network/EventPoller.h"
 #include "network/error_reporter.h"
 
@@ -52,7 +52,7 @@ bool UDPPacketReceiver::processRecv(bool expectingPacket)
 		pNewEndPoint->addr(srcAddr.port, srcAddr.ip);
 
 		pSrcChannel = Channel::ObjPool().createObject();
-		bool ret = pSrcChannel->initialize(*mpNetworkManager, pNewEndPoint, Channel::EXTERNAL, PROTOCOL_UDP);
+		bool ret = pSrcChannel->initialize(*mpNetworkManager, pNewEndPoint, Channel::External, Protocol_UDP);
 		if(!ret)
 		{
 			ERROR_MSG(fmt::format("UDPPacketReceiver::processRecv: initialize({}) is failed!\n",
@@ -83,7 +83,7 @@ bool UDPPacketReceiver::processRecv(bool expectingPacket)
 		UDPPacket::ObjPool().reclaimObject(pChannelReceiveWindow);
 		mpNetworkManager->deregisterChannel(pSrcChannel);
 		pSrcChannel->destroy();
-		Network::Channel::ObjPool().reclaimObject(pSrcChannel);
+		Channel::ObjPool().reclaimObject(pSrcChannel);
 		return false;
 	}
 
@@ -136,7 +136,7 @@ PacketReceiver::ERecvState UDPPacketReceiver::checkSocketErrors(int len, bool ex
 		errno == ECONNREFUSED ||
 		errno == EHOSTUNREACH)
 	{
-		Network::Address offender;
+		Address offender;
 
 		if (mpEndpoint->getClosedPort(offender))
 		{

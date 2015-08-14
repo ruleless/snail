@@ -1,22 +1,3 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2012 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
 #ifndef KBE_TIMER_H
 #define KBE_TIMER_H
 
@@ -24,77 +5,87 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/timestamp.h"
 #include "helper/debug_helper.h"
 
-namespace KBEngine
-{
 class TimersBase;
 class TimeBase;
 
 class TimerHandle
 {
 public:
-	explicit TimerHandle(TimeBase * pTime = NULL) : pTime_( pTime ) {}
+	explicit TimerHandle(TimeBase *pTime = NULL) : mpTime( pTime ) {}
 
-	void cancel();
-	void clearWithoutCancel()	{ pTime_ = NULL; }
+	void cancel()
+	{
+		if (mpTime != NULL)
+		{
+			TimeBase* pTime = mpTime;
+			mpTime = NULL;
+			pTime->cancel();
+		}
+	}
 
-	bool isSet() const		{ return pTime_ != NULL; }
+	void clearWithoutCancel()
+	{
+		mpTime = NULL; 
+	}
 
-	friend bool operator==( TimerHandle h1, TimerHandle h2 );
-	TimeBase * time() const	{ return pTime_; }
+	bool isSet() const
+	{
+		return mpTime != NULL; 
+	}
 
+	TimeBase* time() const
+	{
+		return mpTime;
+	}
+
+	friend bool operator==(TimerHandle h1, TimerHandle h2);
 private:
-	TimeBase * pTime_;
+	TimeBase *mpTime;
 };
 
 INLINE bool operator==( TimerHandle h1, TimerHandle h2 )
 {
-	return h1.pTime_ == h2.pTime_;
+	return h1.mpTime == h2.mpTime;
 }
 
-
-/**
- *	必须继承这个接口
- *	来接收timer->handleTimeout事件
- */
 class TimerHandler
 {
 public:
-	TimerHandler() : numTimesRegistered_( 0 ) {}
+	TimerHandler() : mNumTimesRegistered( 0 ) {}
+
 	virtual ~TimerHandler()
 	{
-		Assert( numTimesRegistered_ == 0 );
+		Assert(mNumTimesRegistered == 0);
 	};
 
-	virtual void handleTimeout(TimerHandle handle, void * pUser) = 0;
-
+	virtual void onTimeout(TimerHandle handle, void *pUser) = 0;
 protected:
-	virtual void onRelease( TimerHandle handle, void * pUser ) {}
+	virtual void onRelease( TimerHandle handle, void *pUser ) {}
 private:
 	friend class TimeBase;
 
-	void incTimerRegisterCount() { ++numTimesRegistered_; }
-	void decTimerRegisterCount() { --numTimesRegistered_; }
+	void incTimerRegisterCount() { ++mNumTimesRegistered; }
+	void decTimerRegisterCount() { --mNumTimesRegistered; }
 
-	void release( TimerHandle handle, void * pUser )
+	void release( TimerHandle handle, void *pUser )
 	{
 		this->decTimerRegisterCount();
-		this->onRelease( handle, pUser );
+		this->onRelease(handle, pUser);
 	}
 
-	int numTimesRegistered_;
+	int mNumTimesRegistered;
 };
 
 class TimeBase
 {
 public:
-	TimeBase(TimersBase &owner, TimerHandler* pHandler, 
-		void* pUserData);
+	TimeBase(TimersBase &owner, TimerHandler* pHandler, void* pUserData);
 	
 	virtual ~TimeBase(){}
 
 	void cancel();
 
-	void * getUserData() const	{ return pUserData_; }
+	void* getUserData() const	{ return pUserData_; }
 
 	bool isCancelled() const{ return state_ == TIME_CANCELLED; }
 	bool isExecuting() const{ return state_ == TIME_EXECUTING; }
@@ -118,8 +109,7 @@ public:
 	virtual void onCancel() = 0;
 };
 
-template<class TIME_STAMP>
-class TimersT : public TimersBase
+template<class TIME_STAMP> class TimersT : public TimersBase
 {
 public:
 	typedef TIME_STAMP TimeStamp;
@@ -142,10 +132,8 @@ public:
 	
 	TimerHandle	add(TimeStamp startTime, TimeStamp interval,
 						TimerHandler* pHandler, void * pUser);
-	
 private:
-	
-	typedef std::vector<KBEngine::TimeBase *> Container;
+	typedef std::vector<TimeBase *> Container;
 	Container container_;
 
 	void purgeCancelledTimes();
@@ -231,14 +219,10 @@ private:
 
 	TimersT( const TimersT & );
 	TimersT & operator=( const TimersT & );
-
 };
 
 typedef TimersT<uint32> Timers;
 typedef TimersT<uint64> Timers64;
-}
 
-#ifdef _INLINE
-#include "timer.inl"
+#include "Timer.inl"
 #endif
-#endif // KBE_TIMER_H

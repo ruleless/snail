@@ -1,10 +1,10 @@
 #include "PacketReceiver.h"
-#include "network/address.h"
+#include "network/Address.h"
 #include "network/bundle.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/EndPoint.h"
-#include "network/event_dispatcher.h"
-#include "network/network_interface.h"
+#include "network/EventDispatcher.h"
+#include "network/NetworkManager.h"
 #include "network/EventPoller.h"
 
 PacketReceiver::PacketReceiver()
@@ -39,9 +39,9 @@ Reason PacketReceiver::processPacket(Channel *pChannel, Packet *pPacket)
 	{
 		pChannel->onPacketReceived(pPacket->length());
 
-		if (pChannel->pFilter())
+		if (pChannel->getFilter())
 		{
-			return pChannel->pFilter()->recv(pChannel, *this, pPacket);
+			return pChannel->getFilter()->recv(pChannel, *this, pPacket);
 		}
 	}
 

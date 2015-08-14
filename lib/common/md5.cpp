@@ -21,9 +21,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "md5.h"
 #include "common.h"
 
-namespace KBEngine
-{
-
 //-------------------------------------------------------------------------------------
 KBE_MD5::KBE_MD5()
 {
@@ -107,6 +104,3 @@ std::string KBE_MD5::getDigest(const void * data, int numBytes)
 	KBE_MD5 md5 = KBE_MD5(data, numBytes);
 	return md5.getDigestStr();
 }
-
-//-------------------------------------------------------------------------------------
-} 

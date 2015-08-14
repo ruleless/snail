@@ -22,9 +22,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 #include "openssl/rand.h"
 
-namespace KBEngine { 
-
-//-------------------------------------------------------------------------------------
 KBEBlowfish::KBEBlowfish(const Key & key):
 key_(key),
 keySize_(key.size()),
@@ -157,8 +154,4 @@ int KBEBlowfish::decrypt( const unsigned char * src, unsigned char * dest,
 	}
 
 	return length;
-}
-
-//-------------------------------------------------------------------------------------
-
 }

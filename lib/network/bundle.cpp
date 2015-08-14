@@ -21,8 +21,8 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "bundle.h"
 #include "network/network_stats.h"
-#include "network/network_interface.h"
-#include "network/channel.h"
+#include "network/NetworkManager.h"
+#include "network/Channel.h"
 #include "helper/profile.h"
 #include "network/packet_sender.h"
 
@@ -31,11 +31,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include "common/blowfish.h"
-
-
-namespace KBEngine { 
-namespace Network
-{
 
 //-------------------------------------------------------------------------------------
 static ObjectPool<Bundle> s_ObjPool("Bundle");
@@ -75,7 +70,7 @@ Bundle::Bundle(Channel * pChannel, ProtocolType pt):
 	currMsgHandlerLength_(0),
 	currMsgLengthPos_(0),
 	packets_(),
-	isTCPPacket_(pt == PROTOCOL_TCP),
+	isTCPPacket_(pt == Protocol_TCP),
 	packetMaxSize_(0),
 	pCurrMsgHandler_(NULL)
 {
@@ -138,7 +133,7 @@ void Bundle::_calcPacketMaxSize()
 		packetMaxSize_ = isTCPPacket_ ? (TCPPacket::maxBufferSize() - ENCRYPTTION_WASTAGE_SIZE):
 			(PACKET_MAX_SIZE_UDP - ENCRYPTTION_WASTAGE_SIZE);
 
-		packetMaxSize_ -= packetMaxSize_ % KBEngine::KBEBlowfish::BLOCK_SIZE;
+		packetMaxSize_ -= packetMaxSize_ % KBEBlowfish::BLOCK_SIZE;
 	}
 	else
 	{
@@ -223,7 +218,7 @@ void Bundle::clear(bool isRecl)
 		}
 		else
 		{
-			RECLAIM_PACKET(isTCPPacket_, (*iter));
+			reclaimPacket(isTCPPacket_, (*iter));
 		}
 	}
 	
@@ -253,7 +248,7 @@ void Bundle::clearPackets()
 	Packets::iterator iter = packets_.begin();
 	for (; iter != packets_.end(); ++iter)
 	{
-		RECLAIM_PACKET(isTCPPacket_, (*iter));
+		reclaimPacket(isTCPPacket_, (*iter));
 	}
 
 	packets_.clear();
@@ -292,7 +287,7 @@ void Bundle::finiMessage(bool isSend)
 {
 	Assert(pCurrPacket_ != NULL);
 	
-	pCurrPacket_->pBundle(this);
+	pCurrPacket_->setBundle(this);
 
 	if(isSend)
 	{
@@ -331,10 +326,10 @@ void Bundle::finiMessage(bool isSend)
 		if(currMsgLength_ >= NETWORK_MESSAGE_MAX_SIZE)
 		{
 			MessageLength1 ex_msg_length = currMsgLength_;
-			KBEngine::EndianConvert(ex_msg_length);
+			EndianConvert(ex_msg_length);
 
 			MessageLength msgLen = NETWORK_MESSAGE_MAX_SIZE;
-			KBEngine::EndianConvert(msgLen);
+			EndianConvert(msgLen);
 
 			memcpy(&pPacket->data()[currMsgLengthPos_], 
 				(uint8*)&msgLen, NETWORK_MESSAGE_LENGTH_SIZE);
@@ -345,7 +340,7 @@ void Bundle::finiMessage(bool isSend)
 		else
 		{
 			MessageLength msgLen = (MessageLength)currMsgLength_;
-			KBEngine::EndianConvert(msgLen);
+			EndianConvert(msgLen);
 
 			memcpy(&pPacket->data()[currMsgLengthPos_], 
 				(uint8*)&msgLen, NETWORK_MESSAGE_LENGTH_SIZE);
@@ -357,7 +352,7 @@ void Bundle::finiMessage(bool isSend)
 		currMsgHandlerLength_ = 0;
 		pCurrPacket_ = NULL;
 
-		if(Network::g_trace_packet > 0)
+		if(g_trace_packet > 0)
 			_debugMessages();
 	}
 
@@ -382,7 +377,7 @@ void Bundle::_debugMessages()
 	MessageID msgid = 0;
 	MessageLength msglen = 0;
 	MessageLength1 msglen1 = 0;
-	const Network::MessageHandler* pCurrMsgHandler = NULL;
+	const MessageHandler* pCurrMsgHandler = NULL;
 
 	int state = 0; // 0:读取消息ID， 1：读取消息长度， 2：读取消息扩展长度, 3:读取内容
 
@@ -491,8 +486,4 @@ void Bundle::_debugMessages()
 	}
 
 	MemoryStream::ObjPool().reclaimObject(pMemoryStream);
-}
-
-//-------------------------------------------------------------------------------------
-}
 }

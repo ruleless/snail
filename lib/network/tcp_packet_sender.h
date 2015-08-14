@@ -23,17 +23,14 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_NETWORKTCPPACKET_SENDER_H
 
 #include "common/common.h"
-#include "common/timer.h"
+#include "common/Timer.h"
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
 #include "network/common.h"
-#include "network/interfaces.h"
+#include "network/NetworkDef.h"
 #include "network/TCPPacket.h"
 #include "network/packet_sender.h"
 
-namespace KBEngine { 
-namespace Network
-{
 class EndPoint;
 class Channel;
 class Address;
@@ -56,10 +53,5 @@ public:
 protected:
 	virtual Reason processFilterPacket(Channel* pChannel, Packet * pPacket);
 };
-}
-}
 
-#ifdef _INLINE
-#include "tcp_packet_sender.inl"
-#endif
 #endif // KBE_NETWORKTCPPACKET_SENDER_H

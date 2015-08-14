@@ -1,7 +1,7 @@
 #include "TCPPacket.h"
 #include "network/bundle.h"
 #include "network/EndPoint.h"
-#include "network/network_interface.h"
+#include "network/NetworkManager.h"
 #include "network/message_handler.h"
 
 static ObjectPool<TCPPacket> s_ObjPool("TCPPacket");

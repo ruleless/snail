@@ -21,10 +21,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_STRING_CONV_H
 #include "common/platform.h"
 
-namespace KBEngine{
-namespace StringConv
-{
-
 template<typename T>
 T str2value(const std::string& s) 
 {
@@ -140,10 +136,6 @@ INLINE void str2value(uint64& value, const char * pstr)
 	value = strtoull(pstr, &endptr, 10);
 	if (*endptr)
 		throw std::runtime_error("not a number");
-}
-
-
-}
 }
 
 #endif // KBE_STRING_CONV_H

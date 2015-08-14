@@ -150,11 +150,11 @@
 			Name="network"
 			>
 			<File
-				RelativePath="..\network\address.cpp"
+				RelativePath="..\network\Address.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\address.h"
+				RelativePath="..\network\Address.h"
 				>
 			</File>
 			<File
@@ -178,19 +178,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\bundle_broadcast.inl"
+				RelativePath="..\network\Channel.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\channel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\channel.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\channel.inl"
+				RelativePath="..\network\Channel.h"
 				>
 			</File>
 			<File
@@ -202,11 +194,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\delayed_channels.cpp"
+				RelativePath="..\network\DelayedChannels.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\delayed_channels.h"
+				RelativePath="..\network\DelayedChannels.h"
 				>
 			</File>
 			<File
@@ -258,15 +250,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\interface_defs.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\network\interface_defs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\interfaces.h"
 				>
 			</File>
 			<File
@@ -298,15 +282,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\network\NetworkDef.h"
+				>
+			</File>
+			<File
 				RelativePath="..\network\NetworkManager.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\network\NetworkManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\NetworkManager.inl"
 				>
 			</File>
 			<File
@@ -319,10 +303,6 @@
 			</File>
 			<File
 				RelativePath="..\network\packet_filter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\packet_filter.inl"
 				>
 			</File>
 			<File
@@ -363,10 +343,6 @@
 			</File>
 			<File
 				RelativePath="..\network\tcp_packet_sender.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet_sender.inl"
 				>
 			</File>
 			<File
@@ -600,15 +576,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\timer.cpp"
+				RelativePath="..\common\Timer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\timer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\timer.inl"
+				RelativePath="..\common\Timer.inl"
 				>
 			</File>
 			<File

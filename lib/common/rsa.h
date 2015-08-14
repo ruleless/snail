@@ -23,10 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-namespace KBEngine
-{
-
-
 /**
  *	openssl rsaµÄ·â×°
  */
@@ -58,8 +54,5 @@ public:
 protected:
 	void* rsa_public, *rsa_private;
 };
-
-
-}
 
 #endif // KBENGINE_RSA_H

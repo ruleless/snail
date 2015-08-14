@@ -20,9 +20,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kbeversion.h"
 #include "helper/debug_helper.h"
-namespace KBEngine{
-namespace KBEVersion
-{
+
 std::string g_versionString;
 
 /**
@@ -51,9 +49,3 @@ const std::string & scriptVersionString()
 {
 	return g_scriptVersion;
 }
-
-
-}
-} 
-
-

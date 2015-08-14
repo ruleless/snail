@@ -25,9 +25,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/packet_filter.h"
 #include "network/websocket_protocol.h"
 
-namespace KBEngine { 
-namespace Network
-{
 class TCPPacket;
 
 class WebSocketPacketFilter : public PacketFilter

@@ -25,9 +25,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "openssl/blowfish.h"
 #include <string>
 
-namespace KBEngine { 
-
-
 class KBEBlowfish
 {
 public:
@@ -64,7 +61,5 @@ protected:
 
 	void * pBlowFishKey_;
 };
-
-}
 
 #endif // KBENGINE_BLOWFISH_H

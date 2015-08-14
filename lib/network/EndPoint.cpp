@@ -68,7 +68,7 @@ void EndPoint::onReclaimObject()
 	mAddress = Address::NONE;
 }
 
-bool EndPoint::getClosedPort(Network::Address & closedPort)
+bool EndPoint::getClosedPort(Address & closedPort)
 {
 	bool isResultSet = false;
 
@@ -542,9 +542,9 @@ bool EndPoint::recvAll(void *gramData, int gramSize)
 	return true;
 }
 
-Network::Address EndPoint::getLocalAddress() const
+Address EndPoint::getLocalAddress() const
 {
-	Network::Address addr(0, 0);
+	Address addr(0, 0);
 
 	if (this->getlocaladdress((u_int16_t*)&addr.port,
 				(u_int32_t*)&addr.ip) == -1)
@@ -555,9 +555,9 @@ Network::Address EndPoint::getLocalAddress() const
 	return addr;
 }
 
-Network::Address EndPoint::getRemoteAddress() const
+Address EndPoint::getRemoteAddress() const
 {
-	Network::Address addr(0, 0);
+	Address addr(0, 0);
 
 	if (this->getremoteaddress((u_int16_t*)&addr.port,
 				(u_int32_t*)&addr.ip) == -1)

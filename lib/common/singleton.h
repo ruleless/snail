@@ -6,8 +6,6 @@
 #endif // _MSC_VER > 1000
 
 #include "common/platform.h"
-
-namespace KBEngine{
 	
 template <typename T> 
 class Singleton
@@ -36,6 +34,5 @@ public:
 
 #define KBE_SINGLETON_INIT( TYPE )							\
 template <>	 TYPE * Singleton< TYPE >::singleton_ = 0;	\
-	
-}
+
 #endif // KBE_SINGLETON_H

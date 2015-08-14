@@ -27,13 +27,9 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "network/common.h"
 #include "network/message_handler.h"
 #include "network/bundle.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 
 #endif
-// KBE_INTERFACE_DEFS_H
-namespace KBEngine{
-namespace Network
-{
 
 #ifdef NETWORK_INTERFACE_DECLARE_BEGIN
 	#undef NETWORK_INTERFACE_DECLARE_BEGIN
@@ -121,7 +117,7 @@ namespace Network
 #define NETWORK_INTERFACE_DECLARE_BEGIN(INAME) 						\
 	namespace INAME													\
 {																	\
-		extern Network::MessageHandlers messageHandlers;			\
+		extern MessageHandlers messageHandlers;			\
 			
 #else
 #define NETWORK_INTERFACE_DECLARE_BEGIN(INAME) 						\
@@ -6025,9 +6021,4 @@ namespace Network
 							ARG_TYPE22, ARG_NAME22,					\
 							ARG_TYPE23, ARG_NAME23,					\
 							ARG_TYPE24, ARG_NAME24)					\
-
-
-
-}
-}
 

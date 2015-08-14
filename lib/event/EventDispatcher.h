@@ -3,8 +3,8 @@
 
 #include <map>
 #include "common/tasks.h"
-#include "common/timer.h"
-#include "network/interfaces.h"
+#include "common/Timer.h"
+#include "network/NetworkDef.h"
 #include "network/common.h"
 
 class EventPoller;
@@ -38,32 +38,32 @@ class EventDispatcher
 
 	INLINE bool hasBreakProcessing() const
 	{
-		return DispatcherStatus_BreakProcessing == breakProcessing_; 
+		return DispatcherStatus_BreakProcessing == mBreakProcessing; 
 	}
 	INLINE bool waitingBreakProcessing() const
 	{
-		return DispatcherStatus_WaitingBreakProcessing == breakProcessing_; 
+		return DispatcherStatus_WaitingBreakProcessing == mBreakProcessing; 
 	}
 	INLINE void setWaitBreakProcessing()
 	{
-		breakProcessing_ = DispatcherStatus_WaitingBreakProcessing;
+		mBreakProcessing = DispatcherStatus_WaitingBreakProcessing;
 	}
 	INLINE void breakProcessing(bool breakState = true)
 	{
 		if(breakState)
-			breakProcessing_ = DispatcherStatus_BreakProcessing;
+			mBreakProcessing = DispatcherStatus_BreakProcessing;
 		else
-			breakProcessing_ = DispatcherStatus_Running;
+			mBreakProcessing = DispatcherStatus_Running;
 	}
 
 	INLINE double maxWait() const
 	{
-		return maxWait_;
+		return mMaxWait;
 	}
 
 	INLINE void maxWait(double seconds)
 	{
-		maxWait_ = seconds;
+		mMaxWait = seconds;
 	}
 
 	INLINE TimerHandle addTimer(int64 microseconds, TimerHandler * handler, void* arg = NULL)
@@ -73,7 +73,7 @@ class EventDispatcher
 
 	INLINE EventPoller* pPoller()
 	{
-		return pPoller_;
+		return mpPoller;
 	}
 
 	int processNetwork(bool shouldIdle);
@@ -86,19 +86,19 @@ class EventDispatcher
 	
 	double calculateWait() const;	
   protected:
-	int8 breakProcessing_;
+	int8 mBreakProcessing;
 
-	double maxWait_;
-	uint32 numTimerCalls_;
+	double mMaxWait;
+	uint32 mNumTimerCalls;
 	
-	TimeStamp accSpareTime_;
-	TimeStamp oldSpareTime_;
-	TimeStamp totSpareTime_;
-	TimeStamp lastStatisticsGathered_;
+	TimeStamp mAccSpareTime;
+	TimeStamp mOldSpareTime;
+	TimeStamp mTotSpareTime;
+	TimeStamp mLastStatisticsGathered;
 	
-	Tasks *pTasks_;
-	Timers64 *pTimers_;
-	EventPoller * pPoller_;
+	Tasks *mpTasks;
+	Timers64 *mpTimers;
+	EventPoller *mpPoller;
 };
 
 #endif

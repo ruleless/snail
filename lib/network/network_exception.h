@@ -22,14 +22,11 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_NETWORKNUB_EXCEPTION_H
 
 #include "common/common.h"
-#include "common/timer.h"
+#include "common/Timer.h"
 #include "helper/debug_helper.h"
 #include "network/common.h"
-#include "network/address.h"
+#include "network/Address.h"
 
-namespace KBEngine { 
-namespace Network
-{
 class NetworkException
 {
 public:
@@ -59,9 +56,6 @@ INLINE bool NetworkException::getAddress(Address & addr) const
 {
 	addr = address_;
 	return address_ != Address::NONE;
-}
-
-}
 }
 
 #endif // KBE_NETWORKNUB_EXCEPTION_H

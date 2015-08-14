@@ -24,10 +24,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "rsa.h"
 #include "common/Singleton.h"
 
-namespace KBEngine
-{
-
-
 /**
  *	引擎的key管理
  */
@@ -42,8 +38,5 @@ public:
 
 	virtual bool isGood() const;
 };
-
-
-}
 
 #endif // KBENGINE_KEY_H

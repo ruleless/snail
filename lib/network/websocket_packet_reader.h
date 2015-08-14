@@ -23,10 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/packet_reader.h"
 
-namespace KBEngine{
-namespace Network
-{
-
 class WebSocketPacketReader : public PacketReader
 {
 public:
@@ -34,14 +30,11 @@ public:
 	virtual ~WebSocketPacketReader();
 
 	virtual void reset();
-	virtual void processMessages(KBEngine::Network::MessageHandlers* pMsgHandlers, Packet* pPacket);
+	virtual void processMessages(MessageHandlers* pMsgHandlers, Packet* pPacket);
 
 	virtual PacketReader::PACKET_READER_TYPE type()const { return PACKET_READER_TYPE_WEBSOCKET; }
 
 protected:
 };
 
-
-}
-}
 #endif 

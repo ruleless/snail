@@ -22,14 +22,11 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_NETWORKPACKET_SENDER_H
 
 #include "common/common.h"
-#include "common/timer.h"
+#include "common/Timer.h"
 #include "helper/debug_helper.h"
 #include "network/common.h"
-#include "network/interfaces.h"
+#include "network/NetworkDef.h"
 
-namespace KBEngine { 
-namespace Network
-{
 class Packet;
 class EndPoint;
 class Channel;
@@ -75,9 +72,6 @@ protected:
 	EndPoint* pEndpoint_;
 	NetworkManager* pNetworkInterface_;
 };
-
-}
-}
 
 #ifdef _INLINE
 #include "packet_sender.inl"

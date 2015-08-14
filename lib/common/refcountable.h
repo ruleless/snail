@@ -47,8 +47,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_REFCOUNTABLE_H
 	
 #include "common.h"
-	
-namespace KBEngine{
 
 class RefCountable 
 {
@@ -253,5 +251,4 @@ private:
 	T* ptr_;
 };
 
-}
 #endif // KBE_REFCOUNTABLE_H

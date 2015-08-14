@@ -25,9 +25,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 #include "network/common.h"
 
-namespace KBEngine{
-namespace Network
-{
 class Channel;
 class MessageHandlers;
 
@@ -45,13 +42,13 @@ public:
 
 	virtual void reset();
 	
-	virtual void processMessages(KBEngine::Network::MessageHandlers* pMsgHandlers, Packet* pPacket);
+	virtual void processMessages(MessageHandlers* pMsgHandlers, Packet* pPacket);
 	
-	Network::MessageID	currMsgID() const{return currMsgID_;}
-	Network::MessageLength	currMsgLen() const{return currMsgLen_;}
+	MessageID	currMsgID() const{return currMsgID_;}
+	MessageLength	currMsgLen() const{return currMsgLen_;}
 	
-	void currMsgID(Network::MessageID id){currMsgID_ = id;}
-	void currMsgLen(Network::MessageLength len){currMsgLen_ = len;}
+	void currMsgID(MessageID id){currMsgID_ = id;}
+	void currMsgLen(MessageLength len){currMsgLen_ = len;}
 
 	virtual PacketReader::PACKET_READER_TYPE type()const { return PACKET_READER_TYPE_SOCKET; }
 
@@ -76,13 +73,10 @@ protected:
 	FragmentDataTypes			fragmentDatasFlag_;
 	MemoryStream*				pFragmentStream_;
 
-	Network::MessageID			currMsgID_;
-	Network::MessageLength1		currMsgLen_;
+	MessageID			currMsgID_;
+	MessageLength1		currMsgLen_;
 	
 	Channel*					pChannel_;
 };
 
-
-}
-}
-#endif 
+#endif

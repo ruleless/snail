@@ -23,14 +23,10 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
-#include "network/channel.h"
-#include "network/network_interface.h"
+#include "network/Channel.h"
+#include "network/NetworkManager.h"
 #include "network/PacketReceiver.h"
 #include "network/packet_sender.h"
-
-namespace KBEngine { 
-namespace Network
-{
 
 //-------------------------------------------------------------------------------------
 BlowfishFilter::BlowfishFilter(const Key & key):
@@ -55,7 +51,7 @@ BlowfishFilter::~BlowfishFilter()
 {
 	if(pPacket_)
 	{
-		RECLAIM_PACKET(pPacket_->isTCPPacket(), pPacket_);
+		reclaimPacket(pPacket_->isTCPPacket(), pPacket_);
 		pPacket_ = NULL;
 	}
 }
@@ -92,16 +88,8 @@ Reason BlowfishFilter::send(Channel * pChannel, PacketSender& sender, Packet * p
 		(*pOutPacket) << padSize;
 
 		pOutPacket->wpos(oldwpos);
-		pPacket->swap(*(static_cast<KBEngine::MemoryStream*>(pOutPacket)));
-		RECLAIM_PACKET(pPacket->isTCPPacket(), pOutPacket);
-
-		/*
-		if(Network::g_trace_packet > 0)
-		{
-			DEBUG_MSG(fmt::format("BlowfishFilter::send: packetLen={}, padSize={}\n",
-				packetLen, (int)padSize));
-		}
-		*/
+		pPacket->swap(*(static_cast<MemoryStream*>(pOutPacket)));
+		reclaimPacket(pPacket->isTCPPacket(), pOutPacket);
 	}
 
 	return sender.processFilterPacket(pChannel, pPacket);
@@ -128,7 +116,7 @@ Reason BlowfishFilter::recv(Channel * pChannel, PacketReceiver & receiver, Packe
 			if(pPacket)
 			{
 				pPacket_->append(pPacket->data() + pPacket->rpos(), pPacket->length());
-				RECLAIM_PACKET(pPacket->isTCPPacket(), pPacket);
+				reclaimPacket(pPacket->isTCPPacket(), pPacket);
 			}
 
 			pPacket = pPacket_;
@@ -199,14 +187,6 @@ Reason BlowfishFilter::recv(Channel * pChannel, PacketReceiver & receiver, Packe
 
 		pPacket->wpos(pPacket->wpos() - padSize_);
 
-		/*
-		if(Network::g_trace_packet > 0)
-		{
-			DEBUG_MSG(fmt::format("BlowfishFilter::recv: packetLen={}, padSize={}\n",
-				(packetLen_ + 1), (int)padSize_));
-		}
-		*/
-
 		packetLen_ = 0;
 		padSize_ = 0;
 
@@ -215,7 +195,7 @@ Reason BlowfishFilter::recv(Channel * pChannel, PacketReceiver & receiver, Packe
 		{
 			if(pPacket_)
 			{
-				RECLAIM_PACKET(pPacket_->isTCPPacket(), pPacket);
+				reclaimPacket(pPacket_->isTCPPacket(), pPacket);
 				pPacket_ = NULL;
 			}
 			return ret;
@@ -266,8 +246,8 @@ void BlowfishFilter::encrypt(Packet * pInPacket, Packet * pOutPacket)
 		int size = KBEBlowfish::encrypt(pInPacket->data(), pOutPacket->data() + pOutPacket->wpos(),  pInPacket->wpos());
 		pOutPacket->wpos(size);
 
-		pInPacket->swap(*(static_cast<KBEngine::MemoryStream*>(pOutPacket)));
-		RECLAIM_PACKET(pInPacket->isTCPPacket(), pOutPacket);
+		pInPacket->swap(*(static_cast<MemoryStream*>(pOutPacket)));
+		reclaimPacket(pInPacket->isTCPPacket(), pOutPacket);
 	}
 
 	pInPacket->encrypted(true);
@@ -294,9 +274,4 @@ void BlowfishFilter::decrypt(Packet * pInPacket, Packet * pOutPacket)
 		pInPacket->wpos(pInPacket->wpos() - pInPacket->rpos());
 		pInPacket->rpos(0);
 	}
-}
-
-//-------------------------------------------------------------------------------------
-
-} 
 }

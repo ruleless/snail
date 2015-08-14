@@ -3,7 +3,7 @@
 
 #include "common/common.h"
 #include "common/timestamp.h"
-#include "network/interfaces.h"
+#include "network/NetworkDef.h"
 #include "thread/concurrency.h"
 #include "network/common.h"
 #include <map>

@@ -3,10 +3,10 @@
 
 #include "common/common.h"
 #include "common/ObjectPool.h"
-#include "common/timer.h"
+#include "common/Timer.h"
 #include "helper/debug_helper.h"
 #include "network/common.h"
-#include "network/interfaces.h"
+#include "network/NetworkDef.h"
 #include "network/TCPPacket.h"
 
 class EndPoint;

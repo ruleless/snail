@@ -24,17 +24,14 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "packet_sender.inl"
 #endif
 
-#include "network/address.h"
+#include "network/Address.h"
 #include "network/bundle.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/EndPoint.h"
-#include "network/event_dispatcher.h"
-#include "network/network_interface.h"
+#include "network/EventDispatcher.h"
+#include "network/NetworkManager.h"
 #include "network/EventPoller.h"
 
-namespace KBEngine { 
-namespace Network
-{
 //-------------------------------------------------------------------------------------
 PacketSender::PacketSender() :
 	pEndpoint_(NULL),
@@ -73,9 +70,9 @@ Reason PacketSender::processPacket(Channel* pChannel, Packet * pPacket)
 {
 	if (pChannel != NULL)
 	{
-		if (pChannel->pFilter())
+		if (pChannel->getFilter())
 		{
-			return pChannel->pFilter()->send(pChannel, *this, pPacket);
+			return pChannel->getFilter()->send(pChannel, *this, pPacket);
 		}
 	}
 
@@ -126,8 +123,4 @@ Reason PacketSender::checkSocketErrors(const EndPoint * pEndpoint)
 	#endif
 
 	return reason;
-}
-
-//-------------------------------------------------------------------------------------
-}
 }

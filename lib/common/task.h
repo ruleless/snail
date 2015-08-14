@@ -23,9 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/common.h"
 
-namespace KBEngine
-{
-
 /**
  *	抽象一个任务
  */
@@ -35,8 +32,5 @@ public:
 	virtual ~Task() {}
 	virtual bool process() = 0;
 };
-
-
-}
 
 #endif // KBE_TASK_H

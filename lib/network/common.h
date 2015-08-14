@@ -25,9 +25,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/common.h"
 #include "helper/debug_option.h"
 
-namespace KBEngine { 
-namespace Network
-{
 const uint32 BROADCAST = 0xFFFFFFFF;
 const uint32 LOCALHOST = 0x0100007F;
 
@@ -43,8 +40,8 @@ typedef int32	ChannelID;
 const ChannelID CHANNEL_ID_NULL = 0;
 
 // 通道超时时间
-extern float g_channelInternalTimeout;
-extern float g_channelExternalTimeout;
+extern float gChannelInternalTimeout;
+extern float gChannelExternalTimeout;
 
 // 通道发送超时重试
 extern uint32 g_intReSendInterval;
@@ -56,12 +53,12 @@ extern uint32 g_extReSendRetries;
 extern int8 g_channelExternalEncryptType;
 
 // listen监听队列最大值
-extern uint32 g_SOMAXCONN;
+extern uint32 gList;
 
 // 不做通道超时检查
 #define CLOSE_CHANNEL_INACTIVITIY_DETECTION()										\
 {																					\
-	Network::g_channelExternalTimeout = Network::g_channelInternalTimeout = -1.0f;	\
+	gChannelExternalTimeout = gChannelInternalTimeout = -1.0f;	\
 }																					\
 
 	
@@ -83,9 +80,9 @@ namespace tcp{
 typedef uint16								PacketLength;				// 最大65535
 #define PACKET_LENGTH_SIZE					sizeof(PacketLength)
 
-#define NETWORK_MESSAGE_ID_SIZE				sizeof(Network::MessageID)
-#define NETWORK_MESSAGE_LENGTH_SIZE			sizeof(Network::MessageLength)
-#define NETWORK_MESSAGE_LENGTH1_SIZE		sizeof(Network::MessageLength1)
+#define NETWORK_MESSAGE_ID_SIZE				sizeof(MessageID)
+#define NETWORK_MESSAGE_LENGTH_SIZE			sizeof(MessageLength)
+#define NETWORK_MESSAGE_LENGTH1_SIZE		sizeof(MessageLength1)
 #define NETWORK_MESSAGE_MAX_SIZE			65535
 #define NETWORK_MESSAGE_MAX_SIZE1			4294967295
 
@@ -122,8 +119,8 @@ enum NETWORK_MESSAGE_TYPE
 
 enum ProtocolType
 {
-	PROTOCOL_TCP = 0,
-	PROTOCOL_UDP = 1,
+	Protocol_TCP = 0,
+	Protocol_UDP = 1,
 };
 
 enum Reason
@@ -181,7 +178,7 @@ const char * reasonToString(Reason reason)
 #define NETWORK_SEND_TO_ENDPOINT(ep, op, pPacket)															\
 {																											\
 	int retries = 0;																						\
-	Network::Reason reason;																					\
+	Reason reason;																					\
 																											\
 	while(true)																								\
 	{																										\
@@ -190,9 +187,9 @@ const char * reasonToString(Reason reason)
 																											\
 		if(slen != (int)pPacket->totalSize())																\
 		{																									\
-			reason = Network::PacketSender::checkSocketErrors(ep, slen, pPacket->totalSize());				\
+			reason = PacketSender::checkSocketErrors(ep, slen, pPacket->totalSize());				\
 			/* 如果发送出现错误那么我们可以继续尝试一次， 超过3次退出	*/									\
-			if (reason == Network::REASON_NO_SUCH_PORT && retries <= 3)										\
+			if (reason == REASON_NO_SUCH_PORT && retries <= 3)										\
 			{																								\
 				continue;																					\
 			}																								\
@@ -205,11 +202,11 @@ const char * reasonToString(Reason reason)
 					"Transmit queue full, waiting for space... ({})\n",										\
 					__FUNCTION__, retries));																\
 																											\
-				KBEngine::sleep(10);																		\
+				sleep(10);																		\
 				continue;																					\
 			}																								\
 																											\
-			if(retries > 3 && reason != Network::REASON_SUCCESS)											\
+			if(retries > 3 && reason != REASON_SUCCESS)											\
 			{																								\
 				ERROR_MSG(fmt::format("NETWORK_SEND::send: packet discarded(reason={}).\n",					\
 															(reasonToString(reason))));						\
@@ -228,7 +225,7 @@ const char * reasonToString(Reason reason)
 #define SEND_BUNDLE_COMMON(SND_FUNC, BUNDLE)																\
 	BUNDLE.finiMessage();																					\
 																											\
-	Network::Bundle::Packets::iterator iter = BUNDLE.packets().begin();										\
+	Bundle::Packets::iterator iter = BUNDLE.packets().begin();										\
 	for (; iter != BUNDLE.packets().end(); ++iter)															\
 	{																										\
 		Packet* pPacket = (*iter);																			\
@@ -307,31 +304,23 @@ const char * reasonToString(Reason reason)
 		outputPacket = UDPPacket::ObjPool().createObject();													\
 }																											\
 
-
-#define RECLAIM_PACKET(isTCPPacket, pPacket)																\
-{																											\
-	if(isTCPPacket)																							\
-		TCPPacket::ObjPool().reclaimObject(static_cast<TCPPacket*>(pPacket));								\
-	else																									\
-		UDPPacket::ObjPool().reclaimObject(static_cast<UDPPacket*>(pPacket));								\
-}																											\
-
+void reclaimPacket(bool isTCPPacket, Packet *pPacket);
 
 // 配合服务端配置选项trace_packet使用，用来跟踪一条即将输出的消息包
 #define TRACE_MESSAGE_PACKET(isrecv, pPacket, pCurrMsgHandler, length, addr)								\
-	if(Network::g_trace_packet > 0)																			\
+	if(g_trace_packet > 0)																			\
 	{																										\
-		if(Network::g_trace_packet_use_logfile)																\
+		if(g_trace_packet_use_logfile)																\
 			DebugHelper::getSingleton().changeLogger("packetlogs");											\
 																											\
 		bool isprint = true;																				\
 		if(pCurrMsgHandler)																					\
 		{																									\
-			std::vector<std::string>::iterator iter = std::find(Network::g_trace_packet_disables.begin(),	\
-														Network::g_trace_packet_disables.end(),				\
+			std::vector<std::string>::iterator iter = std::find(g_trace_packet_disables.begin(),	\
+														g_trace_packet_disables.end(),				\
 															pCurrMsgHandler->name);							\
 																											\
-			if(iter != Network::g_trace_packet_disables.end())												\
+			if(iter != g_trace_packet_disables.end())												\
 			{																								\
 				isprint = false;																			\
 			}																								\
@@ -348,7 +337,7 @@ const char * reasonToString(Reason reason)
 																											\
 		if(isprint)																							\
 		{																									\
-			switch(Network::g_trace_packet)																	\
+			switch(g_trace_packet)																	\
 			{																								\
 			case 1:																							\
 				pPacket->hexlike();																			\
@@ -362,7 +351,7 @@ const char * reasonToString(Reason reason)
 			};																								\
 		}																									\
 																											\
-		if(Network::g_trace_packet_use_logfile)																\
+		if(g_trace_packet_use_logfile)																\
 			DebugHelper::getSingleton().changeLogger(COMPONENT_NAME_EX(g_componentType));					\
 	}																										\
 
@@ -382,16 +371,13 @@ extern uint32						g_extReceiveWindowMessagesOverflow;
 extern uint32						g_intReceiveWindowBytesOverflow;
 extern uint32						g_extReceiveWindowBytesOverflow;
 
-extern uint32						g_sendWindowMessagesOverflowCritical;
-extern uint32						g_intSendWindowMessagesOverflow;
-extern uint32						g_extSendWindowMessagesOverflow;
+extern uint32						gSendWindowMessagesOverflowCritical;
+extern uint32						gIntSendWindowMessagesOverflow;
+extern uint32						gExtSendWindowMessagesOverflow;
 extern uint32						g_intSendWindowBytesOverflow;
 extern uint32						g_extSendWindowBytesOverflow;
 
 bool initializeWatcher();
 void finalise(void);
-
-}
-}
 
 #endif // KBE_NETWORK_COMMON_H

@@ -19,14 +19,9 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "packet_reader.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/message_handler.h"
 #include "network/network_stats.h"
-
-namespace KBEngine { 
-namespace Network
-{
-
 
 //-------------------------------------------------------------------------------------
 PacketReader::PacketReader(Channel* pChannel):
@@ -63,7 +58,7 @@ void PacketReader::reset()
 }
 
 //-------------------------------------------------------------------------------------
-void PacketReader::processMessages(KBEngine::Network::MessageHandlers* pMsgHandlers, Packet* pPacket)
+void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacket)
 {
 	while(pPacket->length() > 0 || pFragmentStream_ != NULL)
 	{
@@ -82,7 +77,7 @@ void PacketReader::processMessages(KBEngine::Network::MessageHandlers* pMsgHandl
 				pPacket->setMessageID(currMsgID_);
 			}
 
-			Network::MessageHandler* pMsgHandler = pMsgHandlers->find(currMsgID_);
+			MessageHandler* pMsgHandler = pMsgHandlers->find(currMsgID_);
 
 			if(pMsgHandler == NULL)
 			{
@@ -124,7 +119,7 @@ void PacketReader::processMessages(KBEngine::Network::MessageHandlers* pMsgHandl
 					else
 					{
 						// 此处获得了长度信息
-						Network::MessageLength currlen;
+						MessageLength currlen;
 						(*pPacket) >> currlen;
 						currMsgLen_ = currlen;
 
@@ -307,8 +302,4 @@ void PacketReader::mergeFragmentMessage(Packet* pPacket)
 		//DEBUG_MSG(fmt::format("PacketReader::mergeFragmentMessage({}): channel[{:p}], fragmentDatasFlag={}, remainsize={}, currMsgID={}, currMsgLen={}.\n",
 		//	pChannel_->c_str(), (void*)pChannel_, fragmentDatasFlag_, pFragmentDatasRemain_, currMsgID_, currMsgLen_));
 	}	
-}
-
-//-------------------------------------------------------------------------------------
-} 
 }

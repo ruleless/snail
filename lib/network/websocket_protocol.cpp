@@ -21,7 +21,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "websocket_protocol.h"
 #include "common/memorystream.h"
 #include "common/memorystream_converter.h"
-#include "network/channel.h"
+#include "network/Channel.h"
 #include "network/Packet.h"
 #include "common/base64.h"
 #include "common/sha1.h"
@@ -35,10 +35,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #pragma comment(lib, "ssleay32.lib")
 #endif
 #endif
-
-namespace KBEngine{
-namespace Network{
-namespace websocket{
 
 //-------------------------------------------------------------------------------------
 bool WebSocketProtocol::isWebSocketProtocol(MemoryStream* s)
@@ -68,7 +64,7 @@ bool WebSocketProtocol::isWebSocketProtocol(MemoryStream* s)
 	}
 
 	std::vector<std::string> header_and_data;
-	header_and_data = KBEngine::strutil::kbe_splits(data, "\r\n\r\n");
+	header_and_data = strutil::kbe_splits(data, "\r\n\r\n");
 	
 	if(header_and_data.size() != 2)
 	{
@@ -83,7 +79,7 @@ bool WebSocketProtocol::isWebSocketProtocol(MemoryStream* s)
 }
 
 //-------------------------------------------------------------------------------------
-bool WebSocketProtocol::handshake(Network::Channel* pChannel, MemoryStream* s)
+bool WebSocketProtocol::handshake(Channel* pChannel, MemoryStream* s)
 {
 	Assert(s != NULL);
 
@@ -94,7 +90,7 @@ bool WebSocketProtocol::handshake(Network::Channel* pChannel, MemoryStream* s)
 	(*s) >> data;
 
 	std::vector<std::string> header_and_data;
-	header_and_data = KBEngine::strutil::kbe_splits(data, "\r\n\r\n");
+	header_and_data = strutil::kbe_splits(data, "\r\n\r\n");
 	
 	if(header_and_data.size() != 2)
 	{
@@ -106,12 +102,12 @@ bool WebSocketProtocol::handshake(Network::Channel* pChannel, MemoryStream* s)
 	KBEUnordered_map<std::string, std::string> headers;
 	std::vector<std::string> values;
 	
-	values = KBEngine::strutil::kbe_splits(header_and_data[0], "\r\n");
+	values = strutil::kbe_splits(header_and_data[0], "\r\n");
 	std::vector<std::string>::iterator iter = values.begin();
 
 	for(; iter != values.end(); ++iter)
 	{
-		header_and_data = KBEngine::strutil::kbe_splits((*iter), ": ");
+		header_and_data = strutil::kbe_splits((*iter), ": ");
 
 		if(header_and_data.size() == 2)
 			headers[header_and_data[0]] = header_and_data[1];
@@ -178,7 +174,7 @@ bool WebSocketProtocol::handshake(Network::Channel* pChannel, MemoryStream* s)
 								"WebSocket-Protocol:WebManagerSocket\r\n\r\n", server_key, szOrigin, szHost);
 
 
-	Network::Bundle* pBundle = Network::Bundle::ObjPool().createObject();
+	Bundle* pBundle = Bundle::ObjPool().createObject();
 	(*pBundle) << ackHandshake;
 	(*pBundle).pCurrPacket()->wpos((*pBundle).pCurrPacket()->wpos() - 1);
 	pChannel->send(pBundle);
@@ -339,9 +335,4 @@ bool WebSocketProtocol::decodingDatas(Packet* pPacket, uint8 msg_masked, uint32 
 	}
 
 	return true;
-}
-
-//-------------------------------------------------------------------------------------
-}
-}
 }

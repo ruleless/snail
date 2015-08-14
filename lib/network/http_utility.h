@@ -22,8 +22,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/common.h"
 
-namespace KBEngine 
-{
 namespace HttpUtility
 { 
     INLINE uint8 toHex(const uint8 &x)
@@ -94,9 +92,6 @@ namespace HttpUtility
         return sOut;
     }
 }
-
-}
-
 
 #endif // KBE_HTTP_UTILTY_H
 

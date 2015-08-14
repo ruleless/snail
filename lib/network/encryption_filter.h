@@ -28,10 +28,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/blowfish.h"
 #endif
 
-namespace KBEngine { 
-namespace Network
-{
-
 class EncryptionFilter : public PacketFilter
 {
 public:
@@ -59,7 +55,7 @@ public:
 	void decrypt(Packet * pInPacket, Packet * pOutPacket);
 private:
 	Packet * pPacket_;
-	Network::PacketLength packetLen_;
+	PacketLength packetLen_;
 	uint8 padSize_;
 };
 
@@ -78,9 +74,6 @@ INLINE EncryptionFilter* createEncryptionFilter(int8 type, const std::string& da
 	}
 
 	return pEncryptionFilter;
-}
-
-}
 }
 
 #endif // KBE_ENCRYPTION_FILTER_H

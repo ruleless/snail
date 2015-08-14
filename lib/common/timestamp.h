@@ -23,7 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/platform.h"
 #include "helper/debug_helper.h"
-namespace KBEngine{
 
 // 指示是否可以通过调用RDTSC（时间戳计数器）
 // 计算时间戳。使用此的好处是，它能快速和精确的返回实际的时钟滴答
@@ -190,8 +189,6 @@ INLINE TimeStamp TimeStamp::ageInStamps() const
 INLINE double TimeStamp::ageInSeconds() const
 {
 	return toSeconds( this->ageInStamps() );
-}
-
 }
 
 #endif // KBE_TIMESTAMP_H

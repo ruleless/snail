@@ -19,7 +19,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "timestamp.h"
-namespace KBEngine{
 
 #ifdef KBE_USE_RDTSC
 KBETimingMethod g_timingMethod = RDTSC_TIMING_METHOD;
@@ -233,6 +232,5 @@ double stampsPerSecondD()
 {
 	static double stampsPerSecondCacheD = double(stampsPerSecond());
 	return stampsPerSecondCacheD;
-}
 }
 /* timestamp.cpp */

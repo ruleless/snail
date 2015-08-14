@@ -23,8 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/platform.h"
 
-namespace KBEngine{
-
 // vector<string>之类的容易使用 std::find_if 来查找是否存在某个字符串
 template<typename T>
 class find_vec_string_exist_handle
@@ -68,6 +66,5 @@ private:
 	T obj_;
 
 };
-}
 
 #endif // KBE_STDFINDIF_HANDERS_H

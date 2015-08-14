@@ -4,7 +4,7 @@
 #include "common/common.h"
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
-#include "network/address.h"
+#include "network/Address.h"
 #include "network/common.h"
 
 class Bundle;
@@ -85,7 +85,7 @@ public:
 	Address getLocalAddress() const;
 	Address getRemoteAddress() const;
 
-	bool getClosedPort(Network::Address &closedPort);
+	bool getClosedPort(Address &closedPort);
 
 	const char *c_str() const;
 	int getremotehostname(std::string *name) const;

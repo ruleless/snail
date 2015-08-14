@@ -26,12 +26,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 #include "network/common.h"
 
-namespace KBEngine{
-
 class KBE_MD5;
-
-namespace Network
-{
 
 class Channel;
 class MessageHandlers;
@@ -59,7 +54,7 @@ public:
 struct ExposedMessageInfo
 {
 	std::string name;
-	Network::MessageID id;
+	MessageID id;
 	int16 msgLen; // 对外消息不会超过1500
 	int8 argsType;
 	std::vector<uint8> argsTypes;
@@ -120,7 +115,7 @@ public:
 class MessageHandlers
 {
 public:
-	static Network::MessageHandlers* pMainMessageHandlers;
+	static MessageHandlers* pMainMessageHandlers;
 	typedef std::map<MessageID, MessageHandler*> MessageHandlerMap;
 	MessageHandlers();
 	~MessageHandlers();
@@ -150,6 +145,4 @@ private:
 	std::vector< std::string > exposedMessages_;
 };
 
-}
-}
 #endif 

@@ -1,6 +1,6 @@
 #include "UDPPacketReceiver.h"
 #include "network/Address.h"
-#include "network/bundle.h"
+#include "network/Bundle.h"
 #include "network/Channel.h"
 #include "network/EndPoint.h"
 #include "network/EventDispatcher.h"
@@ -87,22 +87,22 @@ bool UDPPacketReceiver::processRecv(bool expectingPacket)
 		return false;
 	}
 
-	Reason ret = this->processPacket(pSrcChannel, pChannelReceiveWindow);
+	EReason ret = this->processPacket(pSrcChannel, pChannelReceiveWindow);
 
-	if(ret != REASON_SUCCESS)
+	if(ret != Reason_Success)
 		;
 	
 	return true;
 }
 
-Reason UDPPacketReceiver::processFilteredPacket(Channel *pChannel, Packet *pPacket)
+EReason UDPPacketReceiver::processFilteredPacket(Channel *pChannel, Packet *pPacket)
 {
 	if(pPacket)
 	{
 		pChannel->addReceiveWindow(pPacket);
 	}
 
-	return REASON_SUCCESS;
+	return Reason_Success;
 }
 
 PacketReceiver::ERecvState UDPPacketReceiver::checkSocketErrors(int len, bool expectingPacket)

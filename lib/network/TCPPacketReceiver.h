@@ -5,8 +5,8 @@
 #include "common/Timer.h"
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
-#include "network/common.h"
 #include "network/NetworkDef.h"
+#include "network/Network.h"
 #include "network/TCPPacket.h"
 #include "network/PacketReceiver.h"
 
@@ -26,7 +26,7 @@ public:
 	TCPPacketReceiver(EndPoint &endpoint, NetworkManager &networkMgr);
 	~TCPPacketReceiver();
 
-	Reason processFilteredPacket(Channel *pChannel, Packet *pPacket);
+	EReason processFilteredPacket(Channel *pChannel, Packet *pPacket);
 protected:
 	virtual bool processRecv(bool expectingPacket);
 	PacketReceiver::ERecvState checkSocketErrors(int len, bool expectingPacket);

@@ -6,8 +6,8 @@
 #include "network/Channel.h"
 #include "network/Packet.h"
 #include "network/DelayedChannels.h"
-#include "network/NetworkDef.h"
-#include "network/message_handler.h"
+#include "network/Network.h"
+#include "network/MessageHandler.h"
 
 NetworkManager::NetworkManager(EventDispatcher * pDispatcher,
 		int32 extlisteningPort_min,

@@ -22,7 +22,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "resmgr/resmgr.h"	
 
 
-KBE_SINGLETON_INIT(FixedMessages);
+SINGLETON_INIT(FixedMessages);
 
 //-------------------------------------------------------------------------------------
 FixedMessages::FixedMessages():

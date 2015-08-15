@@ -5,8 +5,8 @@
 #include "common/Timer.h"
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
-#include "network/common.h"
 #include "network/NetworkDef.h"
+#include "network/Network.h"
 #include "network/UDPPacket.h"
 #include "network/PacketReceiver.h"
 
@@ -25,7 +25,7 @@ public:
 	UDPPacketReceiver(EndPoint &endpoint, NetworkManager &networkMgr);
 	~UDPPacketReceiver();
 
-	Reason processFilteredPacket(Channel *pChannel, Packet *pPacket);
+	EReason processFilteredPacket(Channel *pChannel, Packet *pPacket);
 	
 	virtual PacketReceiver::EPacketReceiverType type() const
 	{

@@ -5,7 +5,7 @@
 #include "common/common.h"
 #include "common/ObjectPool.h"
 #include "common/smartpointer.h"	
-#include "network/common.h"
+#include "network/NetworkDef.h"
 
 class EndPoint;
 class Address;

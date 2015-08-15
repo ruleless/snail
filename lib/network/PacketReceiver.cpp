@@ -1,6 +1,6 @@
 #include "PacketReceiver.h"
 #include "network/Address.h"
-#include "network/bundle.h"
+#include "network/Bundle.h"
 #include "network/Channel.h"
 #include "network/EndPoint.h"
 #include "network/EventDispatcher.h"
@@ -33,7 +33,7 @@ int PacketReceiver::handleInputNotification(int fd)
 	return 0;
 }
 
-Reason PacketReceiver::processPacket(Channel *pChannel, Packet *pPacket)
+EReason PacketReceiver::processPacket(Channel *pChannel, Packet *pPacket)
 {
 	if (pChannel != NULL)
 	{

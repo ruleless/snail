@@ -1,5 +1,5 @@
-#ifndef KBE_NETWORK_BUNDLE_H
-#define KBE_NETWORK_BUNDLE_H
+#ifndef __BUNDLE_H__
+#define __BUNDLE_H__
 
 #include "common/common.h"
 #include "common/Timer.h"
@@ -8,7 +8,7 @@
 #include "network/Address.h"
 #include "network/EventDispatcher.h"
 #include "network/EndPoint.h"
-#include "network/common.h"
+#include "network/NetworkDef.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
 #include "network/interface_defs.h"
@@ -22,8 +22,8 @@ class Channel;
 	size_t currSize = 0;																					\
 	size_t reclaimCount = 0;																				\
 																											\
-	Packets::iterator iter = packets_.begin();																\
-	for (; iter != packets_.end(); ++iter)																	\
+	Packets::iterator iter = mPackets.begin();																\
+	for (; iter != mPackets.end(); ++iter)																	\
 	{																										\
 		Packet* pPacket = (*iter);																			\
 		size_t remainSize = (size_t)expectSize - currSize;													\
@@ -52,15 +52,9 @@ class Channel;
 	}																										\
 																											\
 	if(reclaimCount > 0)																					\
-		packets_.erase(packets_.begin(), packets_.begin() + reclaimCount);									\
+		mPackets.erase(mPackets.begin(), mPackets.begin() + reclaimCount);									\
 																											\
 	return *this;																							\
-
-
-// 从对象池中创建与回收
-#define MALLOC_BUNDLE() Network::Bundle::ObjPool().createObject()
-#define DELETE_BUNDLE(obj) { Network::Bundle::ObjPool().reclaimObject(obj); obj = NULL; }
-#define RECLAIM_BUNDLE(obj) { Network::Bundle::ObjPool().reclaimObject(obj);}
 
 class Bundle : public PoolObject
 {
@@ -70,7 +64,7 @@ public:
 	virtual void onReclaimObject();
 	virtual size_t getPoolObjectBytes();
 
-	typedef std::vector<Packet*> Packets;
+	typedef std::vector<Packet *> Packets;
 	
 	Bundle(Channel * pChannel = NULL, ProtocolType pt = Protocol_TCP);
 	Bundle(const Bundle& bundle);
@@ -79,131 +73,125 @@ public:
 	void newMessage(const MessageHandler& msgHandler);
 	void finiMessage(bool isSend = true);
 
-	void clearPackets();
-
-	INLINE MessageLength currMsgLength() const;
-	
-	INLINE void pCurrMsgHandler(const MessageHandler* pMsgHandler);
-	INLINE const MessageHandler* pCurrMsgHandler() const;
-
-	/**
-		计算所有包包括当前还未写完的包的总长度
-	*/
-	int32 packetsLength(bool calccurr = true);
-
-	INLINE bool isTCPPacket() const{ return isTCPPacket_; }
-	INLINE void isTCPPacket(bool v){ isTCPPacket_ = v; }
-
-	void clear(bool isRecl);
-	bool empty() const;
-	
-	int packetsSize() const;
-	INLINE Packets& packets();
-	INLINE Packet* pCurrPacket() const;
-	INLINE void pCurrPacket(Packet* p);
-
-	INLINE void finiCurrPacket();
-
 	Packet* newPacket();
-	
-	INLINE MessageID getMessageID() const;
-	INLINE int32 numMessages() const;
+	void finiCurrPacket();
 
+	void clearPackets();
+	void clear(bool isRecl);
+
+	// 计算所有包包括当前还未写完的包的总长度
+	int32 packetsLength(bool calccurr = true);
+	int packetsSize() const;
+
+	MessageLength currMsgLength() const { return mCurrMsgLength; }
+	
+	void pCurrMsgHandler(const MessageHandler* pMsgHandler) { mpCurrMsgHandler = pMsgHandler; }
+	const MessageHandler* pCurrMsgHandler() const { return mpCurrMsgHandler; }
+
+	bool isTCPPacket() const { return mIsTCPPacket; }
+	void isTCPPacket(bool v) { mIsTCPPacket = v; }
+
+	bool empty() const { return packetsSize() == 0; }
+	Packets& packets() { return mPackets; }
+	Packet* pCurrPacket() const { return mpCurrPacket; }
+	void pCurrPacket(Packet* p) { mpCurrPacket = p; }	
+	
+	MessageID getMessageID() const { return mCurrMsgID; }
+	int32 numMessages() const { return mNumMessages; }
 protected:
 	void _calcPacketMaxSize();
 	int32 onPacketAppend(int32 addsize, bool inseparable = true);
 
 	void _debugMessages();
-
 public:
     Bundle &operator<<(uint8 value)
     {
 		onPacketAppend(sizeof(uint8));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(uint16 value)
     {
 		onPacketAppend(sizeof(uint16));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(uint32 value)
     {
 		onPacketAppend(sizeof(uint32));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(uint64 value)
     {
 		onPacketAppend(sizeof(uint64));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(int8 value)
     {
 		onPacketAppend(sizeof(int8));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(int16 value)
     {
 		onPacketAppend(sizeof(int16));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(int32 value)
     {
 		onPacketAppend(sizeof(int32));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(int64 value)
     {
 		onPacketAppend(sizeof(int64));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(float value)
     {
 		onPacketAppend(sizeof(float));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(double value)
     {
 		onPacketAppend(sizeof(double));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(COMPONENT_TYPE value)
     {
 		onPacketAppend(sizeof(int32));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(ENTITY_MAILBOX_TYPE value)
     {
 		onPacketAppend(sizeof(int32));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
     Bundle &operator<<(bool value)
     {
 		onPacketAppend(sizeof(int8));
-        (*pCurrPacket_) << value;
+        (*mpCurrPacket) << value;
         return *this;
     }
 
@@ -215,7 +203,7 @@ public:
 		while(len > 0)
 		{
 			int32 ilen = onPacketAppend(len, false);
-			pCurrPacket_->append(value.c_str() + addtotalsize, ilen);
+			mpCurrPacket->append(value.c_str() + addtotalsize, ilen);
 			addtotalsize += ilen;
 			len -= ilen;
 		}
@@ -231,7 +219,7 @@ public:
 		while(len > 0)
 		{
 			int32 ilen = onPacketAppend(len, false);
-			pCurrPacket_->append(str + addtotalsize, ilen);
+			mpCurrPacket->append(str + addtotalsize, ilen);
 			addtotalsize += ilen;
 			len -= ilen;
 		}
@@ -247,16 +235,16 @@ public:
 
 	Bundle &append(Bundle& bundle)
 	{
-		Packets::iterator iter = bundle.packets_.begin();
-		for(; iter!=bundle.packets_.end(); ++iter)
+		Packets::iterator iter = bundle.mPackets.begin();
+		for(; iter!=bundle.mPackets.end(); ++iter)
 		{
 			append((*iter)->data(), (*iter)->length());
 		}
 		
-		if(bundle.pCurrPacket_ == NULL)
+		if(bundle.mpCurrPacket == NULL)
 			return *this;
 
-		return append(bundle.pCurrPacket_->data(), bundle.pCurrPacket_->length());
+		return append(bundle.mpCurrPacket->data(), bundle.mpCurrPacket->length());
 	}
 
 	Bundle &append(MemoryStream* s)
@@ -307,7 +295,7 @@ public:
 		while(len > 0)
 		{
 			int32 ilen = onPacketAppend(len, false);
-			pCurrPacket_->append((uint8*)(str + addtotalsize), ilen);
+			mpCurrPacket->append((uint8*)(str + addtotalsize), ilen);
 			addtotalsize += ilen;
 			len -= ilen;
 		}
@@ -370,24 +358,14 @@ public:
         PACKET_OUT_VALUE(value, sizeof(double));
     }
 
-    Bundle &operator>>(COMPONENT_TYPE &value)
-    {
-        PACKET_OUT_VALUE(value, sizeof(int32/*参考MemoryStream*/));
-    }
-
-    Bundle &operator>>(ENTITY_MAILBOX_TYPE &value)
-    {
-        PACKET_OUT_VALUE(value, sizeof(int32/*参考MemoryStream*/));
-    }
-
     Bundle &operator>>(std::string& value)
     {
 		Assert(packetsLength() > 0);
 		size_t reclaimCount = 0;
 		value.clear();
 
-		Packets::iterator iter = packets_.begin();
-		for (; iter != packets_.end(); ++iter)
+		Packets::iterator iter = mPackets.begin();
+		for (; iter != mPackets.end(); ++iter)
 		{
 			Packet* pPacket = (*iter);
 
@@ -419,7 +397,7 @@ public:
 		}
 
 		if(reclaimCount > 0)
-			packets_.erase(packets_.begin(), packets_.begin() + reclaimCount);
+			mPackets.erase(mPackets.begin(), mPackets.begin() + reclaimCount);
 
 		return *this;
     }
@@ -437,8 +415,8 @@ public:
 		size_t reclaimCount = 0;
 		datas.reserve(rsize);
 
-		Packets::iterator iter = packets_.begin();
-		for (; iter != packets_.end(); ++iter)
+		Packets::iterator iter = mPackets.begin();
+		for (; iter != mPackets.end(); ++iter)
 		{
 			Packet* pPacket = (*iter);
 
@@ -464,32 +442,28 @@ public:
 		}
 
 		if(reclaimCount > 0)
-			packets_.erase(packets_.begin(), packets_.begin() + reclaimCount);
+			mPackets.erase(mPackets.begin(), mPackets.begin() + reclaimCount);
 
 		return rsize;
 	}
-
 private:
-	Channel* pChannel_;
-	int32 numMessages_;
+	Channel *mpChannel;
+	int32 mNumMessages;
 	
-	Packet* pCurrPacket_;
-	MessageID currMsgID_;
-	uint32 currMsgPacketCount_;
-	MessageLength1 currMsgLength_;	
-	int32 currMsgHandlerLength_;
-	size_t currMsgLengthPos_;
+	Packet *mpCurrPacket;
+	MessageID mCurrMsgID;
+	uint32 mCurrMsgPacketCount;
+	MessageLength1 mCurrMsgLength;	
+	int32 mCurrMsgHandlerLength;
+	size_t mCurrMsgLengthPos;
 
-	Packets packets_;
+	Packets mPackets;
 	
-	bool isTCPPacket_;
-	int32 packetMaxSize_;
+	bool mIsTCPPacket;
+	int32 mPacketMaxSize;
 
-	const MessageHandler* pCurrMsgHandler_;
+	const MessageHandler* mpCurrMsgHandler;
 
 };
 
-#ifdef _INLINE
-#include "bundle.inl"
-#endif
-#endif // KBE_NETWORK_BUNDLE_H
+#endif // __BUNDLE_H__

@@ -4,7 +4,7 @@
 #include "EndPoint.inl"
 #endif
 
-#include "network/bundle.h"
+#include "network/Bundle.h"
 #include "network/TCPPacketReceiver.h"
 #include "network/TCPPacketSender.h"
 #include "network/UDPPacketReceiver.h"

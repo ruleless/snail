@@ -1,8 +1,8 @@
 #include "TCPPacket.h"
-#include "network/bundle.h"
+#include "network/Bundle.h"
 #include "network/EndPoint.h"
 #include "network/NetworkManager.h"
-#include "network/message_handler.h"
+#include "network/MessageHandler.h"
 
 static ObjectPool<TCPPacket> s_ObjPool("TCPPacket");
 ObjectPool<TCPPacket>& TCPPacket::ObjPool()

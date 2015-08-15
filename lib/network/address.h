@@ -3,7 +3,7 @@
 
 #include "common/common.h"
 #include "common/ObjectPool.h"
-#include "network/common.h"
+#include "network/NetworkDef.h"
 
 class Address : public PoolObject
 {

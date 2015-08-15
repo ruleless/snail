@@ -1,38 +1,41 @@
-#ifndef KBE_SINGLETON_H
-#define KBE_SINGLETON_H
+#ifndef __SINGLETON_H__
+#define __SINGLETON_H__
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
 #include "common/platform.h"
-	
-template <typename T> 
-class Singleton
+
+template <typename T> class Singleton
 {
 protected:
-	static T* singleton_;
-
+	static T* mSingleton;
 public:
 	Singleton(void)
 	{
-		assert(!singleton_);
+		assert(!mSingleton);
 #if defined(_MSC_VER) && _MSC_VER < 1200	 
 		int offset = (int)(T*)1 - (int)(Singleton <T>*)(T*)1;
-		singleton_ = (T*)((int)this + offset);
+		mSingleton = (T*)((int)this + offset);
 #else
-		singleton_ = static_cast< T* >(this);
+		mSingleton = static_cast< T* >(this);
 #endif
 	}
 	
+	~Singleton(void) { assert(mSingleton);  mSingleton = 0; }
 	
-	~Singleton(void){  assert(singleton_);  singleton_ = 0; }
-	
-	static T& getSingleton(void) { assert(singleton_);  return (*singleton_); }
-	static T* getSingletonPtr(void){ return singleton_; }
+	static T& getSingleton(void)
+	{
+		assert(mSingleton);
+		return (*mSingleton);
+	}
+	static T* getSingletonPtr(void)
+	{
+		return mSingleton; 
+	}
 };
 
-#define KBE_SINGLETON_INIT( TYPE )							\
-template <>	 TYPE * Singleton< TYPE >::singleton_ = 0;	\
+#define SINGLETON_INIT(T)	template<> T* Singleton<T>::mSingleton = 0;
 
-#endif // KBE_SINGLETON_H
+#endif // __SINGLETON_H__

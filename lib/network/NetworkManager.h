@@ -2,7 +2,7 @@
 #define __NETWORKMANAGER_H__
 
 #include "common/memorystream.h"
-#include "network/common.h"
+#include "network/NetworkDef.h"
 #include "common/common.h"
 #include "common/Timer.h"
 #include "helper/debug_helper.h"

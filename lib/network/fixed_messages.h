@@ -24,7 +24,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "common/common.h"
 #include "common/Singleton.h"
 #include "helper/debug_helper.h"
-#include "network/common.h"
+#include "network/NetworkDef.h"
 
 /*
 	用来对中间协议(前端与后端之间)进行强制约定。

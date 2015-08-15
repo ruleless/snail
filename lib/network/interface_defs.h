@@ -24,9 +24,9 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 // common include
 #include "common/common.h"
 #include "common/smartpointer.h"
-#include "network/common.h"
-#include "network/message_handler.h"
-#include "network/bundle.h"
+#include "network/NetworkDef.h"
+#include "network/MessageHandler.h"
+#include "network/Bundle.h"
 #include "network/Channel.h"
 
 #endif
@@ -146,9 +146,9 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 		{															\
 			return NETWORK_VARIABLE_MESSAGE;						\
 		}															\
-		virtual MessageArgs::MESSAGE_ARGS_TYPE type(void)			\
+		virtual MessageArgs::EMessageArgsType type(void)			\
 		{															\
-			return MESSAGE_ARGS_TYPE_VARIABLE;						\
+			return MessageArgsType_Variable;						\
 		}															\
 		virtual void addToStream(MemoryStream& s)					\
 		{															\

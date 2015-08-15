@@ -11,10 +11,10 @@
 #include "network/EventDispatcher.h"
 #include "network/EndPoint.h"
 #include "network/Packet.h"
-#include "network/common.h"
-#include "network/bundle.h"
 #include "network/NetworkDef.h"
-#include "network/packet_filter.h"
+#include "network/Bundle.h"
+#include "network/Network.h"
+#include "network/PacketFilter.h"
 
 class Bundle;
 class NetworkManager;

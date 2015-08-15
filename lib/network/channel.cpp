@@ -1,17 +1,17 @@
 #include "Channel.h"
 #include "network/websocket_protocol.h"
-#include "network/websocket_packet_filter.h"
+#include "network/WebSocketPacketFilter.h"
 #include "network/websocket_packet_reader.h"
-#include "network/bundle.h"
-#include "network/packet_reader.h"
+#include "network/Bundle.h"
+#include "network/PacketReader.h"
 #include "network/NetworkManager.h"
 #include "network/TCPPacketReceiver.h"
 #include "network/tcp_packet_sender.h"
 #include "network/UDPPacketReceiver.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
-#include "network/message_handler.h"
-#include "network/network_stats.h"
+#include "network/MessageHandler.h"
+#include "network/NetworkStats.h"
 
 
 static ObjectPool<Channel> s_ObjPool("Channel");
@@ -185,7 +185,7 @@ bool Channel::initialize(NetworkManager &networkMgr,
 
 	mpPacketReceiver->setEndPoint(mpEndPoint);
 	if(mpPacketSender)
-		mpPacketSender->pEndPoint(mpEndPoint);
+		mpPacketSender->setEndPoint(mpEndPoint);
 
 	startInactivityDetection((mTraits == Internal) ? gChannelInternalTimeout : gChannelExternalTimeout,
 		(mTraits == Internal) ? gChannelInternalTimeout / 2.f : gChannelExternalTimeout / 2.f);
@@ -391,9 +391,9 @@ void Channel::send(Bundle *pBundle)
 		if(mpPacketSender == NULL)
 			mpPacketSender = new TCPPacketSender(*mpEndPoint, *mpNetworkManager);
 
-		mpPacketSender->processSend(this);
+		mpPacketSender->processSend(this); // 直接发送。避免系统在可写事件上的频发虚耗
 
-		if(mBundles.size() > 0 && !isCondemn() && !isDestroyed())
+		if(mBundles.size() > 0 && !isCondemn() && !isDestroyed()) // 要是实在没发送完全，好吧，等待发送缓冲区就绪吧！
 		{
 			mFlags |= Flag_Sending;
 			mpNetworkManager->dispatcher().registerWriteFileDescriptor(*mpEndPoint, mpPacketSender);
@@ -639,7 +639,7 @@ void Channel::handshake()
 					mBufferedReceives.erase(packetIter);
 				}
 
-				if(!mpPacketReader || mpPacketReader->type() != PacketReader::PACKET_READER_TYPE_WEBSOCKET)
+				if(!mpPacketReader || mpPacketReader->type() != PacketReader::PacketReaderType_WebSocket)
 				{
 					SafeDelete(mpPacketReader);
 					mpPacketReader = new WebSocketPacketReader(this);
@@ -655,7 +655,7 @@ void Channel::handshake()
 			}
 		}
 
-		if(!mpPacketReader || mpPacketReader->type() != PacketReader::PACKET_READER_TYPE_SOCKET)
+		if(!mpPacketReader || mpPacketReader->type() != PacketReader::PacketReaderType_Socket)
 		{
 			SafeDelete(mpPacketReader);
 			mpPacketReader = new PacketReader(this);

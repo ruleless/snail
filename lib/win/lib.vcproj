@@ -158,15 +158,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\bundle.cpp"
+				RelativePath="..\network\Bundle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\bundle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\bundle.inl"
+				RelativePath="..\network\Bundle.h"
 				>
 			</File>
 			<File
@@ -186,14 +182,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\common.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\common.h"
-				>
-			</File>
-			<File
 				RelativePath="..\network\DelayedChannels.cpp"
 				>
 			</File>
@@ -202,11 +190,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\encryption_filter.cpp"
+				RelativePath="..\network\EncryptionFilter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\encryption_filter.h"
+				RelativePath="..\network\EncryptionFilter.h"
 				>
 			</File>
 			<File
@@ -246,7 +234,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\http_utility.h"
+				RelativePath="..\network\HttpUtility.h"
 				>
 			</File>
 			<File
@@ -262,23 +250,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\message_handler.cpp"
+				RelativePath="..\network\MessageHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\message_handler.h"
+				RelativePath="..\network\MessageHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\network\network_exception.h"
+				RelativePath="..\network\Network.h"
 				>
 			</File>
 			<File
-				RelativePath="..\network\network_stats.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\network_stats.h"
+				RelativePath="..\network\NetworkDef.cpp"
 				>
 			</File>
 			<File
@@ -294,31 +278,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\network\NetworkStats.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\network\NetworkStats.h"
+				>
+			</File>
+			<File
 				RelativePath="..\network\Packet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\network\packet_filter.cpp"
+				RelativePath="..\network\PacketFilter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\packet_filter.h"
+				RelativePath="..\network\PacketFilter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\network\packet_reader.cpp"
+				RelativePath="..\network\PacketReader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\packet_reader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\packet_sender.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\packet_sender.h"
+				RelativePath="..\network\PacketReader.h"
 				>
 			</File>
 			<File
@@ -330,19 +314,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\network\PacketSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\network\PacketSender.h"
+				>
+			</File>
+			<File
 				RelativePath="..\network\SelectPoller.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\network\SelectPoller.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet_sender.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\tcp_packet_sender.h"
 				>
 			</File>
 			<File
@@ -362,6 +346,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\network\TCPPacketSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\network\TCPPacketSender.h"
+				>
+			</File>
+			<File
 				RelativePath="..\network\UDPPacket.cpp"
 				>
 			</File>
@@ -378,14 +370,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\websocket_packet_filter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\websocket_packet_filter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\network\websocket_packet_reader.cpp"
 				>
 			</File>
@@ -399,6 +383,14 @@
 			</File>
 			<File
 				RelativePath="..\network\websocket_protocol.h"
+				>
+			</File>
+			<File
+				RelativePath="..\network\WebSocketPacketFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\network\WebSocketPacketFilter.h"
 				>
 			</File>
 		</Filter>
@@ -423,32 +415,6 @@
 			</File>
 			<File
 				RelativePath="..\common\Buffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\common.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\common\common.h"
 				>
 			</File>
 			<File
@@ -605,54 +571,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="simplenet"
-			>
-			<File
-				RelativePath="..\net\Accepter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\net\Accepter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\net\NetDef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\net\NetManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\net\NetManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\net\Receiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\net\Receiver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\net\Sender.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\net\Sender.h"
-				>
-			</File>
-			<File
-				RelativePath="..\net\SocketInputStream.h"
-				>
-			</File>
-			<File
-				RelativePath="..\net\SocketOutputStream.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="event"
 			>
 			<File
@@ -661,6 +579,118 @@
 			</File>
 			<File
 				RelativePath="..\event\EventDispatcher.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="helper"
+			>
+			<File
+				RelativePath="..\helper\console_helper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\crashhandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\crashhandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\debug_helper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\debug_helper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\debug_option.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\debug_option.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\eventhistory_stats.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\eventhistory_stats.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\memory_helper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profile.inl"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profile_handler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profile_handler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profiler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profiler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\profiler.inl"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\script_loglevel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\script_loglevel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\sys_info.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\sys_info.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\sys_info.inl"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\watch_pools.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\watch_pools.h"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\watcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\helper\watcher.h"
 				>
 			</File>
 		</Filter>

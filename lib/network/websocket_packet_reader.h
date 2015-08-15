@@ -21,7 +21,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KBE_WEBSOCKET_PACKET_READER_H
 #define KBE_WEBSOCKET_PACKET_READER_H
 
-#include "network/packet_reader.h"
+#include "network/PacketReader.h"
 
 class WebSocketPacketReader : public PacketReader
 {
@@ -32,7 +32,7 @@ public:
 	virtual void reset();
 	virtual void processMessages(MessageHandlers* pMsgHandlers, Packet* pPacket);
 
-	virtual PacketReader::PACKET_READER_TYPE type()const { return PACKET_READER_TYPE_WEBSOCKET; }
+	virtual PacketReader::EPacketReaderType type()const { return PacketReaderType_WebSocket; }
 
 protected:
 };

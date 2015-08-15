@@ -1,8 +1,8 @@
 #include "UDPPacket.h"
-#include "network/bundle.h"
+#include "network/Bundle.h"
 #include "network/EndPoint.h"
 #include "network/NetworkManager.h"
-#include "network/message_handler.h"
+#include "network/MessageHandler.h"
 
 static ObjectPool<UDPPacket> s_ObjPool("UDPPacket");
 ObjectPool<UDPPacket>& UDPPacket::ObjPool()

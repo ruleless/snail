@@ -23,7 +23,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include "helper/debug_helper.h"
 
 
-KBE_SINGLETON_INIT(KBEKey);
+SINGLETON_INIT(KBEKey);
 
 //-------------------------------------------------------------------------------------
 KBEKey::KBEKey(const std::string& pubkeyname, const std::string& prikeyname):

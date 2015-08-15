@@ -1,0 +1,3 @@
+[submodule "lib/deps/openssl"]
+	path = lib/deps/openssl
+	url = git@github.com:ruleless/openssl.git

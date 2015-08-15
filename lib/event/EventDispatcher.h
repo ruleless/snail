@@ -4,8 +4,8 @@
 #include <map>
 #include "common/tasks.h"
 #include "common/Timer.h"
+#include "network/Network.h"
 #include "network/NetworkDef.h"
-#include "network/common.h"
 
 class EventPoller;
 

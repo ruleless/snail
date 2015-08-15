@@ -23,10 +23,10 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/common.h"
 #include "helper/debug_helper.h"
-#include "network/common.h"
 #include "network/NetworkDef.h"
-#include "message_handler.h"
-#include "network/bundle.h"
+#include "network/Network.h"
+#include "MessageHandler.h"
+#include "network/Bundle.h"
 #include "network/EndPoint.h"
 
 class NetworkManager;

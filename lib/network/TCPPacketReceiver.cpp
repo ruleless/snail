@@ -1,6 +1,6 @@
 #include "TCPPacketReceiver.h"
 #include "network/Address.h"
-#include "network/bundle.h"
+#include "network/Bundle.h"
 #include "network/Channel.h"
 #include "network/EndPoint.h"
 #include "network/EventDispatcher.h"
@@ -65,9 +65,9 @@ bool TCPPacketReceiver::processRecv(bool expectingPacket)
 		return false;
 	}
 	
-	Reason ret = this->processPacket(pChannel, pReceiveWindow);
+	EReason ret = this->processPacket(pChannel, pReceiveWindow);
 
-	if(ret != REASON_SUCCESS)
+	if(ret != Reason_Success)
 		; // todo
 	
 	return true;
@@ -78,14 +78,14 @@ void TCPPacketReceiver::onGetError(Channel* pChannel)
 	pChannel->condemn();
 }
 
-Reason TCPPacketReceiver::processFilteredPacket(Channel *pChannel, Packet *pPacket)
+EReason TCPPacketReceiver::processFilteredPacket(Channel *pChannel, Packet *pPacket)
 {
 	if(pPacket)
 	{
 		pChannel->addReceiveWindow(pPacket);
 	}
 
-	return REASON_SUCCESS;
+	return Reason_Success;
 }
 
 PacketReceiver::ERecvState TCPPacketReceiver::checkSocketErrors(int len, bool expectingPacket)

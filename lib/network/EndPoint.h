@@ -5,7 +5,7 @@
 #include "common/ObjectPool.h"
 #include "helper/debug_helper.h"
 #include "network/Address.h"
-#include "network/common.h"
+#include "network/NetworkDef.h"
 
 class Bundle;
 class EndPoint : public PoolObject

@@ -5,8 +5,8 @@
 #include "common/ObjectPool.h"
 #include "common/Timer.h"
 #include "helper/debug_helper.h"
-#include "network/common.h"
 #include "network/NetworkDef.h"
+#include "network/Network.h"
 #include "network/TCPPacket.h"
 
 class EndPoint;
@@ -21,8 +21,8 @@ public:
 	enum ERecvState
 	{
 		RecvState_Interrupt = -1,
-		RecvState_Break,
-		RecvState_Continue,
+		RecvState_Break = 0,
+		RecvState_Continue = 1,
 	};
 
 	enum EPacketReceiverType
@@ -58,8 +58,8 @@ public:
 
 	virtual int handleInputNotification(int fd);
 
-	virtual Reason processPacket(Channel *pChannel, Packet *pPacket);
-	virtual Reason processFilteredPacket(Channel *pChannel, Packet *pPacket) = 0;
+	virtual EReason processPacket(Channel *pChannel, Packet *pPacket);
+	virtual EReason processFilteredPacket(Channel *pChannel, Packet *pPacket) = 0;
 
 	virtual Channel* getChannel();
 protected:

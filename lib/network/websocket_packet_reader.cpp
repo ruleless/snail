@@ -20,8 +20,8 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "websocket_packet_reader.h"
 #include "network/Channel.h"
-#include "network/message_handler.h"
-#include "network/network_stats.h"
+#include "network/MessageHandler.h"
+#include "network/NetworkStats.h"
 
 //-------------------------------------------------------------------------------------
 WebSocketPacketReader::WebSocketPacketReader(Channel* pChannel):

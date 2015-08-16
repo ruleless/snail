@@ -122,8 +122,8 @@ public:
 	void condemn();
 	virtual void handshake();
 
-	ENTITY_ID proxyID() const { return proxyID_; }
-	void proxyID(ENTITY_ID pid){ proxyID_ = pid; }
+	int32 proxyID() const { return proxyID_; }
+	void proxyID(int32 pid){ proxyID_ = pid; }
 
 	const std::string& extra() const { return mStrExtra; }
 	void extra(const std::string& s){ mStrExtra = s; }
@@ -181,7 +181,7 @@ private:
 	uint32 mLastTickBytesSent;
 
 	// 如果是外部通道且代理了一个前端则会绑定前端代理ID
-	ENTITY_ID proxyID_;
+	int32 proxyID_;
 	EChannelTypes mChannelType;
 	COMPONENT_ID mComponentID;
 	uint32 mFlags;

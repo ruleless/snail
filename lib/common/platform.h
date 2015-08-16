@@ -1,6 +1,8 @@
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
+
+//////////////////////////////////////////////////////////////////////////
 // common include	
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +28,8 @@
 #include <iterator>
 #include "common/strutil.h"
 
+
+//////////////////////////////////////////////////////////////////////////
 // windows include	
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
 #pragma warning(disable:4996)
@@ -89,37 +93,66 @@
 #define SIGSYS	32
 #endif
 
+
+//////////////////////////////////////////////////////////////////////////
 // 字节序
-#define KBENGINE_LITTLE_ENDIAN							0
-#define KBENGINE_BIG_ENDIAN								1
-#if !defined(KBENGINE_ENDIAN)
-#  if defined (USE_BIG_ENDIAN)
-#    define KBENGINE_ENDIAN KBENGINE_BIG_ENDIAN
-#  else 
-#    define KBENGINE_ENDIAN KBENGINE_LITTLE_ENDIAN
-#  endif 
+#define LITTLE_ENDIAN	0
+#define BIG_ENDIAN		1
+#if !defined(ENDIAN)
+#	if defined (USE_BIG_ENDIAN)
+#		define ENDIAN BIG_ENDIAN
+#	else 
+#		define ENDIAN LITTLE_ENDIAN
+#	endif 
 #endif
 
-// current platform and compiler
+
+//////////////////////////////////////////////////////////////////////////
+// 平台定义
 #define PLATFORM_WIN32 0
 #define PLATFORM_UNIX  1
 #define PLATFORM_APPLE 2
 
-#define UNIX_FLAVOUR_LINUX 1
-#define UNIX_FLAVOUR_BSD 2
-#define UNIX_FLAVOUR_OTHER 3
-#define UNIX_FLAVOUR_OSX 4
+#define UNIX_FLAVOUR_LINUX	1
+#define UNIX_FLAVOUR_BSD	2
+#define UNIX_FLAVOUR_OTHER	3
+#define UNIX_FLAVOUR_OSX	4
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
-#  define PLATFORM PLATFORM_WIN32
+#	define PLATFORM PLATFORM_WIN32
 #elif defined( __INTEL_COMPILER )
-#  define PLATFORM PLATFORM_INTEL
+#	define PLATFORM PLATFORM_INTEL
 #elif defined( __APPLE_CC__ )
-#  define PLATFORM PLATFORM_APPLE
+#	define PLATFORM PLATFORM_APPLE
 #else
-#  define PLATFORM PLATFORM_UNIX
+#	define PLATFORM PLATFORM_UNIX
 #endif
 
+#if PLATFORM == PLATFORM_UNIX || PLATFORM == PLATFORM_APPLE
+#	ifdef HAVE_DARWIN
+#		define PLATFORM_TEXT "MacOSX"
+#		define UNIX_FLAVOUR UNIX_FLAVOUR_OSX
+#	else
+#		ifdef USE_KQUEUE
+#			define PLATFORM_TEXT "FreeBSD"
+#			define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
+#		else
+#			ifdef USE_KQUEUE_DFLY
+#				define PLATFORM_TEXT "DragonFlyBSD"
+#				define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
+#			else
+#				define PLATFORM_TEXT "Linux"
+#				define UNIX_FLAVOUR UNIX_FLAVOUR_LINUX
+#			endif
+#		endif
+#	endif
+#elif PLATFORM == PLATFORM_WIN32
+#	define PLATFORM_TEXT "Win32"
+#endif
+
+
+//////////////////////////////////////////////////////////////////////////
+// 编译器定义
 #define COMPILER_MICROSOFT 0
 #define COMPILER_GNU	   1
 #define COMPILER_BORLAND   2
@@ -127,358 +160,188 @@
 #define COMPILER_CLANG     4
 
 #ifdef _MSC_VER
-#  define KBE_COMPILER COMPILER_MICROSOFT
+#	define COMPILER COMPILER_MICROSOFT
 #elif defined( __INTEL_COMPILER )
-#  define KBE_COMPILER COMPILER_INTEL
+#	define COMPILER COMPILER_INTEL
 #elif defined( __BORLANDC__ )
-#  define KBE_COMPILER COMPILER_BORLAND
+#	define COMPILER COMPILER_BORLAND
 #elif defined( __GNUC__ )
-#  define KBE_COMPILER COMPILER_GNU
+#	define COMPILER COMPILER_GNU
 #elif defined( __clang__ )
-#  define KBE_COMPILER COMPILER_CLANG
-	
+#	define COMPILER COMPILER_CLANG
 #else
-#  pragma error "FATAL ERROR: Unknown compiler."
+#	pragma error "FATAL ERROR: Unknown compiler."
 #endif
 
-#if PLATFORM == PLATFORM_UNIX || PLATFORM == PLATFORM_APPLE
-#ifdef HAVE_DARWIN
-#define KBE_PLATFORM_TEXT "MacOSX"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_OSX
-#else
-#ifdef USE_KQUEUE
-#define KBE_PLATFORM_TEXT "FreeBSD"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
-#else
-#ifdef USE_KQUEUE_DFLY
-#define KBE_PLATFORM_TEXT "DragonFlyBSD"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_BSD
-#else
-#define KBE_PLATFORM_TEXT "Linux"
-#define UNIX_FLAVOUR UNIX_FLAVOUR_LINUX
-#endif
-#endif
-#endif
-#endif
 
-#if PLATFORM == PLATFORM_WIN32
-#define KBE_PLATFORM_TEXT "Win32"
-#endif
-
-#ifndef KBE_CONFIG
-#ifdef _DEBUG
-#define KBE_CONFIG "Debug"
-#else
-#define KBE_CONFIG "Release"
-#endif
-#endif
-
-#ifdef X64
-#define KBE_ARCH "X64"
-#else
-#define KBE_ARCH "X86"
-#endif
-
-/*---------------------------------------------------------------------------------
-	类型定义
----------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////
+// 类型定义
 #ifndef TCHAR
-#ifdef _UNICODE
-	typedef wchar_t												TCHAR;
-#else
-	typedef char												TCHAR;
+#  ifdef _UNICODE
+     typedef wchar_t TCHAR;
+#  else
+     typedef char TCHAR;
+#  endif
 #endif
-#endif
 
-typedef unsigned char											uchar;
-typedef unsigned short											ushort;
-typedef unsigned int											uint;
-typedef unsigned long											ulong;
+typedef unsigned char			uchar;
+typedef unsigned short			ushort;
+typedef unsigned int			uint;
+typedef unsigned long			ulong;
 
-#define charptr													char*
-#define const_charptr											const char*
-#define PyObject_ptr											PyObject*
-
-#define KBEShared_ptr											std::tr1::shared_ptr
-#define KBEUnordered_map										std::tr1::unordered_map
-
-/* Use correct types for x64 platforms, too */
-#if KBE_COMPILER != COMPILER_GNU
-typedef signed __int64											int64;
-typedef signed __int32											int32;
-typedef signed __int16											int16;
-typedef signed __int8											int8;
-typedef unsigned __int64										uint64;
-typedef unsigned __int32										uint32;
-typedef unsigned __int16										uint16;
-typedef unsigned __int8											uint8;
-typedef INT_PTR													intptr;
-typedef UINT_PTR        										uintptr;
-#define PRI64													"lld"
-#define PRIu64													"llu"
-#define PRIx64													"llx"
-#define PRIX64													"llX"
-#define PRIzu													"lu"
-#define PRIzd													"ld"
-#define PRTime													PRI64
+#if COMPILER != COMPILER_GNU
+typedef signed __int64			int64;
+typedef signed __int32			int32;
+typedef signed __int16			int16;
+typedef signed __int8			int8;
+typedef unsigned __int64		uint64;
+typedef unsigned __int32		uint32;
+typedef unsigned __int16		uint16;
+typedef unsigned __int8			uint8;
+typedef INT_PTR					intptr;
+typedef UINT_PTR        		uintptr;
+#define PRI64					"lld"
+#define PRIu64					"llu"
+#define PRIx64					"llx"
+#define PRIX64					"llX"
+#define PRIzu					"lu"
+#define PRIzd					"ld"
+#define PRTime					PRI64
 #else
-typedef int64_t													int64;
-typedef int32_t													int32;
-typedef int16_t													int16;
-typedef int8_t													int8;
-typedef uint64_t												uint64;
-typedef uint32_t												uint32;
-typedef uint16_t												uint16;
-typedef uint8_t													uint8;
-typedef uint16_t												WORD;
-typedef uint32_t												DWORD;
+typedef int64_t					int64;
+typedef int32_t					int32;
+typedef int16_t					int16;
+typedef int8_t					int8;
+typedef uint64_t				uint64;
+typedef uint32_t				uint32;
+typedef uint16_t				uint16;
+typedef uint8_t					uint8;
+typedef uint16_t				WORD;
+typedef uint32_t				DWORD;
 
 #ifdef _LP64
-typedef int64													intptr;
-typedef uint64													uintptr;
-
+typedef int64					intptr;
+typedef uint64					uintptr;
 #ifndef PRI64
-#define PRI64													"ld"
+#define PRI64					"ld"
 #endif
 
 #ifndef PRIu64
-#define PRIu64													"lu"
+#define PRIu64					"lu"
 #endif
 
 #ifndef PRIx64
-#define PRIx64													"lx"
+#define PRIx64					"lx"
 #endif
 
 #ifndef PRIX64
-#define PRIX64													"lX"
+#define PRIX64					"lX"
 #endif
 
 #ifndef PRTime
-#define PRTime													PRI64
+#define PRTime					PRI64
 #endif
-
 #else
-typedef int32													intptr;
-typedef uint32													uintptr;
+typedef int32					intptr;
+typedef uint32					uintptr;
 
 #ifndef PRI64
-#define PRI64													"lld"
+#define PRI64					"lld"
 #endif
 
 #ifndef PRIu64
-#define PRIu64													"llu"
+#define PRIu64					"llu"
 #endif
 
 #ifndef PRIx64
-#define PRIx64													"llx"
+#define PRIx64					"llx"
 #endif
 
 #ifndef PRIX64
-#define PRIX64													"llX"
+#define PRIX64					"llX"
 #endif
 
 #ifndef PRTime
-#define PRTime													"ld"
+#define PRTime					"ld"
 #endif
-
 #endif
 
 #ifndef PRIzd
-#define PRIzd													"zd"
+#define PRIzd					"zd"
 #endif
 
 #ifndef PRIzu
-#define PRIzu													"zu"
+#define PRIzu					"zu"
+#endif
 #endif
 
-#endif
+#define KBEShared_ptr			std::tr1::shared_ptr
+#define KBEUnordered_map		std::tr1::unordered_map
 
-#define PRAppID													PRIu64
-#define PRDBID													PRIu64
-
-typedef uint16													ENTITY_TYPE;											// entity的类别类型定义支持0-65535个类别
-typedef int32													ENTITY_ID;												// entityID的类型
-typedef uint32													SPACE_ID;												// 一个space的id
-typedef uint32													CALLBACK_ID;											// 一个callback由CallbackMgr分配的id
-typedef uint64													COMPONENT_ID;											// 一个服务器组件的id
-typedef int32													COMPONENT_ORDER;										// 一个组件的启动顺序
-typedef	uint32													TIMER_ID;												// 一个timer的id类型
-typedef uint8													MAIL_TYPE;												// mailbox 所投递的mail类别的类别
-typedef uint32													GAME_TIME;
-typedef uint32													GameTime;
-typedef int32													ScriptID;
-typedef uint32													ArraySize;												// 任何数组的大小都用这个描述
-typedef uint64													DBID;													// 一个在数据库中的索引用来当做某ID
-typedef uint32													CELL_ID;
-typedef KBEUnordered_map< std::string, std::string >			SPACE_DATA;												// space中存储的数据
+typedef uint64					COMPONENT_ID;
+typedef int32					COMPONENT_ORDER;	// 组件的启动顺序
+typedef uint32					ArraySize;			// 任何数组的大小都用这个描述
+typedef uint64					DBID;				// 一个在数据库中的索引用来当做某ID
 
 #if PLATFORM == PLATFORM_WIN32
-	#define IFNAMSIZ											16
-	typedef UINT_PTR											SOCKET;
+#define IFNAMSIZ				16
+typedef UINT_PTR				SOCKET;
 #ifndef socklen_t
-	typedef	int													socklen_t;
+typedef	int						socklen_t;
 #endif
-	typedef unsigned short										u_int16_t;
-	typedef unsigned long										u_int32_t;
-	
+typedef unsigned short			u_int16_t;
+typedef unsigned long			u_int32_t;
+
 #ifndef IFF_UP
-	enum
-	{
-		IFF_UP													= 0x1,
-		IFF_BROADCAST											= 0x2,
-		IFF_DEBUG												= 0x4,
-		IFF_LOOPBACK											= 0x8,
-		IFF_POINTOPOINT											= 0x10,
-		IFF_NOTRAILERS											= 0x20,
-		IFF_RUNNING												= 0x40,
-		IFF_NOARP												= 0x80,
-		IFF_PROMISC												= 0x100,
-		IFF_MULTICAST											= 0x1000
-	};
+enum
+{
+	IFF_UP					= 0x1,
+	IFF_BROADCAST			= 0x2,
+	IFF_DEBUG				= 0x4,
+	IFF_LOOPBACK			= 0x8,
+	IFF_POINTOPOINT			= 0x10,
+	IFF_NOTRAILERS			= 0x20,
+	IFF_RUNNING				= 0x40,
+	IFF_NOARP				= 0x80,
+	IFF_PROMISC				= 0x100,
+	IFF_MULTICAST			= 0x1000
+};
 #endif
 #else
-	typedef int													SOCKET;
+typedef int					SOCKET;
 #endif
 
-/*---------------------------------------------------------------------------------
-	定会多种平台上的多线程相关
----------------------------------------------------------------------------------*/
+
+//////////////////////////////////////////////////////////////////////////
+// 线程定义
 #if PLATFORM == PLATFORM_WIN32
-	#define THREAD_ID											HANDLE
-	#define THREAD_SINGNAL										HANDLE
-	#define THREAD_SINGNAL_INIT(x)								x = CreateEvent(NULL, TRUE, FALSE, NULL)
-	#define THREAD_SINGNAL_DELETE(x)							CloseHandle(x)
-	#define THREAD_SINGNAL_SET(x)								SetEvent(x)
-	#define THREAD_MUTEX										CRITICAL_SECTION
-	#define THREAD_MUTEX_INIT(x)								InitializeCriticalSection(&x)
-	#define THREAD_MUTEX_DELETE(x)								DeleteCriticalSection(&x)
-	#define THREAD_MUTEX_LOCK(x)								EnterCriticalSection(&x)
-	#define THREAD_MUTEX_UNLOCK(x)								LeaveCriticalSection(&x)	
+#	define THREAD_ID							HANDLE
+#	define THREAD_SINGNAL						HANDLE
+#	define THREAD_SINGNAL_INIT(x)				x = CreateEvent(NULL, TRUE, FALSE, NULL)
+#	define THREAD_SINGNAL_DELETE(x)				CloseHandle(x)
+#	define THREAD_SINGNAL_SET(x)				SetEvent(x)
+#	define THREAD_MUTEX							CRITICAL_SECTION
+#	define THREAD_MUTEX_INIT(x)					InitializeCriticalSection(&x)
+#	define THREAD_MUTEX_DELETE(x)				DeleteCriticalSection(&x)
+#	define THREAD_MUTEX_LOCK(x)					EnterCriticalSection(&x)
+#	define THREAD_MUTEX_UNLOCK(x)				LeaveCriticalSection(&x)	
 #else
-	#define THREAD_ID											pthread_t
-	#define THREAD_SINGNAL										pthread_cond_t
-	#define THREAD_SINGNAL_INIT(x)								pthread_cond_init(&x, NULL)
-	#define THREAD_SINGNAL_DELETE(x)							pthread_cond_destroy(&x)
-	#define THREAD_SINGNAL_SET(x)								pthread_cond_signal(&x);
-	#define THREAD_MUTEX										pthread_mutex_t
-	#define THREAD_MUTEX_INIT(x)								pthread_mutex_init (&x, NULL)
-	#define THREAD_MUTEX_DELETE(x)								pthread_mutex_destroy(&x)
-	#define THREAD_MUTEX_LOCK(x)								pthread_mutex_lock(&x)
-	#define THREAD_MUTEX_UNLOCK(x)								pthread_mutex_unlock(&x)		
+#	define THREAD_ID							pthread_t
+#	define THREAD_SINGNAL						pthread_cond_t
+#	define THREAD_SINGNAL_INIT(x)				pthread_cond_init(&x, NULL)
+#	define THREAD_SINGNAL_DELETE(x)				pthread_cond_destroy(&x)
+#	define THREAD_SINGNAL_SET(x)				pthread_cond_signal(&x);
+#	define THREAD_MUTEX							pthread_mutex_t
+#	define THREAD_MUTEX_INIT(x)					pthread_mutex_init (&x, NULL)
+#	define THREAD_MUTEX_DELETE(x)				pthread_mutex_destroy(&x)
+#	define THREAD_MUTEX_LOCK(x)					pthread_mutex_lock(&x)
+#	define THREAD_MUTEX_UNLOCK(x)				pthread_mutex_unlock(&x)		
 #endif
 
-/*---------------------------------------------------------------------------------
-	跨平台宏定义
----------------------------------------------------------------------------------*/
-#if 0
-#define ARRAYCLR(v)					memset((v), 0x0, sizeof(v))
-#define MEMCLR(v)					memset(&(v), 0x0, sizeof(v))
-#define MEMCLRP(v)					memset((v), 0x0, sizeof(*v))
-#endif
 
-#define ARRAYSZ(v)					(sizeof(v) / sizeof(v[0]))
-#define ARRAY_SIZE(v)				(sizeof(v) / sizeof(v[0]))
-
-#if 0
-#define offsetof(type, field)		((uint32)&(((type *)NULL)->field))
-#ifndef FIELD_OFFSET
-#define FIELD_OFFSET(type, field)	offsetof(type, field)
-#endif
-#ifndef FIELD_SIZE
-#define FIELD_SIZE(type, field)		(sizeof(((type *)NULL)->field))
-#endif
-#endif
-
-#define KBE_LITTLE_ENDIAN
-/*#define KBE_BIG_ENDIAN*/
-
-#ifdef KBE_LITTLE_ENDIAN
-/* accessing individual bytes (int8) and words (int16) within
- * words and long words (int32).
- * Macros ending with W deal with words, L macros deal with longs
- */
-/// Returns the high byte of a word.
-#define HIBYTEW(b)		(((b) & 0xff00) >> 8)
-/// Returns the low byte of a word.
-#define LOBYTEW(b)		( (b) & 0xff)
-
-/// Returns the high byte of a long.
-#define HIBYTEL(b)		(((b) & 0xff000000L) >> 24)
-/// Returns the low byte of a long.
-#define LOBYTEL(b)		( (b) & 0xffL)
-
-/// Returns byte 0 of a long.
-#define BYTE0L(b)		( (b) & 0xffL)
-/// Returns byte 1 of a long.
-#define BYTE1L(b)		(((b) & 0xff00L) >> 8)
-/// Returns byte 2 of a long.
-#define BYTE2L(b)		(((b) & 0xff0000L) >> 16)
-/// Returns byte 3 of a long.
-#define BYTE3L(b)		(((b) & 0xff000000L) >> 24)
-
-/// Returns the high word of a long.
-#define HIWORDL(b)		(((b) & 0xffff0000L) >> 16)
-/// Returns the low word of a long.
-#define LOWORDL(b)		( (b) & 0xffffL)
-
-/**
- *	This macro takes a dword ordered 0123 and reorder it to 3210.
- */
-#define SWAP_DW(a)	  ( (((a) & 0xff000000)>>24) |	\
-						(((a) & 0xff0000)>>8) |		\
-						(((a) & 0xff00)<<8) |		\
-						(((a) & 0xff)<<24) )
-
-#else
-/* big endian macros go here */
-#endif
-
-#if defined(_WIN32)
-
-#undef min
-#define min min
-#undef max
-#define max max
-
-template <class T>
-INLINE const T & min( const T & a, const T & b )
-{
-	return b < a ? b : a;
-}
-
-template <class T>
-INLINE const T & max( const T & a, const T & b )
-{
-	return a < b ? b : a;
-}
-
-#define KBE_MIN min
-#define KBE_MAX max
-
-#define NOMINMAX
-
-#else
-
-#define KBE_MIN std::min
-#define KBE_MAX std::max
-
-#endif
-
-// 所有名称字符串的最大长度
-#define MAX_NAME 256	
-
-// ip字符串的最大长度
-#define MAX_IP 50
-
-// 常规的buf长度
-#define MAX_BUF 256
-
-#ifndef MAX_PATH
-#define MAX_PATH 260
-#endif
-
+//////////////////////////////////////////////////////////////////////////
 // 获得系统产生的最后一次错误描述
-INLINE char* kbe_strerror(int ierrorno = 0)
+inline char* kbe_strerror(int ierrorno = 0)
 {
 #if PLATFORM == PLATFORM_WIN32
 	if(ierrorno == 0)
@@ -486,18 +349,6 @@ INLINE char* kbe_strerror(int ierrorno = 0)
 
 	static char lpMsgBuf[256] = {0};
 	
-	/*
-	FormatMessage(
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		ierrorno,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(LPTSTR) &lpMsgBuf,
-		1024,
-		NULL
-	); 
-	*/
 	kbe_snprintf(lpMsgBuf, 256, "errorno=%d",  ierrorno);
 	return lpMsgBuf;
 #else

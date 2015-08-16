@@ -1,11 +1,7 @@
 #include "common.h"
-#include <unistd.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
+
+#if PLATFORM == PLATFORM_UNIX
 void errSys(const char *msg, bool bErrno)
 {
 	const char *preMsg = "";
@@ -88,3 +84,4 @@ int traverseDir(const char *pathname, FileHandler handler)
 
 	return 0;
 }
+#endif

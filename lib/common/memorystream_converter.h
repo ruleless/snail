@@ -53,7 +53,7 @@ INLINE void convert(char *val, size_t size)
 	convert(val + 1, size - 2);
 }
 
-#if KBENGINE_ENDIAN == KBENGINE_BIG_ENDIAN			// 可以使用sys.isPlatformLittleEndian() 进行测试
+#if ENDIAN == BIG_ENDIAN			// 可以使用sys.isPlatformLittleEndian() 进行测试
 template<typename T> INLINE void EndianConvert(T& val) { MemoryStreamConverter::apply<T>(&val); }
 template<typename T> INLINE void EndianConvertReverse(T&) { }
 #else

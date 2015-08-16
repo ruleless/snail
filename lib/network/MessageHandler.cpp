@@ -168,7 +168,7 @@ MessageHandler* MessageHandlers::add(std::string ihName, MessageArgs* args,
 
 			if(msgHandler->type() == NETWORK_MESSAGE_TYPE_ENTITY)
 			{
-				msgHandler->msgLen += sizeof(ENTITY_ID);
+				msgHandler->msgLen += sizeof(int32);
 			}
 		}
 		

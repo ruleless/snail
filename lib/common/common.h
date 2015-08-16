@@ -1,10 +1,7 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#include <unistd.h>
-#include <stdint.h>
-#include <errno.h>
-#include <fcntl.h>
+#include "common/platform.h"
 
 #ifndef min
 #define min(a, b) ((a)<(b)?(a):(b))
@@ -19,8 +16,25 @@
 #ifndef NAME_PATH
 #define NAME_PATH 255
 #endif
+
 #ifndef NAME_MAX
 #define NAME_MAX 255
+#endif
+
+#ifndef MAX_NAME
+#define MAX_NAME 256
+#endif
+
+#ifndef MAX_IP
+#define MAX_IP 50
+#endif
+
+#ifndef MAX_BUF
+#define MAX_BUF 256
+#endif
+
+#ifndef MAX_PATH
+#define MAX_PATH 260
 #endif
 
 #ifdef _INLINE
@@ -35,6 +49,9 @@
 #define SafeDelete(ptr)      if ((ptr)) {delete (ptr); (ptr) = 0;}
 #define SafeDeleteArray(ptr) if ((ptr)) {delete[] (ptr); (ptr) = 0;}
 #define SafeRelease(ptr)     if ((ptr)) {(ptr)->Release(); (ptr) = 0;}
+
+
+#if PLATFORM == PLATFORM_UNIX
 
 /* 输出错误信息并退出
  * @param msg: 错误信息
@@ -69,6 +86,8 @@ int regRecLock(int fd, int cmd, int type, off_t offset, int whence, off_t len);
  */
 typedef bool (*FileHandler)(const char *pathname);
 int traverseDir(const char *pathname, FileHandler handler);
+
+#endif
 
 #if defined (__i386__)
 inline uint64_t getTimeStamp()

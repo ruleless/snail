@@ -1,5 +1,5 @@
-#ifndef KBE_MESSAGE_HANDLER_H
-#define KBE_MESSAGE_HANDLER_H
+#ifndef __MESSAGEHANDLER_H__
+#define __MESSAGEHANDLER_H__
 
 #include "common/memorystream.h"
 #include "common/smartpointer.h"
@@ -123,4 +123,4 @@ private:
 	std::vector< std::string > exposedMessages_;
 };
 
-#endif 
+#endif // __MESSAGEHANDLER_H__

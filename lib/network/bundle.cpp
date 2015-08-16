@@ -119,13 +119,13 @@ void Bundle::newMessage(const MessageHandler& msgHandler)
 	mCurrMsgHandlerLength = msgHandler.msgLen;
 }
 
-void Bundle::finiMessage(bool isSend)
+void Bundle::finiMessage(bool bReadyToSend)
 {
 	Assert(mpCurrPacket != NULL);
 
 	mpCurrPacket->setBundle(this);
 
-	if(isSend)
+	if(bReadyToSend)
 	{
 		mCurrMsgPacketCount++;
 		mPackets.push_back(mpCurrPacket);
@@ -134,13 +134,13 @@ void Bundle::finiMessage(bool isSend)
 	// 对消息进行跟踪
 	if(mpCurrMsgHandler)
 	{
-		if(isSend || mNumMessages > 1)
+		if(bReadyToSend || mNumMessages > 1)
 		{
 			NetworkStats::getSingleton().trackMessage(NetworkStats::Opt_Send, *mpCurrMsgHandler, mCurrMsgLength);
 		}
 	}
 
-	// 此处对于非固定长度的消息来说需要设置它的最终长度信息
+	// 对于非固定长度的消息来说需要设置它的长度信息
 	if(mCurrMsgHandlerLength < 0 || g_packetAlwaysContainLength)
 	{
 		Packet* pPacket = mpCurrPacket;
@@ -155,15 +155,15 @@ void Bundle::finiMessage(bool isSend)
 		// 用于描述更大的长度
 		if(mCurrMsgLength >= NETWORK_MESSAGE_MAX_SIZE)
 		{
-			MessageLength1 ex_msg_length = mCurrMsgLength;
-			EndianConvert(ex_msg_length);
+			MessageLength1 exMsgLength = mCurrMsgLength;
+			EndianConvert(exMsgLength);
 
 			MessageLength msgLen = NETWORK_MESSAGE_MAX_SIZE;
 			EndianConvert(msgLen);
 
 			memcpy(&pPacket->data()[mCurrMsgLengthPos], (uint8*)&msgLen, sizeof(MessageLength));
 
-			pPacket->insert(mCurrMsgLengthPos + sizeof(MessageLength), (uint8*)&ex_msg_length, sizeof(MessageLength1));
+			pPacket->insert(mCurrMsgLengthPos + sizeof(MessageLength), (uint8*)&exMsgLength, sizeof(MessageLength1));
 		}
 		else
 		{
@@ -174,7 +174,7 @@ void Bundle::finiMessage(bool isSend)
 		}
 	}
 
-	if(isSend)
+	if(bReadyToSend)
 	{
 		mCurrMsgHandlerLength = 0;
 		mpCurrPacket = NULL;
@@ -187,6 +187,58 @@ void Bundle::finiMessage(bool isSend)
 	mCurrMsgPacketCount = 0;
 	mCurrMsgLength = 0;
 	mCurrMsgLengthPos = 0;
+}
+
+void Bundle::clearPackets()
+{
+	if(mpCurrPacket != NULL)
+	{
+		mPackets.push_back(mpCurrPacket);
+		mpCurrPacket = NULL;
+	}
+
+	Packets::iterator iter = mPackets.begin();
+	for (; iter != mPackets.end(); ++iter)
+	{
+		reclaimPacket(mIsTCPPacket, (*iter));
+	}
+
+	mPackets.clear();
+}
+
+void Bundle::clear(bool isRecl)
+{
+	if(mpCurrPacket != NULL)
+	{
+		mPackets.push_back(mpCurrPacket);
+		mpCurrPacket = NULL;
+	}
+
+	Packets::iterator iter = mPackets.begin();
+	for (; iter != mPackets.end(); ++iter)
+	{
+		if(!isRecl)
+		{
+			delete (*iter);
+		}
+		else
+		{
+			reclaimPacket(mIsTCPPacket, (*iter));
+		}
+	}
+
+	mPackets.clear();
+
+	mpChannel = NULL;
+	mNumMessages = 0;
+
+	mCurrMsgID = 0;
+	mCurrMsgPacketCount = 0;
+	mCurrMsgLength = 0;
+	mCurrMsgLengthPos = 0;
+	mCurrMsgHandlerLength = 0;
+	mpCurrMsgHandler = NULL;
+	_calcPacketMaxSize();
 }
 
 Packet* Bundle::newPacket()
@@ -202,7 +254,31 @@ void Bundle::finiCurrPacket()
 	mpCurrPacket = NULL; 
 }
 
-//-------------------------------------------------------------------------------------
+int32 Bundle::packetsLength(bool calccurr)
+{
+	int32 len = 0;
+
+	Packets::iterator iter = mPackets.begin();
+	for (; iter != mPackets.end(); ++iter)
+	{
+		len += (*iter)->length();
+	}
+
+	if(calccurr && mpCurrPacket)
+		len += mpCurrPacket->length();
+
+	return len;
+}
+
+int Bundle::packetsSize() const
+{
+	size_t i = mPackets.size();
+	if(mpCurrPacket && !mpCurrPacket->empty())
+		++i;
+
+	return i;
+}
+
 void Bundle::_calcPacketMaxSize()
 {
 	// 如果使用了openssl加密通讯则我们保证一个包最大能被Blowfish::BLOCK_SIZE除尽
@@ -220,24 +296,6 @@ void Bundle::_calcPacketMaxSize()
 	}
 }
 
-//-------------------------------------------------------------------------------------
-int32 Bundle::packetsLength(bool calccurr)
-{
-	int32 len = 0;
-
-	Packets::iterator iter = mPackets.begin();
-	for (; iter != mPackets.end(); ++iter)
-	{
-		len += (*iter)->length();
-	}
-
-	if(calccurr && mpCurrPacket)
-		len += mpCurrPacket->length();
-
-	return len;
-}
-
-//-------------------------------------------------------------------------------------
 int32 Bundle::onPacketAppend(int32 addsize, bool inseparable)
 {
 	if(mpCurrPacket == NULL)
@@ -271,70 +329,6 @@ int32 Bundle::onPacketAppend(int32 addsize, bool inseparable)
 	return taddsize;
 }
 
-//-------------------------------------------------------------------------------------
-void Bundle::clear(bool isRecl)
-{
-	if(mpCurrPacket != NULL)
-	{
-		mPackets.push_back(mpCurrPacket);
-		mpCurrPacket = NULL;
-	}
-
-	Packets::iterator iter = mPackets.begin();
-	for (; iter != mPackets.end(); ++iter)
-	{
-		if(!isRecl)
-		{
-			delete (*iter);
-		}
-		else
-		{
-			reclaimPacket(mIsTCPPacket, (*iter));
-		}
-	}
-	
-	mPackets.clear();
-
-	mpChannel = NULL;
-	mNumMessages = 0;
-
-	mCurrMsgID = 0;
-	mCurrMsgPacketCount = 0;
-	mCurrMsgLength = 0;
-	mCurrMsgLengthPos = 0;
-	mCurrMsgHandlerLength = 0;
-	mpCurrMsgHandler = NULL;
-	_calcPacketMaxSize();
-}
-
-int Bundle::packetsSize() const
-{
-	size_t i = mPackets.size();
-	if(mpCurrPacket && !mpCurrPacket->empty())
-		++i;
-
-	return i;
-}
-
-//-------------------------------------------------------------------------------------
-void Bundle::clearPackets()
-{
-	if(mpCurrPacket != NULL)
-	{
-		mPackets.push_back(mpCurrPacket);
-		mpCurrPacket = NULL;
-	}
-
-	Packets::iterator iter = mPackets.begin();
-	for (; iter != mPackets.end(); ++iter)
-	{
-		reclaimPacket(mIsTCPPacket, (*iter));
-	}
-
-	mPackets.clear();
-}
-
-//-------------------------------------------------------------------------------------
 void Bundle::_debugMessages()
 {
 	if(!mpCurrMsgHandler)

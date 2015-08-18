@@ -4,6 +4,7 @@
 *.user
 /Obj
 /obj
+/win/debug
 /lib/win/obj
 /lib/win/Obj
 main

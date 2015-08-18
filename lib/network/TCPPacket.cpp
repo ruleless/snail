@@ -12,8 +12,8 @@ ObjectPool<TCPPacket>& TCPPacket::ObjPool()
 
 void TCPPacket::destroyObjPool()
 {
-	DEBUG_MSG(fmt::format("TCPPacket::destroyObjPool(): size {}.\n", 
-		s_ObjPool.size()));
+// 	DEBUG_MSG(fmt::format("TCPPacket::destroyObjPool(): size {}.\n", 
+// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }

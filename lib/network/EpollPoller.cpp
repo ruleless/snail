@@ -1,19 +1,16 @@
 #include "EpollPoller.h"
-#include "helper/profile.h"
 
 #ifdef HAS_EPOLL
 
 #include <sys/epoll.h>
-
-static ProfileVal g_idleProfile("Idle");
 
 EpollPoller::EpollPoller(int expectedSize)
 {
 	mEpfd = epoll_create(expectedSize);
 	if (mEpfd == -1)
 	{
-		ERROR_MSG(fmt::format("EpollPoller::EpollPoller: epoll_create failed: {}\n",
-				kbe_strerror()));
+// 		ERROR_MSG(fmt::format("EpollPoller::EpollPoller: epoll_create failed: {}\n",
+// 				__strerror()));
 	}
 }
 
@@ -31,23 +28,14 @@ int EpollPoller::processPendingEvents(double maxWait)
 	struct epoll_event events[ MAX_EVENTS ];
 	int maxWaitInMilliseconds = int(ceil(maxWait * 1000));
 
-#if ENABLE_WATCHERS
-	g_idleProfile.start();
-#else
 	uint64 startTime = timestamp();
-#endif
 
-	KBEConcurrency::onStartMainThreadIdling();
+	onStartMainThreadIdling();
 	int nfds = epoll_wait(mEpfd, events, MAX_EVENTS, maxWaitInMilliseconds);
-	KBEConcurrency::onEndMainThreadIdling();
+	onEndMainThreadIdling();
 
 
-#if ENABLE_WATCHERS
-	g_idleProfile.stop();
-	mSpareTime += g_idleProfile.lastTime_;
-#else
 	mSpareTime += timestamp() - startTime;
-#endif
 
 	for (int i = 0; i < nfds; ++i)
 	{
@@ -97,19 +85,19 @@ bool EpollPoller::doRegister(int fd, bool isRead, bool isRegister)
 			"descriptor {} ({})\n";
 		if (errno == EBADF)
 		{
-			WARNING_MSG(fmt::format(MESSAGE,
-				(isRegister ? "add" : "remove"),
-				(isRead ? "read" : "write"),
-				fd,
-				kbe_strerror()));
+// 			WARNING_MSG(fmt::format(MESSAGE,
+// 				(isRegister ? "add" : "remove"),
+// 				(isRead ? "read" : "write"),
+// 				fd,
+// 				__strerror()));
 		}
 		else
 		{
-			ERROR_MSG(fmt::format(MESSAGE,
-				(isRegister ? "add" : "remove"),
-				(isRead ? "read" : "write"),
-				fd,
-				kbe_strerror()));
+// 			ERROR_MSG(fmt::format(MESSAGE,
+// 				(isRegister ? "add" : "remove"),
+// 				(isRead ? "read" : "write"),
+// 				fd,
+// 				__strerror()));
 		}
 
 		return false;

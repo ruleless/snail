@@ -6,7 +6,6 @@
 #include "common/smartpointer.h"
 #include "common/timestamp.h"
 #include "common/ObjectPool.h"
-#include "helper/debug_helper.h"
 #include "network/address.h"
 #include "network/EventDispatcher.h"
 #include "network/EndPoint.h"

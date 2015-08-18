@@ -26,15 +26,15 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 /**
  *	openssl rsaµÄ·â×°
  */
-class KBE_RSA
+class SNAIL_RSA
 {
 public:
-	KBE_RSA(const std::string& pubkeyname, 
+	SNAIL_RSA(const std::string& pubkeyname, 
 		const std::string& prikeyname);
 
-	KBE_RSA();
+	SNAIL_RSA();
 
-	virtual ~KBE_RSA();
+	virtual ~SNAIL_RSA();
 
 	bool generateKey(const std::string& pubkeyname, 
 		const std::string& prikeyname, int keySize = 1024, int e = 65537);

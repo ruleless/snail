@@ -19,7 +19,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "blowfish.h"
-#include "helper/debug_helper.h"
 #include "openssl/rand.h"
 
 KBEBlowfish::KBEBlowfish(const Key & key):
@@ -47,8 +46,8 @@ KBEBlowfish::KBEBlowfish(int keySize):
 
 	if (this->init())
 	{
-		DEBUG_MSG(fmt::format("KBEBlowfish::KBEBlowfish(): Using Blowfish key: {}\n", 
-			this->strBlowFishKey()));
+// 		DEBUG_MSG(fmt::format("KBEBlowfish::KBEBlowfish(): Using Blowfish key: {}\n", 
+// 			this->strBlowFishKey()));
 	}
 }
 
@@ -71,9 +70,9 @@ bool KBEBlowfish::init()
 	}
 	else
 	{
-		ERROR_MSG(fmt::format("KBEBlowfish::init: "
-			"invalid length {}\n",
-			keySize_));
+// 		ERROR_MSG(fmt::format("KBEBlowfish::init: "
+// 			"invalid length {}\n",
+// 			keySize_));
 
 		isGood_ = false;
 	}
@@ -103,9 +102,9 @@ int KBEBlowfish::encrypt( const unsigned char * src, unsigned char * dest,
 	// BLOCK_SIZEµÄÕûÊý±¶
 	if(length % BLOCK_SIZE != 0)
 	{
-		CRITICAL_MSG(fmt::format("Blowfish::encrypt: "
-			"Input length ({}) is not a multiple of block size ({})\n",
-			length, (int)(BLOCK_SIZE)));
+// 		CRITICAL_MSG(fmt::format("Blowfish::encrypt: "
+// 			"Input length ({}) is not a multiple of block size ({})\n",
+// 			length, (int)(BLOCK_SIZE)));
 	}
 
 	uint64 * pPrevBlock = NULL;
@@ -133,9 +132,9 @@ int KBEBlowfish::decrypt( const unsigned char * src, unsigned char * dest,
 {
 	if (length % BLOCK_SIZE != 0)
 	{
-		WARNING_MSG(fmt::format("Blowfish::decrypt:"
-			"Input stream size ({}) is not a multiple of the block size ({})\n",
-			length, (int)(BLOCK_SIZE)));
+// 		WARNING_MSG(fmt::format("Blowfish::decrypt:"
+// 			"Input stream size ({}) is not a multiple of the block size ({})\n",
+// 			length, (int)(BLOCK_SIZE)));
 
 		return -1;
 	}

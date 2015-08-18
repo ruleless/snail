@@ -22,7 +22,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_BUNDLE_BROADCAST_H
 
 #include "common/common.h"
-#include "helper/debug_helper.h"
 #include "network/NetworkDef.h"
 #include "network/Network.h"
 #include "MessageHandler.h"

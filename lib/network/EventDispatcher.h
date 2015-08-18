@@ -2,7 +2,7 @@
 #define __EVENTDISPATCHER_H__
 
 #include <map>
-#include "common/tasks.h"
+#include "common/Tasks.h"
 #include "common/Timer.h"
 #include "network/Network.h"
 #include "network/NetworkDef.h"
@@ -36,19 +36,19 @@ class EventDispatcher
 	void addTask(Task *pTask);
 	bool cancelTask(Task *pTask);  
 
-	INLINE bool hasBreakProcessing() const
+	inline bool hasBreakProcessing() const
 	{
 		return DispatcherStatus_BreakProcessing == mBreakProcessing; 
 	}
-	INLINE bool waitingBreakProcessing() const
+	inline bool waitingBreakProcessing() const
 	{
 		return DispatcherStatus_WaitingBreakProcessing == mBreakProcessing; 
 	}
-	INLINE void setWaitBreakProcessing()
+	inline void setWaitBreakProcessing()
 	{
 		mBreakProcessing = DispatcherStatus_WaitingBreakProcessing;
 	}
-	INLINE void breakProcessing(bool breakState = true)
+	inline void breakProcessing(bool breakState = true)
 	{
 		if(breakState)
 			mBreakProcessing = DispatcherStatus_BreakProcessing;
@@ -56,22 +56,22 @@ class EventDispatcher
 			mBreakProcessing = DispatcherStatus_Running;
 	}
 
-	INLINE double maxWait() const
+	inline double maxWait() const
 	{
 		return mMaxWait;
 	}
 
-	INLINE void maxWait(double seconds)
+	inline void maxWait(double seconds)
 	{
 		mMaxWait = seconds;
 	}
 
-	INLINE TimerHandle addTimer(int64 microseconds, TimerHandler * handler, void* arg = NULL)
+	inline TimerHandle addTimer(int64 microseconds, TimerHandler * handler, void* arg = NULL)
 	{
 		return this->addTimerCommon(microseconds, handler, arg, true);
 	}
 
-	INLINE EventPoller* pPoller()
+	inline EventPoller* pPoller()
 	{
 		return mpPoller;
 	}

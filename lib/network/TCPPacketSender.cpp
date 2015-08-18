@@ -6,7 +6,6 @@
 #include "network/EventDispatcher.h"
 #include "network/NetworkManager.h"
 #include "network/EventPoller.h"
-#include "network/error_reporter.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
 
@@ -18,8 +17,8 @@ ObjectPool<TCPPacketSender>& TCPPacketSender::ObjPool()
 
 void TCPPacketSender::destroyObjPool()
 {
-	DEBUG_MSG(fmt::format("TCPPacketSender::destroyObjPool(): size {}.\n", 
-		s_ObjPool.size()));
+// 	DEBUG_MSG(fmt::format("TCPPacketSender::destroyObjPool(): size {}.\n", 
+// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }

@@ -56,17 +56,8 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 
 			if(pMsgHandler == NULL)
 			{
-				MemoryStream* pPacket1 = mpFragmentStream != NULL ? mpFragmentStream : pPacket;
-				TRACE_MESSAGE_PACKET(true, pPacket1, pMsgHandler, pPacket1->length(), mpChannel->c_str());
-				
-				// 用作调试时比对
-				uint32 rpos = pPacket1->rpos();
-				pPacket1->rpos(0);
-				TRACE_MESSAGE_PACKET(true, pPacket1, pMsgHandler, pPacket1->length(), mpChannel->c_str());
-				pPacket1->rpos(rpos);
-
-				ERROR_MSG(fmt::format("PacketReader::processMessages: not found msgID={}, msglen={}, from {}.\n",
-					mCurrMsgID, pPacket1->length(), mpChannel->c_str()));
+// 				ERROR_MSG(fmt::format("PacketReader::processMessages: not found msgID={}, msglen={}, from {}.\n",
+// 					mCurrMsgID, pPacket1->length(), mpChannel->c_str()));
 
 				mCurrMsgID = 0;
 				mCurrMsgLen = 0;
@@ -76,7 +67,7 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 			
 			if(mCurrMsgLen == 0)
 			{
-				if(pMsgHandler->msgLen == NETWORK_VARIABLE_MESSAGE || g_packetAlwaysContainLength)
+				if(pMsgHandler->msgLen == NETWORK_VARIABLE_MESSAGE)
 					// 如果长度信息是可变的或者配置了永远包含长度信息选项时，从流中分析长度数据
 				{
 					if(pPacket->length() < sizeof(MessageLength))
@@ -121,17 +112,8 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 
 			if(this->mpChannel->isExternal() && mCurrMsgLen > NETWORK_MESSAGE_MAX_SIZE) // 消息包过大，断掉连接！
 			{
-				MemoryStream* pPacket1 = mpFragmentStream != NULL ? mpFragmentStream : pPacket;
-				TRACE_MESSAGE_PACKET(true, pPacket1, pMsgHandler, pPacket1->length(), mpChannel->c_str());
-
-				// 用作调试时比对
-				uint32 rpos = pPacket1->rpos();
-				pPacket1->rpos(0);
-				TRACE_MESSAGE_PACKET(true, pPacket1, pMsgHandler, pPacket1->length(), mpChannel->c_str());
-				pPacket1->rpos(rpos);
-
-				WARNING_MSG(fmt::format("PacketReader::processMessages({0}): msglen exceeds the limit! msgID={1}, msglen=({2}:{3}), maxlen={5}, from {4}.\n", 
-					pMsgHandler->name.c_str(), mCurrMsgID, mCurrMsgLen, pPacket1->length(), mpChannel->c_str(), NETWORK_MESSAGE_MAX_SIZE));
+// 				WARNING_MSG(fmt::format("PacketReader::processMessages({0}): msglen exceeds the limit! msgID={1}, msglen=({2}:{3}), maxlen={5}, from {4}.\n", 
+// 					pMsgHandler->name.c_str(), mCurrMsgID, mCurrMsgLen, pPacket1->length(), mpChannel->c_str(), NETWORK_MESSAGE_MAX_SIZE));
 
 				mCurrMsgLen = 0;
 				mpChannel->condemn();
@@ -140,7 +122,6 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 
 			if(mpFragmentStream != NULL)
 			{
-				TRACE_MESSAGE_PACKET(true, mpFragmentStream, pMsgHandler, mCurrMsgLen, mpChannel->c_str());
 				pMsgHandler->handle(mpChannel, *mpFragmentStream);
 
 				MemoryStream::ObjPool().reclaimObject(mpFragmentStream);
@@ -159,7 +140,6 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 				size_t frpos = pPacket->rpos() + mCurrMsgLen;
 				pPacket->wpos(frpos);
 
-				TRACE_MESSAGE_PACKET(true, pPacket, pMsgHandler, mCurrMsgLen, mpChannel->c_str());
 				pMsgHandler->handle(mpChannel, *pPacket);
 
 				// 如果handler没有处理完数据则输出一个警告
@@ -167,8 +147,8 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 				{
 					if(frpos != pPacket->rpos())
 					{
-						WARNING_MSG(fmt::format("PacketReader::processMessages({}): rpos({}) invalid, expect={}. msgID={}, msglen={}.\n",
-							pMsgHandler->name.c_str(), pPacket->rpos(), frpos, mCurrMsgID, mCurrMsgLen));
+// 						WARNING_MSG(fmt::format("PacketReader::processMessages({}): rpos({}) invalid, expect={}. msgID={}, msglen={}.\n",
+// 							pMsgHandler->name.c_str(), pPacket->rpos(), frpos, mCurrMsgID, mCurrMsgLen));
 
 						pPacket->rpos(frpos);
 					}
@@ -187,7 +167,7 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 	}
 }
 
-void PacketReader::writeFragmentMessage(FragmentDataTypes fragmentDatasFlag, Packet* pPacket, uint32 datasize)
+void PacketReader::writeFragmentMessage(EFragmentDataTypes fragmentDatasFlag, Packet* pPacket, uint32 datasize)
 {
 	Assert(mpFragmentDatas == NULL);
 

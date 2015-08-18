@@ -4,7 +4,6 @@
 #include "common/common.h"
 #include "common/Timer.h"
 #include "common/ObjectPool.h"
-#include "helper/debug_helper.h"
 #include "network/Address.h"
 #include "network/EventDispatcher.h"
 #include "network/EndPoint.h"
@@ -61,8 +60,6 @@ public:
 protected:
 	void _calcPacketMaxSize();
 	int32 onPacketAppend(int32 addsize, bool inseparable = true);
-
-	void _debugMessages();
 public:
     Bundle &operator<<(uint8 value);
     Bundle &operator<<(uint16 value);
@@ -78,7 +75,7 @@ public:
     Bundle &operator<<(const std::string &value);	
     Bundle &operator<<(const char *str);    
 
-	Bundle &append(Bundle* pBundle)
+	Bundle &append(Bundle* pBundle);
 	Bundle &append(Bundle& bundle);
 	Bundle &append(MemoryStream* s);
 	Bundle &append(MemoryStream& s);

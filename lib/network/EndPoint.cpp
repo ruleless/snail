@@ -51,15 +51,15 @@ ObjectPool<EndPoint>& EndPoint::ObjPool()
 
 void EndPoint::destroyObjPool()
 {
-	DEBUG_MSG(fmt::format("EndPoint::destroyObjPool(): size {}.\n", 
-		s_ObjPool.size()));
+// 	DEBUG_MSG(fmt::format("EndPoint::destroyObjPool(): size {}.\n", 
+// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
 
 void EndPoint::onReclaimObject()
 {
-#if KBE_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == PLATFORM_WIN32
 	mSocket = INVALID_SOCKET;
 #else
 	mSocket = -1;
@@ -131,8 +131,8 @@ bool EndPoint::getClosedPort(Address & closedPort)
 			offender = *(sockaddr_in*)SO_EE_OFFENDER(extError);
 			offender.sin_port = 0;
 
-			ERROR_MSG("EndPoint::getClosedPort: "
-				"Kernel has a bug: recv_msg did not set msg_name.\n");
+// 			ERROR_MSG("EndPoint::getClosedPort: "
+// 				"Kernel has a bug: recv_msg did not set msg_name.\n");
 		}
 
 		closedPort.ip = offender.sin_addr.s_addr;
@@ -157,10 +157,10 @@ int EndPoint::getBufferSize(int optname) const
 	if (rberr == 0 && rbargsize == sizeof(int))
 		return recvbuf;
 
-	ERROR_MSG(fmt::format("EndPoint::getBufferSize: "
-		"Failed to read option {}: {}\n",
-		(optname == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"),
-		kbe_strerror()));
+// 	ERROR_MSG(fmt::format("EndPoint::getBufferSize: "
+// 		"Failed to read option {}: {}\n",
+// 		(optname == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"),
+// 		__strerror()));
 
 	return -1;
 }
@@ -182,7 +182,7 @@ bool EndPoint::getInterfaces(std::map< u_int32_t, std::string > &interfaces)
 				unsigned long addrs = *(unsigned long*)inaddrs->h_addr_list[count];
 				interfaces[addrs] = "eth0";
 				char *ip = inet_ntoa (*(struct in_addr *)inaddrs->h_addr_list[count]);
-				DEBUG_MSG(fmt::format("EndPoint::getInterfaces: found eth0 {}\n", ip));
+				// DEBUG_MSG(fmt::format("EndPoint::getInterfaces: found eth0 {}\n", ip));
 				++count;
 			}
 		}
@@ -198,7 +198,7 @@ bool EndPoint::getInterfaces(std::map< u_int32_t, std::string > &interfaces)
 
 	if(ioctl(mSocket, SIOCGIFCONF, &ifc) < 0)
 	{
-		ERROR_MSG("EndPoint::getInterfaces: ioctl(SIOCGIFCONF) failed.\n");
+		/*ERROR_MSG("EndPoint::getInterfaces: ioctl(SIOCGIFCONF) failed.\n");*/
 		return false;
 	}
 
@@ -470,9 +470,9 @@ int EndPoint::findDefaultInterface(char * name)
 	}
 	else
 	{
-		ERROR_MSG(fmt::format("EndPoint::findDefaultInterface: "
-							"if_nameindex returned NULL ({})\n",
-						kbe_strerror()));
+// 		ERROR_MSG(fmt::format("EndPoint::findDefaultInterface: "
+// 							"if_nameindex returned NULL ({})\n",
+// 						__strerror()));
 	}
 
 	return ret;
@@ -525,12 +525,12 @@ bool EndPoint::recvAll(void *gramData, int gramSize)
 		{
 			if (len == 0)
 			{
-				WARNING_MSG("EndPoint::recvAll: Connection lost\n");
+				// WARNING_MSG("EndPoint::recvAll: Connection lost\n");
 			}
 			else
 			{
-				WARNING_MSG(fmt::format("EndPoint::recvAll: Got error '{}'\n",
-					kbe_strerror()));
+// 				WARNING_MSG(fmt::format("EndPoint::recvAll: Got error '{}'\n",
+// 					__strerror()));
 			}
 
 			return false;
@@ -549,7 +549,7 @@ Address EndPoint::getLocalAddress() const
 	if (this->getlocaladdress((u_int16_t*)&addr.port,
 				(u_int32_t*)&addr.ip) == -1)
 	{
-		ERROR_MSG("EndPoint::getLocalAddress: Failed\n");
+		/*ERROR_MSG("EndPoint::getLocalAddress: Failed\n");*/
 	}
 
 	return addr;
@@ -562,7 +562,7 @@ Address EndPoint::getRemoteAddress() const
 	if (this->getremoteaddress((u_int16_t*)&addr.port,
 				(u_int32_t*)&addr.ip) == -1)
 	{
-		ERROR_MSG("EndPoint::getRemoteAddress: Failed\n");
+		/*ERROR_MSG("EndPoint::getRemoteAddress: Failed\n");*/
 	}
 
 	return addr;
@@ -575,7 +575,7 @@ void EndPoint::initNetwork()
 	
 	s_bNetworkInitted = true;
 
-#if KBE_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == PLATFORM_WIN32
 	WSAData wsdata;
 	WSAStartup(0x202, &wsdata);
 #endif

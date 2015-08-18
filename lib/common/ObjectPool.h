@@ -10,7 +10,7 @@
 #include <vector>
 #include <queue> 
 
-#include "thread/threadmutex.h"
+#include "thread/ThreadMutex.h"
 
 #define OBJECT_POOL_INIT_SIZE	16
 #define OBJECT_POOL_INIT_MAX_SIZE	OBJECT_POOL_INIT_SIZE*16
@@ -73,7 +73,7 @@ public:
 		return mObjects; 
 	}
 
-	void assignObjs(unsigned int preAssignVal = OBJECT_POOL_INIT_SIZE)
+	void assignObjs(int preAssignVal = OBJECT_POOL_INIT_SIZE)
 	{
 		for(int i = 0; i < preAssignVal; ++i)
 		{
@@ -207,7 +207,7 @@ public:
 		return buf;
 	}
 
-	size_t max() const
+	size_t maxSize() const
 	{
 		return mMaxSize; 
 	}

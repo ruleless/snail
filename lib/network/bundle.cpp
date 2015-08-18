@@ -2,9 +2,7 @@
 #include "network/NetworkStats.h"
 #include "network/NetworkManager.h"
 #include "network/Channel.h"
-#include "helper/profile.h"
 #include "network/PacketSender.h"
-#include "common/blowfish.h"
 
 
 static ObjectPool<Bundle> s_ObjPool("Bundle");
@@ -15,8 +13,8 @@ ObjectPool<Bundle>& Bundle::ObjPool()
 
 void Bundle::destroyObjPool()
 {
-	DEBUG_MSG(fmt::format("Bundle::destroyObjPool(): size {}.\n", 
-		s_ObjPool.size()));
+// 	DEBUG_MSG(fmt::format("Bundle::destroyObjPool(): size {}.\n", 
+// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
@@ -141,7 +139,7 @@ void Bundle::finiMessage(bool bReadyToSend)
 	}
 
 	// 对于非固定长度的消息来说需要设置它的长度信息
-	if(mCurrMsgHandlerLength < 0 || g_packetAlwaysContainLength)
+	if(mCurrMsgHandlerLength < 0)
 	{
 		Packet* pPacket = mpCurrPacket;
 		if(mCurrMsgPacketCount > 0)
@@ -178,9 +176,6 @@ void Bundle::finiMessage(bool bReadyToSend)
 	{
 		mCurrMsgHandlerLength = 0;
 		mpCurrPacket = NULL;
-
-		if(g_trace_packet > 0)
-			_debugMessages();
 	}
 
 	mCurrMsgID = 0;
@@ -283,6 +278,7 @@ void Bundle::_calcPacketMaxSize()
 {
 	// 如果使用了openssl加密通讯则我们保证一个包最大能被Blowfish::BLOCK_SIZE除尽
 	// 这样我们在加密一个满载包时不需要额外填充字节
+#ifdef USE_OPENSSL
 	if(g_channelExternalEncryptType == 1)
 	{
 		mPacketMaxSize = mIsTCPPacket ? (TCPPacket::maxBufferSize() - ENCRYPTTION_WASTAGE_SIZE):
@@ -294,6 +290,9 @@ void Bundle::_calcPacketMaxSize()
 	{
 		mPacketMaxSize = mIsTCPPacket ? TCPPacket::maxBufferSize() : PACKET_MAX_SIZE_UDP;
 	}
+#else
+	mPacketMaxSize = mIsTCPPacket ? TCPPacket::maxBufferSize() : PACKET_MAX_SIZE_UDP;
+#endif
 }
 
 int32 Bundle::onPacketAppend(int32 addsize, bool inseparable)
@@ -327,129 +326,4 @@ int32 Bundle::onPacketAppend(int32 addsize, bool inseparable)
 	
 	mCurrMsgLength += taddsize;
 	return taddsize;
-}
-
-void Bundle::_debugMessages()
-{
-	if(!mpCurrMsgHandler)
-		return;
-
-	Packets packets;
-	packets.insert(packets.end(), mPackets.begin(), mPackets.end());
-	if(mpCurrPacket)
-		packets.push_back(mpCurrPacket);
-
-	MemoryStream* pMemoryStream = MemoryStream::ObjPool().createObject();
-	MessageID msgid = 0;
-	MessageLength msglen = 0;
-	MessageLength1 msglen1 = 0;
-	const MessageHandler* pCurrMsgHandler = NULL;
-
-	int state = 0; // 0:读取消息ID， 1：读取消息长度， 2：读取消息扩展长度, 3:读取内容
-
-	for(Packets::iterator iter = packets.begin(); iter != packets.end(); iter++)
-	{
-		Packet* pPacket = (*iter);
-		if(pPacket->length() == 0)
-			continue;
-
-		size_t rpos = pPacket->rpos();
-		size_t wpos = pPacket->wpos();
-
-		while(pPacket->length() > 0)
-		{
-			if(state == 0)
-			{
-				// 一些sendto操作的包导致, 这类包也不需要追踪
-				if(pPacket->length() < sizeof(MessageID))
-				{
-					pPacket->done();
-					continue;
-				}
-
-				(*pPacket) >> msgid;
-				(*pMemoryStream) << msgid;
-				state = 1;
-				continue;
-			}
-			else if(state == 1)
-			{
-				if(!mpCurrMsgHandler || !mpCurrMsgHandler->pMessageHandlers)
-				{
-					pPacket->done();
-					continue;
-				}
-
-				pCurrMsgHandler = mpCurrMsgHandler->pMessageHandlers->find(msgid);
-
-				// 一些sendto操作的包导致找不到MsgHandler, 这类包也不需要追踪
-				if(!pCurrMsgHandler)
-				{
-					pPacket->done();
-					continue;
-				}
-
-				if(pCurrMsgHandler->msgLen == NETWORK_VARIABLE_MESSAGE || g_packetAlwaysContainLength)
-				{
-					(*pPacket) >> msglen;
-					(*pMemoryStream) << msglen;
-
-					if(msglen == NETWORK_MESSAGE_MAX_SIZE)
-						state = 2;
-					else
-						state = 3;
-				}
-				else
-				{
-					msglen = pCurrMsgHandler->msgLen;
-					(*pMemoryStream) << msglen;
-					state = 3;
-				}
-
-				continue;
-			}
-			else if(state == 2)
-			{
-				(*pPacket) >> msglen1;
-				(*pMemoryStream) << msglen1;
-				state = 3;
-				continue;
-			}
-			else if(state == 3)
-			{
-				MessageLength1 totallen = msglen1 > 0 ? msglen1 : msglen;
-				
-				if(pPacket->length() >= totallen - pMemoryStream->length())
-				{
-					MessageLength1 len  = totallen - pMemoryStream->length();
-					pMemoryStream->append(pPacket->data() + pPacket->rpos(), len);
-					pPacket->rpos(pPacket->rpos() + len);
-				}
-				else
-				{
-					pMemoryStream->append(*static_cast<MemoryStream*>(pPacket));
-					pPacket->done();
-				}
-
-				if(pMemoryStream->length() == totallen)
-				{
-					state = 0;
-					msglen1 = 0;
-					msglen = 0;
-					msgid = 0;
-
-					TRACE_MESSAGE_PACKET(false, pMemoryStream, pCurrMsgHandler, pMemoryStream->length(), 
-						(mpChannel != NULL ? mpChannel->c_str() : "None"));
-
-					pMemoryStream->clear(false);
-					continue;
-				}
-			}
-		};
-
-		pPacket->rpos(rpos);
-		pPacket->wpos(wpos);
-	}
-
-	MemoryStream::ObjPool().reclaimObject(pMemoryStream);
 }

@@ -104,7 +104,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../"
+				AdditionalIncludeDirectories="../;../deps"
 				PreprocessorDefinitions="WIN32"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -227,14 +227,6 @@
 			</File>
 			<File
 				RelativePath="..\network\EventPoller.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\fixed_messages.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\fixed_messages.h"
 				>
 			</File>
 			<File
@@ -373,30 +365,6 @@
 				RelativePath="..\network\UDPPacketReceiver.h"
 				>
 			</File>
-			<File
-				RelativePath="..\network\websocket_packet_reader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\websocket_packet_reader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\websocket_protocol.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\websocket_protocol.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\WebSocketPacketFilter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\WebSocketPacketFilter.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="common"
@@ -407,14 +375,6 @@
 			</File>
 			<File
 				RelativePath="..\common\base64.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\blowfish.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\blowfish.h"
 				>
 			</File>
 			<File
@@ -430,31 +390,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\format.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\format.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\kbekey.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\kbekey.h"
-				>
-			</File>
-			<File
 				RelativePath="..\common\kbemalloc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\md5.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\md5.h"
 				>
 			</File>
 			<File
@@ -482,22 +418,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\rsa.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\rsa.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\sha1.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\sha1.h"
-				>
-			</File>
-			<File
 				RelativePath="..\common\Singleton.h"
 				>
 			</File>
@@ -506,11 +426,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\stdfindif_handers.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\stringconv.h"
+				RelativePath="..\common\StrConvertor.h"
 				>
 			</File>
 			<File
@@ -522,23 +438,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\task.h"
+				RelativePath="..\common\Task.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\tasks.cpp"
+				RelativePath="..\common\Tasks.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\tasks.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\Thread.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\Thread.h"
+				RelativePath="..\common\Tasks.h"
 				>
 			</File>
 			<File
@@ -571,126 +479,54 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="event"
+			Name="utf8cpp"
 			>
 			<File
-				RelativePath="..\event\EventDispatcher.cpp"
+				RelativePath="..\deps\utf8cpp\utf8\checked.h"
 				>
 			</File>
 			<File
-				RelativePath="..\event\EventDispatcher.h"
+				RelativePath="..\deps\utf8cpp\utf8\core.h"
+				>
+			</File>
+			<File
+				RelativePath="..\deps\utf8cpp\utf8\unchecked.h"
+				>
+			</File>
+			<File
+				RelativePath="..\deps\utf8cpp\utf8.h"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="helper"
+			Name="thread"
 			>
 			<File
-				RelativePath="..\helper\console_helper.h"
+				RelativePath="..\thread\concurrency.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\helper\crashhandler.cpp"
+				RelativePath="..\thread\concurrency.h"
 				>
 			</File>
 			<File
-				RelativePath="..\helper\crashhandler.h"
+				RelativePath="..\thread\ThreadGuard.h"
 				>
 			</File>
 			<File
-				RelativePath="..\helper\debug_helper.cpp"
+				RelativePath="..\thread\ThreadMutex.h"
 				>
 			</File>
 			<File
-				RelativePath="..\helper\debug_helper.h"
+				RelativePath="..\thread\ThreadPool.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\helper\debug_option.cpp"
+				RelativePath="..\thread\ThreadPool.h"
 				>
 			</File>
 			<File
-				RelativePath="..\helper\debug_option.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\eventhistory_stats.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\eventhistory_stats.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\memory_helper.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profile.inl"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profile_handler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profile_handler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profiler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profiler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\profiler.inl"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\script_loglevel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\script_loglevel.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\sys_info.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\sys_info.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\sys_info.inl"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\watch_pools.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\watch_pools.h"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\watcher.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\helper\watcher.h"
+				RelativePath="..\thread\ThreadTask.h"
 				>
 			</File>
 		</Filter>

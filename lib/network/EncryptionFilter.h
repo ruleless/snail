@@ -16,6 +16,7 @@ public:
 	virtual void decrypt(Packet * pInPacket, Packet * pOutPacket) = 0;
 };
 
+#ifdef USE_OPENSSL
 class BlowfishFilter : public EncryptionFilter, public KBEBlowfish
 {
 public:
@@ -34,17 +35,19 @@ private:
 	PacketLength packetLen_;
 	uint8 padSize_;
 };
-
 typedef SmartPointer<BlowfishFilter> BlowfishFilterPtr;
+#endif
 
 inline EncryptionFilter* createEncryptionFilter(int8 type, const std::string& datas)
 {
 	EncryptionFilter* pEncryptionFilter = NULL;
 	switch(type)
 	{
+#ifdef USE_OPENSSL
 	case 1:
 		pEncryptionFilter = new BlowfishFilter(datas);
 		break;
+#endif
 	default:
 		break;
 	}

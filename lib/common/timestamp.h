@@ -1,36 +1,15 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2012 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#ifndef KBE_TIMESTAMP_H
-#define KBE_TIMESTAMP_H
+#ifndef __TIMESTAMP_H__
+#define __TIMESTAMP_H__
 
 #include "common/platform.h"
-#include "helper/debug_helper.h"
 
 // 指示是否可以通过调用RDTSC（时间戳计数器）
 // 计算时间戳。使用此的好处是，它能快速和精确的返回实际的时钟滴答
-// 。不足之处是，这并不使用SpeedStep技术来改变他们的时钟速度的CPU。
+// 不足之处是，这并不使用SpeedStep技术来改变他们的时钟速度的CPU
 #ifdef unix
-//#define KBE_USE_RDTSC
-#else // unix
-//#define KBE_USE_RDTSC
+//#define USE_RDTSC
+#else
+//#define USE_RDTSC
 #endif // unix
 
 enum KBETimingMethod
@@ -83,9 +62,9 @@ INLINE uint64 timestamp_gettime()
 
 INLINE uint64 timestamp()
 {
-#ifdef KBE_USE_RDTSC
+#ifdef USE_RDTSC
 	return timestamp_rdtsc();
-#else // KBE_USE_RDTSC
+#else // USE_RDTSC
 	if (g_timingMethod == RDTSC_TIMING_METHOD)
 		return timestamp_rdtsc();
 	else if (g_timingMethod == GET_TIME_OF_DAY_TIMING_METHOD)
@@ -93,12 +72,12 @@ INLINE uint64 timestamp()
 	else //if (g_timingMethod == GET_TIME_TIMING_METHOD)
 		return timestamp_gettime();
 
-#endif // KBE_USE_RDTSC
+#endif // USE_RDTSC
 }
 
 #elif defined(_WIN32)
 
-#ifdef KBE_USE_RDTSC
+#ifdef USE_RDTSC
 #pragma warning (push)
 #pragma warning (disable: 4035)
 INLINE uint64 timestamp()
@@ -106,18 +85,18 @@ INLINE uint64 timestamp()
 	__asm rdtsc
 }
 #pragma warning (pop)
-#else // KBE_USE_RDTSC
+#else // USE_RDTSC
 
 #include <windows.h>
 
-INLINE uint64 timestamp()
+inline uint64 timestamp()
 {
 	LARGE_INTEGER counter;
 	QueryPerformanceCounter( &counter );
 	return counter.QuadPart;
 }
 
-#endif // KBE_USE_RDTSC
+#endif // USE_RDTSC
 
 #else
 	#error Unsupported platform!
@@ -132,7 +111,7 @@ double stampsPerSecondD_rdtsc();
 uint64 stampsPerSecond_gettimeofday();
 double stampsPerSecondD_gettimeofday();
 
-INLINE double stampsToSeconds( uint64 stamps )
+inline double stampsToSeconds( uint64 stamps )
 {
 	return double( stamps )/stampsPerSecondD();
 }
@@ -146,49 +125,49 @@ public:
 	operator uint64 &()				{ return stamp_; }
 	operator uint64() const			{ return stamp_; }
 	
-	INLINE uint64 stamp(){ return stamp_; }
+	uint64 stamp(){ return stamp_; }
 
-	INLINE double inSeconds() const;
-	INLINE void setInSeconds( double seconds );
+	double inSeconds() const;
+	void setInSeconds( double seconds );
 
-	INLINE TimeStamp ageInStamps() const;
-	INLINE double ageInSeconds() const;
+	TimeStamp ageInStamps() const;
+	double ageInSeconds() const;
 
-	INLINE static double toSeconds( uint64 stamps );
-	INLINE static TimeStamp fromSeconds( double seconds );
+	static double toSeconds( uint64 stamps );
+	static TimeStamp fromSeconds( double seconds );
 
 	uint64	stamp_;
 };
 
 
-INLINE double TimeStamp::toSeconds( uint64 stamps )
+double TimeStamp::toSeconds( uint64 stamps )
 {
 	return double( stamps )/stampsPerSecondD();
 }
 
-INLINE TimeStamp TimeStamp::fromSeconds( double seconds )
+TimeStamp TimeStamp::fromSeconds( double seconds )
 {
 	return uint64( seconds * stampsPerSecondD() );
 }
 
-INLINE double TimeStamp::inSeconds() const
+double TimeStamp::inSeconds() const
 {
 	return toSeconds( stamp_ );
 }
 
-INLINE void TimeStamp::setInSeconds( double seconds )
+void TimeStamp::setInSeconds( double seconds )
 {
 	stamp_ = fromSeconds( seconds );
 }
 
-INLINE TimeStamp TimeStamp::ageInStamps() const
+TimeStamp TimeStamp::ageInStamps() const
 {
 	return timestamp() - stamp_;
 }
 
-INLINE double TimeStamp::ageInSeconds() const
+double TimeStamp::ageInSeconds() const
 {
 	return toSeconds( this->ageInStamps() );
 }
 
-#endif // KBE_TIMESTAMP_H
+#endif // __TIMESTAMP_H__

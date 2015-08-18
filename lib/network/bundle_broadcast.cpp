@@ -39,8 +39,8 @@ BundleBroadcast::BundleBroadcast(NetworkManager & networkInterface,
 
 	if (!epListen_.good() || !epBroadcast_.good())
 	{
-		ERROR_MSG(fmt::format("BundleBroadcast::BundleBroadcast: init socket is error, {}\n", 
-			kbe_strerror()));
+// 		ERROR_MSG(fmt::format("BundleBroadcast::BundleBroadcast: init socket is error, {}\n", 
+// 			__strerror()));
 
 		networkInterface_.dispatcher().breakProcessing();
 	}
@@ -58,8 +58,8 @@ BundleBroadcast::BundleBroadcast(NetworkManager & networkInterface,
 
 				if(count > 30)
 				{
-					WARNING_MSG(fmt::format("BundleBroadcast::BundleBroadcast: Couldn't bind listener socket to port {}, {}\n",
-						bindPort, kbe_strerror()));
+// 					WARNING_MSG(fmt::format("BundleBroadcast::BundleBroadcast: Couldn't bind listener socket to port {}, {}\n",
+// 						bindPort, __strerror()));
 
 					break;
 				}
@@ -111,8 +111,8 @@ bool BundleBroadcast::broadcast(uint16 port)
 
 	if(epBroadcast_.setbroadcast(true) != 0)
 	{
-		ERROR_MSG(fmt::format("BundleBroadcast::broadcast: Couldn't broadcast socket, port {}, {}\n", 
-			port, kbe_strerror()));
+// 		ERROR_MSG(fmt::format("BundleBroadcast::broadcast: Couldn't broadcast socket, port {}, {}\n", 
+// 			port, __strerror()));
 
 		networkInterface_.dispatcher().breakProcessing();
 		return false;
@@ -150,7 +150,7 @@ bool BundleBroadcast::receive(MessageArgs* recvArgs, sockaddr_in* psin, int32 ti
 			{
 				if(showerr)
 				{
-					ERROR_MSG("BundleBroadcast::receive: is failed(please check {firewall rule => broadcastaddr not is LAN ?})!\n");
+					/*ERROR_MSG("BundleBroadcast::receive: is failed(please check {firewall rule => broadcastaddr not is LAN ?})!\n");*/
 				}
 				
 				return false;
@@ -168,8 +168,8 @@ bool BundleBroadcast::receive(MessageArgs* recvArgs, sockaddr_in* psin, int32 ti
 		{
 			if(showerr)
 			{
-				ERROR_MSG(fmt::format("BundleBroadcast::receive: select error. {}.\n",
-						kbe_strerror()));
+// 				ERROR_MSG(fmt::format("BundleBroadcast::receive: select error. {}.\n",
+// 						__strerror()));
 			}
 
 			return false;
@@ -189,8 +189,8 @@ bool BundleBroadcast::receive(MessageArgs* recvArgs, sockaddr_in* psin, int32 ti
 			{
 				if(showerr)
 				{
-					ERROR_MSG(fmt::format("BundleBroadcast::receive: recvfrom error. {}.\n",
-							kbe_strerror()));
+// 					ERROR_MSG(fmt::format("BundleBroadcast::receive: recvfrom error. {}.\n",
+// 							__strerror()));
 				}
 
 				continue;
@@ -209,8 +209,8 @@ bool BundleBroadcast::receive(MessageArgs* recvArgs, sockaddr_in* psin, int32 ti
 				}
 				catch(MemoryStreamException &)
 				{
-					ERROR_MSG(fmt::format("BundleBroadcast::receive: data is error. size={}, from {}.\n",
-							len, inet_ntoa((struct in_addr&)psin->sin_addr.s_addr)));
+// 					ERROR_MSG(fmt::format("BundleBroadcast::receive: data is error. size={}, from {}.\n",
+// 							len, inet_ntoa((struct in_addr&)psin->sin_addr.s_addr)));
 
 					continue;
 				}

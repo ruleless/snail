@@ -6,7 +6,6 @@
 #include "network/EventDispatcher.h"
 #include "network/NetworkManager.h"
 #include "network/EventPoller.h"
-#include "network/error_reporter.h"
 
 static ObjectPool<TCPPacketReceiver> s_ObjPool("TCPPacketReceiver");
 ObjectPool<TCPPacketReceiver>& TCPPacketReceiver::ObjPool()
@@ -16,8 +15,8 @@ ObjectPool<TCPPacketReceiver>& TCPPacketReceiver::ObjPool()
 
 void TCPPacketReceiver::destroyObjPool()
 {
-	DEBUG_MSG(fmt::format("TCPPacketReceiver::destroyObjPool(): size {}.\n", 
-		s_ObjPool.size()));
+// 	DEBUG_MSG(fmt::format("TCPPacketReceiver::destroyObjPool(): size {}.\n", 
+// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
@@ -67,8 +66,8 @@ bool TCPPacketReceiver::processRecv(bool expectingPacket)
 	
 	EReason ret = this->processPacket(pChannel, pReceiveWindow);
 
-	if(ret != Reason_Success)
-		; // todo
+// 	if(ret != Reason_Success)
+// 		; // todo
 	
 	return true;
 }
@@ -122,12 +121,12 @@ PacketReceiver::ERecvState TCPPacketReceiver::checkSocketErrors(int len, bool ex
 	switch(wsaErr)
 	{
 	case WSAECONNRESET:
-		WARNING_MSG("TCPPacketReceiver::processPendingEvents: "
-					"Throwing REASON_GENERAL_NETWORK - WSAECONNRESET\n");
+// 		WARNING_MSG("TCPPacketReceiver::processPendingEvents: "
+// 					"Throwing REASON_GENERAL_NETWORK - WSAECONNRESET\n");
 		return RecvState_Interrupt;
 	case WSAECONNABORTED:
-		WARNING_MSG("TCPPacketReceiver::processPendingEvents: "
-					"Throwing REASON_GENERAL_NETWORK - WSAECONNABORTED\n");
+// 		WARNING_MSG("TCPPacketReceiver::processPendingEvents: "
+// 					"Throwing REASON_GENERAL_NETWORK - WSAECONNABORTED\n");
 		return RecvState_Interrupt;
 	default:
 		break;
@@ -137,13 +136,13 @@ PacketReceiver::ERecvState TCPPacketReceiver::checkSocketErrors(int len, bool ex
 #endif // unix
 
 #ifdef _WIN32
-	WARNING_MSG(fmt::format("TCPPacketReceiver::processPendingEvents: "
-				"Throwing REASON_GENERAL_NETWORK - {}\n",
-				wsaErr));
+// 	WARNING_MSG(fmt::format("TCPPacketReceiver::processPendingEvents: "
+// 				"Throwing REASON_GENERAL_NETWORK - {}\n",
+// 				wsaErr));
 #else
-	WARNING_MSG(fmt::format("TCPPacketReceiver::processPendingEvents: "
-				"Throwing REASON_GENERAL_NETWORK - {}\n",
-			kbe_strerror()));
+// 	WARNING_MSG(fmt::format("TCPPacketReceiver::processPendingEvents: "
+// 				"Throwing REASON_GENERAL_NETWORK - {}\n",
+// 			__strerror()));
 #endif
 
 	return RecvState_Continue;

@@ -20,7 +20,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "rsa.h"
 #include "common.h"
-#include "helper/debug_helper.h"
 
 #include <iostream>
 #include <fstream>
@@ -30,7 +29,7 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #include <openssl/pem.h>
 
 //-------------------------------------------------------------------------------------
-KBE_RSA::KBE_RSA(const std::string& pubkeyname, const std::string& prikeyname):
+SNAIL_RSA::SNAIL_RSA(const std::string& pubkeyname, const std::string& prikeyname):
 rsa_public(0),
 rsa_private(0)
 {
@@ -45,14 +44,14 @@ rsa_private(0)
 }
 
 //-------------------------------------------------------------------------------------
-KBE_RSA::KBE_RSA():
+SNAIL_RSA::SNAIL_RSA():
 rsa_public(0),
 rsa_private(0)
 {
 }
 
 //-------------------------------------------------------------------------------------
-KBE_RSA::~KBE_RSA()
+SNAIL_RSA::~SNAIL_RSA()
 {
 	if(rsa_public != NULL)
 	{
@@ -68,7 +67,7 @@ KBE_RSA::~KBE_RSA()
 }
 
 //-------------------------------------------------------------------------------------
-bool KBE_RSA::loadPublic(const std::string& keyname)
+bool SNAIL_RSA::loadPublic(const std::string& keyname)
 {
     FILE *fp = NULL;
 
@@ -99,7 +98,7 @@ bool KBE_RSA::loadPublic(const std::string& keyname)
 }
 
 //-------------------------------------------------------------------------------------
-bool KBE_RSA::loadPrivate(const std::string& keyname)
+bool SNAIL_RSA::loadPrivate(const std::string& keyname)
 {
     FILE *fp = NULL;
 
@@ -130,7 +129,7 @@ bool KBE_RSA::loadPrivate(const std::string& keyname)
 }
 
 //-------------------------------------------------------------------------------------
-bool KBE_RSA::generateKey(const std::string& pubkeyname, 
+bool SNAIL_RSA::generateKey(const std::string& pubkeyname, 
 						  const std::string& prikeyname, int keySize, int e)
 {
 	Assert(rsa_public == NULL && rsa_private == NULL);
@@ -204,7 +203,7 @@ bool KBE_RSA::generateKey(const std::string& pubkeyname,
 }
 
 //-------------------------------------------------------------------------------------
-std::string KBE_RSA::encrypt(const std::string& instr)
+std::string SNAIL_RSA::encrypt(const std::string& instr)
 {
 	std::string encrypted;
 	if(encrypt(instr, encrypted) < 0)
@@ -212,12 +211,12 @@ std::string KBE_RSA::encrypt(const std::string& instr)
 
 	char strencrypted[1024];
 	memset(strencrypted, 0, 1024);
-	strutil::bytes2string((unsigned char *)encrypted.data(), encrypted.size(), (unsigned char *)strencrypted, 1024);
+	bytes2string((unsigned char *)encrypted.data(), encrypted.size(), (unsigned char *)strencrypted, 1024);
 	return strencrypted;
 }
 
 //-------------------------------------------------------------------------------------
-int KBE_RSA::encrypt(const std::string& instr, std::string& outCertifdata)
+int SNAIL_RSA::encrypt(const std::string& instr, std::string& outCertifdata)
 {
 	Assert(rsa_public != NULL);
 
@@ -244,7 +243,7 @@ int KBE_RSA::encrypt(const std::string& instr, std::string& outCertifdata)
 }
 
 //-------------------------------------------------------------------------------------
-void KBE_RSA::hexCertifData(const std::string& inCertifdata)
+void SNAIL_RSA::hexCertifData(const std::string& inCertifdata)
 {
 	std::string s = "KBE_RSA::encrypt: encrypted string = \n";
 
@@ -259,7 +258,7 @@ void KBE_RSA::hexCertifData(const std::string& inCertifdata)
 }
 
 //-------------------------------------------------------------------------------------
-int KBE_RSA::decrypt(const std::string& inCertifdata, std::string& outstr)
+int SNAIL_RSA::decrypt(const std::string& inCertifdata, std::string& outstr)
 {
 	Assert(rsa_private != NULL);
 
@@ -287,11 +286,11 @@ int KBE_RSA::decrypt(const std::string& inCertifdata, std::string& outstr)
 }
 
 //-------------------------------------------------------------------------------------
-std::string KBE_RSA::decrypt(const std::string& instr)
+std::string SNAIL_RSA::decrypt(const std::string& instr)
 {
 	unsigned char strencrypted[1024];
 	memset(strencrypted, 0, 1024);
-	strutil::string2bytes((unsigned char *)instr.data(), (unsigned char *)&strencrypted[0], 1024);
+	string2bytes((unsigned char *)instr.data(), (unsigned char *)&strencrypted[0], 1024);
 	std::string encrypted;
 	encrypted.assign((char*)strencrypted, 1024);
 

@@ -1,6 +1,5 @@
 #include "Address.h"
 #include "EndPoint.h"
-#include "helper/debug_helper.h"
 
 char Address::s_stringBuf[2][32] = {{0}, {0}};
 
@@ -15,8 +14,8 @@ ObjectPool<Address>& Address::ObjPool()
 
 void Address::destroyObjPool()
 {
-	DEBUG_MSG(fmt::format("Address::destroyObjPool(): size {}.\n",
-		s_ObjPool.size()));
+// 	DEBUG_MSG(fmt::format("Address::destroyObjPool(): size {}.\n",
+// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
@@ -53,7 +52,7 @@ int Address::writeToString(char *str, int length) const
 	uint32	hip = ntohl(ip);
 	uint16	hport = ntohs(port);
 
-	return kbe_snprintf(str, length,
+	return __snprintf(str, length,
 		"%d.%d.%d.%d:%d",
 		(int)(uchar)(hip>>24),
 		(int)(uchar)(hip>>16),
@@ -74,7 +73,7 @@ const char* Address::ipAsString() const
 	uint32 hip = ntohl(ip);
 	char *buf = Address::nextStringBuf();
 
-	kbe_snprintf(buf, 32, "%d.%d.%d.%d",
+	__snprintf(buf, 32, "%d.%d.%d.%d",
 		(int)(uchar)(hip>>24),
 		(int)(uchar)(hip>>16),
 		(int)(uchar)(hip>>8),

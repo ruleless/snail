@@ -18,9 +18,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "fixed_messages.h"
-#include "xml/xml.h"	
-#include "resmgr/resmgr.h"	
-
 
 SINGLETON_INIT(FixedMessages);
 
@@ -54,12 +51,12 @@ bool FixedMessages::loadConfig(std::string fileName)
 	if(!xml->isGood())
 	{
 #if PLATFORM == PLATFORM_WIN32
-		printf("%s", (fmt::format("[ERROR]: FixedMessages::loadConfig: load {} is failed!\n", fileName.c_str())).c_str());
+		// printf("%s", (fmt::format("[ERROR]: FixedMessages::loadConfig: load {} is failed!\n", fileName.c_str())).c_str());
 #endif
 
 		if(DebugHelper::isInit())
 		{
-			ERROR_MSG(fmt::format("FixedMessages::loadConfig: load {} is failed!\n", fileName.c_str()));
+			//ERROR_MSG(fmt::format("FixedMessages::loadConfig: load {} is failed!\n", fileName.c_str()));
 		}
 
 		return false;

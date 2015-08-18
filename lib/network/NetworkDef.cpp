@@ -7,7 +7,6 @@
 #include "network/TCPPacketReceiver.h"
 #include "network/UDPPacketReceiver.h"
 #include "network/Address.h"
-#include "helper/watcher.h"
 
 float gChannelInternalTimeout = 60.f;
 float gChannelExternalTimeout = 60.f;
@@ -39,23 +38,6 @@ uint32						g_intReSendInterval = 10;
 uint32						g_intReSendRetries = 0;
 uint32						g_extReSendInterval = 10;
 uint32						g_extReSendRetries = 3;
-
-bool initializeWatcher()
-{
-	WATCH_OBJECT("network/numPacketsSent", g_numPacketsSent);
-	WATCH_OBJECT("network/numPacketsReceived", g_numPacketsReceived);
-	WATCH_OBJECT("network/numBytesSent", g_numBytesSent);
-	WATCH_OBJECT("network/numBytesReceived", g_numBytesReceived);
-	
-	std::vector<MessageHandlers*>::iterator iter = MessageHandlers::messageHandlers().begin();
-	for(; iter != MessageHandlers::messageHandlers().end(); ++iter)
-	{
-		if(!(*iter)->initializeWatcher())
-			return false;
-	}
-
-	return true;
-}
 
 void destroyObjPool()
 {

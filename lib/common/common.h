@@ -13,30 +13,6 @@
 
 #define PRINT_INTVAL(val) printf("%s:%d\n", #val, val)
 
-#ifndef NAME_PATH
-#define NAME_PATH 255
-#endif
-
-#ifndef NAME_MAX
-#define NAME_MAX 255
-#endif
-
-#ifndef MAX_NAME
-#define MAX_NAME 256
-#endif
-
-#ifndef MAX_IP
-#define MAX_IP 50
-#endif
-
-#ifndef MAX_BUF
-#define MAX_BUF 256
-#endif
-
-#ifndef MAX_PATH
-#define MAX_PATH 260
-#endif
-
 #ifdef _INLINE
 #define INLINE inline
 #else
@@ -45,7 +21,7 @@
 
 #define Assert assert
 
-// å®‰å…¨åˆ é™¤å’Œé‡Šæ”¾
+// °²È«É¾³ıºÍÊÍ·Å
 #define SafeDelete(ptr)      if ((ptr)) {delete (ptr); (ptr) = 0;}
 #define SafeDeleteArray(ptr) if ((ptr)) {delete[] (ptr); (ptr) = 0;}
 #define SafeRelease(ptr)     if ((ptr)) {(ptr)->Release(); (ptr) = 0;}
@@ -53,36 +29,36 @@
 
 #if PLATFORM == PLATFORM_UNIX
 
-/* è¾“å‡ºé”™è¯¯ä¿¡æ¯å¹¶é€€å‡º
- * @param msg: é”™è¯¯ä¿¡æ¯
- * @param bErrno: æ˜¯å¦æ‰“å°errnoé”™è¯¯æ¶ˆæ¯
+/* Êä³ö´íÎóĞÅÏ¢²¢ÍË³ö
+ * @param msg: ´íÎóĞÅÏ¢
+ * @param bErrno: ÊÇ·ñ´òÓ¡errno´íÎóÏûÏ¢
  */
 void errSys(const char *msg, bool bErrno = true);
 
 void errQuit(const char *msg, bool bErrno = true);
 
-/* ç»™æŒ‡å®šåŒºåŸŸåŠ è¯»é”(ä¸é˜»å¡)
+/* ¸øÖ¸¶¨ÇøÓò¼Ó¶ÁËø(²»×èÈû)
  */
 #define regReadRecLock(fd, offset, whence, len) \
 	regRecLock(fd, F_SETLK, F_RDLCK, offset, whence, len)
-/* ç»™æŒ‡å®šåŒºåŸŸåŠ è¯»é”(é˜»å¡)
+/* ¸øÖ¸¶¨ÇøÓò¼Ó¶ÁËø(×èÈû)
  */
 #define regReadWRecLock(fd, offset, whence, len) \
 	regRecLock(fd, F_SETLKW, F_RDLCK, offset, whence, len)
-/* ç»™æŒ‡å®šåŒºåŸŸåŠ å†™é”(ä¸é˜»å¡)
+/* ¸øÖ¸¶¨ÇøÓò¼ÓĞ´Ëø(²»×èÈû)
  */
 #define regWriteRecLock(fd, offset, whence, len) \
 	regRecLock(fd, F_SETLK, F_WRLCK, offset, whence, len)
-/* ç»™æŒ‡å®šåŒºåŸŸåŠ å†™é”(é˜»å¡)
+/* ¸øÖ¸¶¨ÇøÓò¼ÓĞ´Ëø(×èÈû)
  */
 #define regWriteWRecLock(fd, offset, whence, len) \
 	regRecLock(fd, F_SETLKW, offset, whence, len)
 
-/* æ³¨å†Œè®°å½•é”
+/* ×¢²á¼ÇÂ¼Ëø
  */
 int regRecLock(int fd, int cmd, int type, off_t offset, int whence, off_t len);
 
-/* éå†ç›®å½•
+/* ±éÀúÄ¿Â¼
  */
 typedef bool (*FileHandler)(const char *pathname);
 int traverseDir(const char *pathname, FileHandler handler);
@@ -90,21 +66,21 @@ int traverseDir(const char *pathname, FileHandler handler);
 #endif
 
 #if defined (__i386__)
-inline uint64_t getTimeStamp()
+inline uint64 getTimeStamp()
 {
-	uint64_t x;
+	uint64 x;
 	__asm__ volatile("rdtsc":"=A"(x));
 	return x;
 }
 #elif defined (__x86_64__)
-inline uint64_t getTimeStamp()
+inline uint64 getTimeStamp()
 {
 	unsigned hi,lo;
 	__asm__ volatile("rdtsc":"=a"(lo),"=d"(hi));
 	return ((uint64_t)lo)|(((uint64_t)hi)<<32);
 }
 #elif defined (__WIN32__) || defined(_WIN32) || defined(WIN32)
-inline uint64_t getTimeStamp()
+inline uint64 getTimeStamp()
 {
     __asm
     {

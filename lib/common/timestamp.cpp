@@ -20,12 +20,12 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "timestamp.h"
 
-#ifdef KBE_USE_RDTSC
+#ifdef USE_RDTSC
 KBETimingMethod g_timingMethod = RDTSC_TIMING_METHOD;
-#else // KBE_USE_RDTSC
+#else // USE_RDTSC
 const KBETimingMethod DEFAULT_TIMING_METHOD = GET_TIME_TIMING_METHOD;
 KBETimingMethod g_timingMethod = NO_TIMING_METHOD;
-#endif // KBE_USE_RDTSC
+#endif // USE_RDTSC
 
 const char* getTimingMethodName()
 {
@@ -98,9 +98,9 @@ static uint64 calcStampsPerSecond()
 		firstTime = false;
 	}
 
-#ifdef KBE_USE_RDTSC
+#ifdef USE_RDTSC
 	return calcStampsPerSecond_rdtsc();
-#else // KBE_USE_RDTSC
+#else // USE_RDTSC
 	if (g_timingMethod == RDTSC_TIMING_METHOD)
 		return calcStampsPerSecond_rdtsc();
 	else if (g_timingMethod == GET_TIME_OF_DAY_TIMING_METHOD)
@@ -128,16 +128,16 @@ static uint64 calcStampsPerSecond()
 		}
 		else
 		{
-			WARNING_MSG(fmt::format("calcStampsPerSecond: "
-						 "Unknown timing method '%s', using clock_gettime.\n",
-						 timingMethod));
+// 			WARNING_MSG(fmt::format("calcStampsPerSecond: "
+// 						 "Unknown timing method '%s', using clock_gettime.\n",
+// 						 timingMethod));
 
 			g_timingMethod = DEFAULT_TIMING_METHOD;
 		}
 
 		return calcStampsPerSecond();
 	}
-#endif // KBE_USE_RDTSC
+#endif // USE_RDTSC
 }
 
 
@@ -170,7 +170,7 @@ double stampsPerSecondD_gettimeofday()
 
 #include <windows.h>
 
-#ifdef KBE_USE_RDTSC
+#ifdef USE_RDTSC
 static uint64 calcStampsPerSecond()
 {	
 	LARGE_INTEGER	tvBefore,	tvAfter;
@@ -202,16 +202,16 @@ static uint64 calcStampsPerSecond()
 	return (uint64)((stampDelta * uint64(frequency.QuadPart) ) / countDelta);
 }
 
-#else // KBE_USE_RDTSC
+#else // USE_RDTSC
 
 static uint64 calcStampsPerSecond()
 {
 	LARGE_INTEGER rate;
-	KBE_VERIFY(QueryPerformanceFrequency(&rate));
+	QueryPerformanceFrequency(&rate);
 	return rate.QuadPart;
 }
 
-#endif // KBE_USE_RDTSC
+#endif // USE_RDTSC
 
 #endif // unix
 

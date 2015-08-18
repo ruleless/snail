@@ -1,3 +1,4 @@
+#include "common/common.h"
 #include "base64.h"
 #include <iostream>
 

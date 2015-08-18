@@ -22,8 +22,8 @@ EventDispatcher::~EventDispatcher()
 	
 	if (!mpTimers->empty())
 	{
-		INFO_MSG(fmt::format("EventDispatcher()::~EventDispatcher: Num timers = {}\n",
-							 mpTimers->size()));
+// 		INFO_MSG(fmt::format("EventDispatcher()::~EventDispatcher: Num timers = {}\n",
+// 							 mpTimers->size()));
 	}
 
 	mpTimers->clear(false);
@@ -67,7 +67,7 @@ double EventDispatcher::calculateWait() const
 
 	if (!mpTimers->empty())
 	{
-		maxWait = std::min(maxWait, mpTimers->nextExp(timestamp()) / stampsPerSecondD());
+		maxWait = min(maxWait, mpTimers->nextExp(timestamp()) / stampsPerSecondD());
 	}
 
 	return maxWait;

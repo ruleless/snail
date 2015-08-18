@@ -8,6 +8,8 @@
 const uint32 BROADCAST = 0xFFFFFFFF;
 const uint32 LOCALHOST = 0x0100007F;
 
+extern uint32 gListenQ;
+
 // 消息的ID
 typedef uint16	MessageID;
 
@@ -170,9 +172,6 @@ const char * reasonToString(EReason reason)
 				if ((reason == Reason_ResourceUnavailable || reason == Reason_GeneralNetwork)				\
 																					&& retries <= 60)		\
 				{																							\
-					WARNING_MSG(fmt::format("{}: "															\
-						"Transmit queue full, waiting for space... ({})\n",									\
-						__FUNCTION__, retries));															\
 																											\
 					ep.waitSend();																			\
 					continue;																				\
@@ -180,8 +179,6 @@ const char * reasonToString(EReason reason)
 																											\
 				if(retries > 60 && reason != Reason_Success)												\
 				{																							\
-					ERROR_MSG(fmt::format("Bundle::basicSendWithRetries: packet discarded(reason={}).\n",	\
-															(reasonToString(reason))));						\
 					break;																					\
 				}																							\
 			}																								\
@@ -212,58 +209,9 @@ const char * reasonToString(EReason reason)
 	pPacket->length() - pPacket->sentSize, PORT, ADDR), BUNDLE);											\
 }																											\
 
+class Packet;
 extern Packet* mallocPacket(bool isTCPPacket);
 extern void reclaimPacket(bool isTCPPacket, Packet *pPacket);
-
-// 配合服务端配置选项trace_packet使用，用来跟踪一条即将输出的消息包
-#define TRACE_MESSAGE_PACKET(isrecv, pPacket, pCurrMsgHandler, length, addr)								\
-	if(g_trace_packet > 0)																			\
-	{																										\
-		if(g_trace_packet_use_logfile)																\
-			DebugHelper::getSingleton().changeLogger("packetlogs");											\
-																											\
-		bool isprint = true;																				\
-		if(pCurrMsgHandler)																					\
-		{																									\
-			std::vector<std::string>::iterator iter = std::find(g_trace_packet_disables.begin(),	\
-														g_trace_packet_disables.end(),				\
-															pCurrMsgHandler->name);							\
-																											\
-			if(iter != g_trace_packet_disables.end())												\
-			{																								\
-				isprint = false;																			\
-			}																								\
-			else																							\
-			{																								\
-				DEBUG_MSG(fmt::format("{} {}:msgID:{}, currMsgLength:{}, addr:{}\n",						\
-						((isrecv == true) ? "====>" : "<===="),												\
-						pCurrMsgHandler->name.c_str(),														\
-						pCurrMsgHandler->msgID,																\
-						length,																				\
-						addr));																				\
-			}																								\
-		}																									\
-																											\
-		if(isprint)																							\
-		{																									\
-			switch(g_trace_packet)																	\
-			{																								\
-			case 1:																							\
-				pPacket->hexlike();																			\
-				break;																						\
-			case 2:																							\
-				pPacket->textlike();																		\
-				break;																						\
-			default:																						\
-				pPacket->print_storage();																	\
-				break;																						\
-			};																								\
-		}																									\
-																											\
-		if(g_trace_packet_use_logfile)																\
-			DebugHelper::getSingleton().changeLogger(COMPONENT_NAME_EX(g_componentType));					\
-	}																										\
-
 
 extern void destroyObjPool();
 
@@ -286,7 +234,6 @@ extern uint32						gExtSendWindowMessagesOverflow;
 extern uint32						g_intSendWindowBytesOverflow;
 extern uint32						g_extSendWindowBytesOverflow;
 
-bool initializeWatcher();
 void finalise(void);
 
 #endif // KBE_NETWORK_COMMON_H

@@ -23,7 +23,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common/common.h"
 #include "common/Singleton.h"
-#include "helper/debug_helper.h"
 #include "network/NetworkDef.h"
 
 /*
@@ -52,7 +51,7 @@ public:
 	bool isFixed(MessageID msgid);
 
 public:
-	typedef KBEUnordered_map<std::string, MSGInfo> MSGINFO_MAP;
+	typedef UnorderedMap<std::string, MSGInfo> MSGINFO_MAP;
 
 private:
 	MSGINFO_MAP _infomap;

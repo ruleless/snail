@@ -1,5 +1,4 @@
 #include "NetworkStats.h"
-#include "helper/watcher.h"
 #include "network/MessageHandler.h"
 
 SINGLETON_INIT(NetworkStats);

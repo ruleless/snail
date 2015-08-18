@@ -1,7 +1,4 @@
 #include "SelectPoller.h"
-#include "helper/profile.h"
-
-static ProfileVal g_idleProfile("Idle");
 
 SelectPoller::SelectPoller()
 		:EventPoller()
@@ -27,13 +24,9 @@ int SelectPoller::processPendingEvents(double maxWait)
 	nextTimeout.tv_sec = (int)maxWait;
 	nextTimeout.tv_usec = (int)((maxWait - (double)nextTimeout.tv_sec) * 1000000.0);
 
-#if ENABLE_WATCHERS
-	g_idleProfile.start();
-#else
 	uint64 startTime = timestamp();
-#endif
 
-	KBEConcurrency::onStartMainThreadIdling();
+	onStartMainThreadIdling();
 
 	int countReady = 0;
 
@@ -48,14 +41,9 @@ int SelectPoller::processPendingEvents(double maxWait)
 		countReady = select(mMaxFd+1, &readFDs,	mFdWriteCount ? &writeFDs : NULL, NULL, &nextTimeout);
 	}
 
-	KBEConcurrency::onEndMainThreadIdling();
+	onEndMainThreadIdling();
 
-#if ENABLE_WATCHERS
-	g_idleProfile.stop();
-	mSpareTime += g_idleProfile.lastTime_;
-#else
 	mSpareTime += timestamp() - startTime;
-#endif
 	
 	if (countReady > 0)
 	{
@@ -64,8 +52,8 @@ int SelectPoller::processPendingEvents(double maxWait)
 	else if (countReady == -1)
 	{
 		{
-			WARNING_MSG(fmt::format("EventDispatcher::processContinuously: "
-									"error in select(): {}\n", kbe_strerror()));
+// 			WARNING_MSG(fmt::format("EventDispatcher::processContinuously: "
+// 									"error in select(): {}\n", __strerror()));
 		}
 	}
 
@@ -111,18 +99,18 @@ bool SelectPoller::doRegisterForRead(int fd)
 #ifndef _WIN32
 	if ((fd < 0) || (FD_SETSIZE <= fd))
 	{
-		ERROR_MSG(fmt::format("SelectPoller::doRegisterForRead: "
-			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
-			fd, FD_SETSIZE));
+// 		ERROR_MSG(fmt::format("SelectPoller::doRegisterForRead: "
+// 			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
+// 			fd, FD_SETSIZE));
 
 		return false;
 	}
 #else
 	if (mFdReadSet.fd_count >= FD_SETSIZE)
 	{
-		ERROR_MSG(fmt::format("SelectPoller::doRegisterForRead: "
-			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
-			fd, FD_SETSIZE));
+// 		ERROR_MSG(fmt::format("SelectPoller::doRegisterForRead: "
+// 			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
+// 			fd, FD_SETSIZE));
 
 		return false;
 	}
@@ -142,18 +130,18 @@ bool SelectPoller::doRegisterForWrite(int fd)
 #ifndef _WIN32
 	if ((fd < 0) || (FD_SETSIZE <= fd))
 	{
-		ERROR_MSG(fmt::format("SelectPoller::doRegisterForWrite: "
-			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
-			fd, FD_SETSIZE));
+// 		ERROR_MSG(fmt::format("SelectPoller::doRegisterForWrite: "
+// 			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
+// 			fd, FD_SETSIZE));
 
 		return false;
 	}
 #else
 	if (mFdWriteSet.fd_count >= FD_SETSIZE)
 	{
-		ERROR_MSG(fmt::format("SelectPoller::doRegisterForWrite: "
-			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
-			fd, FD_SETSIZE));
+// 		ERROR_MSG(fmt::format("SelectPoller::doRegisterForWrite: "
+// 			"Tried to register invalid fd {}. FD_SETSIZE ({})\n",
+// 			fd, FD_SETSIZE));
 
 		return false;
 	}

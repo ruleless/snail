@@ -1,27 +1,21 @@
-#ifndef KBE_TIMER_H
-#define KBE_TIMER_H
+#ifndef __TIMER_H__
+#define __TIMER_H__
 
 #include "common/common.h"
 #include "common/timestamp.h"
-#include "helper/debug_helper.h"
+
 
 class TimersBase;
 class TimeBase;
 
+
+// 创建定时器成功时，返回此对象，可用于取消定时器
 class TimerHandle
 {
 public:
 	explicit TimerHandle(TimeBase *pTime = NULL) : mpTime( pTime ) {}
 
-	void cancel()
-	{
-		if (mpTime != NULL)
-		{
-			TimeBase* pTime = mpTime;
-			mpTime = NULL;
-			pTime->cancel();
-		}
-	}
+	void cancel();
 
 	void clearWithoutCancel()
 	{
@@ -43,11 +37,13 @@ private:
 	TimeBase *mpTime;
 };
 
-INLINE bool operator==( TimerHandle h1, TimerHandle h2 )
+inline bool operator==( TimerHandle h1, TimerHandle h2 )
 {
 	return h1.mpTime == h2.mpTime;
 }
 
+
+// 用到定时器的对象需继承此类
 class TimerHandler
 {
 public:
@@ -72,7 +68,7 @@ private:
 		this->decTimerRegisterCount();
 		this->onRelease(handle, pUser);
 	}
-
+private:
 	int mNumTimesRegistered;
 };
 
@@ -85,24 +81,26 @@ public:
 
 	void cancel();
 
-	void* getUserData() const	{ return pUserData_; }
+	void* getUserData() const { return mpUserData; }
 
-	bool isCancelled() const{ return state_ == TIME_CANCELLED; }
-	bool isExecuting() const{ return state_ == TIME_EXECUTING; }
+	bool isCancelled() const { return mState == Time_Cancelled; }
+	bool isExecuting() const { return mState == Time_Executing; }
 protected:
-	enum TimeState
+	enum ETimeState
 	{
-		TIME_PENDING,
-		TIME_EXECUTING,
-		TIME_CANCELLED
+		Time_Pending,
+		Time_Executing,
+		Time_Cancelled,
 	};
 
-	TimersBase& owner_;
-	TimerHandler * pHandler_;
-	void *pUserData_;
-	TimeState state_;
+	TimersBase& mOwner;
+	TimerHandler *mpHandler;
+	void *mpUserData;
+	ETimeState mState;
 };
 
+
+// 定时器管理类
 class TimersBase
 {
 public:
@@ -117,45 +115,39 @@ public:
 	TimersT();
 	virtual ~TimersT();
 	
-	INLINE uint32 size() const	{ return timeQueue_.size(); }
-	INLINE bool empty() const	{ return timeQueue_.empty(); }
-	
-	int	process(TimeStamp now);
-	bool legal( TimerHandle handle ) const;
-	TIME_STAMP nextExp( TimeStamp now ) const;
-	void clear( bool shouldCallCancel = true );
-	
-	bool getTimerInfo( TimerHandle handle, 
-					TimeStamp& time, 
-					TimeStamp&	interval,
-					void *&	pUser ) const;
-	
-	TimerHandle	add(TimeStamp startTime, TimeStamp interval,
-						TimerHandler* pHandler, void * pUser);
-private:
-	typedef std::vector<TimeBase *> Container;
-	Container container_;
+	inline uint32 size() const { return mTimeQueue.size(); }
+	inline bool empty() const { return mTimeQueue.empty(); }
 
+	void clear(bool shouldCallCancel = true);
+	
+	TimerHandle	add(TimeStamp startTime, TimeStamp interval, TimerHandler* pHandler, void* pUser);
+	int	process(TimeStamp now);
+
+	bool legal(TimerHandle handle) const;
+	TIME_STAMP nextExp(TimeStamp now) const;
+	bool getTimerInfo(TimerHandle handle, TimeStamp& time, TimeStamp&	interval, void *&pUser) const;
+private:
+	TimersT(const TimersT &);
+	TimersT & operator=(const TimersT &);
+
+	virtual void onCancel();
 	void purgeCancelledTimes();
-	void onCancel();
 
 	class Time : public TimeBase
 	{
 	public:
-		Time( TimersBase & owner, TimeStamp startTime, TimeStamp interval,
-			TimerHandler * pHandler, void * pUser );
+		Time(TimersBase &owner, TimeStamp startTime, TimeStamp interval, TimerHandler *pHandler, void *pUser);
 
-		TIME_STAMP time() const			{ return time_; }
-		TIME_STAMP interval() const		{ return interval_; }
+		TIME_STAMP time() const { return mTime; }
+		TIME_STAMP interval() const { return mInterval; }
 
 		void triggerTimer();
-
 	private:
-		TimeStamp			time_;
-		TimeStamp			interval_;
+		Time(const Time &);
+		Time& operator=(const Time &);
 
-		Time( const Time & );
-		Time & operator=( const Time & );
+		TimeStamp mTime;
+		TimeStamp mInterval;
 	};
 
 	class Comparator
@@ -175,54 +167,48 @@ private:
 		typedef typename Container::value_type value_type;
 		typedef typename Container::size_type size_type;
 
-		bool empty() const				{ return container_.empty(); }
-		size_type size() const			{ return container_.size(); }
+		bool empty() const { return mContainer.empty(); }
+		size_type size() const { return mContainer.size(); }
 
-		const value_type & top() const	{ return container_.front(); }
+		const value_type & top() const { return mContainer.front(); }
 
 		void push( const value_type & x )
 		{
-			container_.push_back( x );
-			std::push_heap( container_.begin(), container_.end(),
-					Comparator() );
+			mContainer.push_back( x );
+			std::push_heap(mContainer.begin(), mContainer.end(), Comparator());
 		}
 
 		void pop()
 		{
-			std::pop_heap( container_.begin(), container_.end(), Comparator() );
-			container_.pop_back();
+			std::pop_heap(mContainer.begin(), mContainer.end(), Comparator());
+			mContainer.pop_back();
 		}
 
-		Time * unsafePopBack()
+		Time* unsafePopBack()
 		{
-			Time * pTime = container_.back();
-			container_.pop_back();
+			Time *pTime = mContainer.back();
+			mContainer.pop_back();
 			return pTime;
 		}
 
-		Container & container()		{ return container_; }
+		Container & container() { return mContainer; }
 
 		void make_heap()
 		{
-			std::make_heap( container_.begin(), container_.end(),
-					Comparator() );
+			std::make_heap(mContainer.begin(), mContainer.end(), Comparator());
 		}
-
 	private:
-		Container container_;
+		Container mContainer;
 	};
 	
-	PriorityQueue	timeQueue_;
-	Time * 			pProcessingNode_;
-	TimeStamp 		lastProcessTime_;
-	int				numCancelled_;
-
-	TimersT( const TimersT & );
-	TimersT & operator=( const TimersT & );
+	PriorityQueue mTimeQueue;
+	Time *mpProcessingNode;
+	TimeStamp mLastProcessTime;
+	int mNumCancelled;
 };
 
 typedef TimersT<uint32> Timers;
 typedef TimersT<uint64> Timers64;
 
 #include "Timer.inl"
-#endif
+#endif // __TIMER_H__

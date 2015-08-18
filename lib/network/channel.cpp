@@ -6,7 +6,7 @@
 #include "network/PacketReader.h"
 #include "network/NetworkManager.h"
 #include "network/TCPPacketReceiver.h"
-#include "network/tcp_packet_sender.h"
+#include "network/TCPPacketSender.h"
 #include "network/UDPPacketReceiver.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
@@ -22,8 +22,8 @@ ObjectPool<Channel>& Channel::ObjPool()
 
 void Channel::destroyObjPool()
 {
-	DEBUG_MSG(fmt::format("Channel::destroyObjPool(): size {}.\n", 
-		s_ObjPool.size()));
+// 	DEBUG_MSG(fmt::format("Channel::destroyObjPool(): size {}.\n", 
+// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
@@ -73,7 +73,7 @@ Channel::Channel(NetworkManager & networkInterface,
 				 ,proxyID_(0)
 				 ,mStrExtra()
 				 ,mChannelType(Chanel_Normal)
-				 ,mComponentID(UNKNOWN_COMPONENT_TYPE)
+				 ,mComponentID(-1)
 				 ,mpMsgHandlers(NULL)
 				 ,mFlags(0)
 {
@@ -104,7 +104,7 @@ Channel::Channel()
 ,proxyID_(0)
 ,mStrExtra()
 ,mChannelType(Chanel_Normal)
-,mComponentID(UNKNOWN_COMPONENT_TYPE)
+,mComponentID(-1)
 ,mpMsgHandlers(NULL)
 ,mFlags(0)
 {
@@ -124,7 +124,7 @@ const char* Channel::c_str() const
 	if(mpEndPoint && !mpEndPoint->addr().isNone())
 		mpEndPoint->addr().writeToString(tdodgyString, MAX_BUF);
 
-	kbe_snprintf(dodgyString, MAX_BUF, "%s/%d/%d/%d", tdodgyString, mID, this->isCondemn(), this->isDestroyed());
+	__snprintf(dodgyString, MAX_BUF, "%s/%d/%d/%d", tdodgyString, mID, this->isCondemn(), this->isDestroyed());
 
 	return dodgyString;
 }
@@ -211,7 +211,7 @@ void Channel::destroy()
 {
 	if(isDestroyed())
 	{
-		CRITICAL_MSG("is channel has Destroyed!\n");
+		// CRITICAL_MSG("is channel has Destroyed!\n");
 		return;
 	}
 
@@ -237,9 +237,9 @@ void Channel::clearState(bool warnOnDiscard)
 
 		if (hasDiscard > 0 && warnOnDiscard)
 		{
-			WARNING_MSG(fmt::format("Channel::clearState( {} ): "
-				"Discarding {} buffered packet(s)\n",
-				this->c_str(), hasDiscard));
+// 			WARNING_MSG(fmt::format("Channel::clearState( {} ): "
+// 				"Discarding {} buffered packet(s)\n",
+// 				this->c_str(), hasDiscard));
 		}
 
 		mBufferedReceives.clear();
@@ -288,7 +288,7 @@ void Channel::startInactivityDetection( float period, float checkPeriod )
 	// 如果周期为负数则不检查
 	if(period > 0.001f)
 	{
-		checkPeriod = std::max(1.f, checkPeriod);
+		checkPeriod = max(1.f, checkPeriod);
 		mInactivityExceptionPeriod = uint64(period * stampsPerSecond() ) - uint64( 0.05f * stampsPerSecond());
 		mLastReceivedTime = timestamp();
 
@@ -356,7 +356,7 @@ void Channel::send(Bundle *pBundle)
 {
 	if (isDestroyed())
 	{
-		ERROR_MSG(fmt::format("Channel::send({}): channel has destroyed.\n", this->c_str()));
+		/*ERROR_MSG(fmt::format("Channel::send({}): channel has destroyed.\n", this->c_str()));*/
 		
 		this->clearBundle();
 
@@ -404,13 +404,13 @@ void Channel::send(Bundle *pBundle)
 	{
 		if(this->isExternal())
 		{
-			WARNING_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}).\n", 
-				(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
+// 			WARNING_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}).\n", 
+// 				(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
 
 			if(gExtSendWindowMessagesOverflow > 0 && bundleSize > gExtSendWindowMessagesOverflow)
 			{
-				ERROR_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->send.\n", 
-					(void*)this, this->c_str(), bundleSize, gExtSendWindowMessagesOverflow));
+// 				ERROR_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->send.\n", 
+// 					(void*)this, this->c_str(), bundleSize, gExtSendWindowMessagesOverflow));
 
 				this->condemn();
 			}
@@ -419,15 +419,15 @@ void Channel::send(Bundle *pBundle)
 		{
 			if(gIntSendWindowMessagesOverflow > 0 && bundleSize > gIntSendWindowMessagesOverflow)
 			{
-				ERROR_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
-					(void*)this, this->c_str(), bundleSize, gIntSendWindowMessagesOverflow));
+// 				ERROR_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
+// 					(void*)this, this->c_str(), bundleSize, gIntSendWindowMessagesOverflow));
 
 				this->condemn();
 			}
 			else
 			{
-				WARNING_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
-					(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
+// 				WARNING_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
+// 					(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
 			}
 		}
 	}
@@ -470,8 +470,8 @@ void Channel::onPacketSent(int bytes, bool sentCompleted)
 	{
 		if(g_extSendWindowBytesOverflow > 0 && mLastTickBytesSent >= g_extSendWindowBytesOverflow)
 		{
-			ERROR_MSG(fmt::format("Channel::onPacketSent[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
-				(void*)this, this->c_str(), mLastTickBytesSent, g_extSendWindowBytesOverflow));
+// 			ERROR_MSG(fmt::format("Channel::onPacketSent[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
+// 				(void*)this, this->c_str(), mLastTickBytesSent, g_extSendWindowBytesOverflow));
 
 			this->condemn();
 		}
@@ -480,8 +480,8 @@ void Channel::onPacketSent(int bytes, bool sentCompleted)
 	{
 		if(g_intSendWindowBytesOverflow > 0 && mLastTickBytesSent >= g_intSendWindowBytesOverflow)
 		{
-			WARNING_MSG(fmt::format("Channel::onPacketSent[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
-				(void*)this, this->c_str(), mLastTickBytesSent, g_intSendWindowBytesOverflow));
+// 			WARNING_MSG(fmt::format("Channel::onPacketSent[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
+// 				(void*)this, this->c_str(), mLastTickBytesSent, g_intSendWindowBytesOverflow));
 		}
 	}
 }
@@ -500,8 +500,8 @@ void Channel::onPacketReceived(int bytes)
 	{
 		if(g_extReceiveWindowBytesOverflow > 0 && mLastTickBytesReceived >= g_extReceiveWindowBytesOverflow)
 		{
-			ERROR_MSG(fmt::format("Channel::onPacketReceived[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
-				(void*)this, this->c_str(), mLastTickBytesReceived, g_extReceiveWindowBytesOverflow));
+// 			ERROR_MSG(fmt::format("Channel::onPacketReceived[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
+// 				(void*)this, this->c_str(), mLastTickBytesReceived, g_extReceiveWindowBytesOverflow));
 
 			this->condemn();
 		}
@@ -510,8 +510,8 @@ void Channel::onPacketReceived(int bytes)
 	{
 		if(g_intReceiveWindowBytesOverflow > 0 && mLastTickBytesReceived >= g_intReceiveWindowBytesOverflow)
 		{
-			WARNING_MSG(fmt::format("Channel::onPacketReceived[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
-				(void*)this, this->c_str(), mLastTickBytesReceived, g_intReceiveWindowBytesOverflow));
+// 			WARNING_MSG(fmt::format("Channel::onPacketReceived[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
+// 				(void*)this, this->c_str(), mLastTickBytesReceived, g_intReceiveWindowBytesOverflow));
 		}
 	}
 }
@@ -527,23 +527,23 @@ void Channel::addReceiveWindow(Packet* pPacket)
 		{
 			if(g_extReceiveWindowMessagesOverflow > 0 && size > g_extReceiveWindowMessagesOverflow)
 			{
-				ERROR_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive->messages->external.\n", 
-					(void*)this, this->c_str(), size, g_extReceiveWindowMessagesOverflow));
+// 				ERROR_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive->messages->external.\n", 
+// 					(void*)this, this->c_str(), size, g_extReceiveWindowMessagesOverflow));
 
 				this->condemn();
 			}
 			else
 			{
-				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}).\n", 
-					(void*)this, this->c_str(), size, g_receiveWindowMessagesOverflowCritical));
+// 				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}).\n", 
+// 					(void*)this, this->c_str(), size, g_receiveWindowMessagesOverflowCritical));
 			}
 		}
 		else
 		{
 			if(g_intReceiveWindowMessagesOverflow > 0 && size > g_intReceiveWindowMessagesOverflow)
 			{
-				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: internal channel({}), receive window has overflowed({} > {}).\n", 
-					(void*)this, this->c_str(), size, g_intReceiveWindowMessagesOverflow));
+// 				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: internal channel({}), receive window has overflowed({} > {}).\n", 
+// 					(void*)this, this->c_str(), size, g_intReceiveWindowMessagesOverflow));
 			}
 		}
 	}
@@ -561,16 +561,16 @@ void Channel::processPackets(MessageHandlers* pMsgHandlers)
 
 	if (this->isDestroyed())
 	{
-		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is destroyed.\n", 
-			this->c_str(), (void*)this));
+// 		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is destroyed.\n", 
+// 			this->c_str(), (void*)this));
 
 		return;
 	}
 
 	if(this->isCondemn())
 	{
-		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is condemn.\n", 
-			this->c_str(), (void*)this));
+// 		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is condemn.\n", 
+// 			this->c_str(), (void*)this));
 
 		return;
 	}
@@ -593,12 +593,12 @@ void Channel::processPackets(MessageHandlers* pMsgHandlers)
 	catch(MemoryStreamException &)
 	{
 		MessageHandler* pMsgHandler = pMsgHandlers->find(mpPacketReader->currMsgID());
-		WARNING_MSG(fmt::format("Channel::processPackets({}): packet invalid. currMsg=(name={}, id={}, len={}), currMsgLen={}\n",
-			this->c_str()
-			, (pMsgHandler == NULL ? "unknown" : pMsgHandler->name) 
-			, mpPacketReader->currMsgID() 
-			, (pMsgHandler == NULL ? -1 : pMsgHandler->msgLen) 
-			, mpPacketReader->currMsgLen()));
+// 		WARNING_MSG(fmt::format("Channel::processPackets({}): packet invalid. currMsg=(name={}, id={}, len={}), currMsgLen={}\n",
+// 			this->c_str()
+// 			, (pMsgHandler == NULL ? "unknown" : pMsgHandler->name) 
+// 			, mpPacketReader->currMsgID() 
+// 			, (pMsgHandler == NULL ? -1 : pMsgHandler->msgLen) 
+// 			, mpPacketReader->currMsgLen()));
 
 		mpPacketReader->currMsgID(0);
 		mpPacketReader->currMsgLen(0);
@@ -646,12 +646,12 @@ void Channel::handshake()
 				}
 
 				mpFilter = new WebSocketPacketFilter(this);
-				DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) successfully!\n", this->c_str()));
+				// DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) successfully!\n", this->c_str()));
 				return;
 			}
 			else
 			{
-				DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) error!\n", this->c_str()));
+				// DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) error!\n", this->c_str()));
 			}
 		}
 

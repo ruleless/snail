@@ -35,7 +35,7 @@ public:
 		uint32 recv_count;
 	};
 
-	typedef KBEUnordered_map<std::string, Stats> STATS;
+	typedef UnorderedMap<std::string, Stats> STATS;
 
 	NetworkStats();
 	~NetworkStats();

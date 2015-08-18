@@ -3,7 +3,6 @@
 
 #include "common/memorystream.h"
 #include "common/smartpointer.h"
-#include "helper/debug_helper.h"
 #include "network/NetworkDef.h"
 
 class KBE_MD5;
@@ -106,16 +105,11 @@ public:
 	MessageHandler* find(MessageID msgID);
 	
 	MessageID lastMsgID() {return msgID_ - 1;}
-
-	bool initializeWatcher();
 	
 	static void finalise(void);
 	static std::vector<MessageHandlers*>& messageHandlers();
 
 	const MessageHandlerMap& msgHandlers(){ return msgHandlers_; }
-
-	static std::string getDigestStr();
-
 private:
 	MessageHandlerMap msgHandlers_;
 	MessageID msgID_;

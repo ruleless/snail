@@ -64,7 +64,7 @@ bool WebSocketProtocol::isWebSocketProtocol(MemoryStream* s)
 	}
 
 	std::vector<std::string> header_and_data;
-	header_and_data = strutil::kbe_splits(data, "\r\n\r\n");
+	header_and_data = __splits(data, "\r\n\r\n");
 	
 	if(header_and_data.size() != 2)
 	{
@@ -90,7 +90,7 @@ bool WebSocketProtocol::handshake(Channel* pChannel, MemoryStream* s)
 	(*s) >> data;
 
 	std::vector<std::string> header_and_data;
-	header_and_data = strutil::kbe_splits(data, "\r\n\r\n");
+	header_and_data = __splits(data, "\r\n\r\n");
 	
 	if(header_and_data.size() != 2)
 	{
@@ -99,15 +99,15 @@ bool WebSocketProtocol::handshake(Channel* pChannel, MemoryStream* s)
 		return false;
 	}
 
-	KBEUnordered_map<std::string, std::string> headers;
+	UnorderedMap<std::string, std::string> headers;
 	std::vector<std::string> values;
 	
-	values = strutil::kbe_splits(header_and_data[0], "\r\n");
+	values = __splits(header_and_data[0], "\r\n");
 	std::vector<std::string>::iterator iter = values.begin();
 
 	for(; iter != values.end(); ++iter)
 	{
-		header_and_data = strutil::kbe_splits((*iter), ": ");
+		header_and_data = __splits((*iter), ": ");
 
 		if(header_and_data.size() == 2)
 			headers[header_and_data[0]] = header_and_data[1];
@@ -115,7 +115,7 @@ bool WebSocketProtocol::handshake(Channel* pChannel, MemoryStream* s)
 
 	std::string szKey, szOrigin, szHost;
 
-	KBEUnordered_map<std::string, std::string>::iterator findIter = headers.find("Sec-WebSocket-Origin");
+	UnorderedMap<std::string, std::string>::iterator findIter = headers.find("Sec-WebSocket-Origin");
 	if(findIter == headers.end())
 	{
 		findIter = headers.find("Origin");

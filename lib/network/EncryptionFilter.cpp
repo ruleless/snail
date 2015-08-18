@@ -1,6 +1,4 @@
 #include "EncryptionFilter.h"
-#include "helper/profile.h"
-#include "helper/debug_helper.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
 #include "network/Channel.h"
@@ -8,6 +6,7 @@
 #include "network/PacketReceiver.h"
 #include "network/PacketSender.h"
 
+#ifdef USE_OPENSSL
 BlowfishFilter::BlowfishFilter(const Key & key):
 KBEBlowfish(key),
 pPacket_(NULL),
@@ -43,9 +42,9 @@ EReason BlowfishFilter::send(Channel * pChannel, PacketSender& sender, Packet * 
 		
 		if (!isGood_)
 		{
-			WARNING_MSG(fmt::format("BlowfishFilter::send: "
-				"Dropping packet to {} due to invalid filter\n",
-				pChannel->addr().c_str()));
+// 			WARNING_MSG(fmt::format("BlowfishFilter::send: "
+// 				"Dropping packet to {} due to invalid filter\n",
+// 				pChannel->addr().c_str()));
 
 			return Reason_GeneralNetwork;
 		}
@@ -78,13 +77,13 @@ EReason BlowfishFilter::recv(Channel * pChannel, PacketReceiver & receiver, Pack
 {
 	while(pPacket || pPacket_)
 	{
-		AUTO_SCOPED_PROFILE("encryptRecv")
+		// AUTO_SCOPED_PROFILE("encryptRecv")
 
 		if (!isGood_)
 		{
-			WARNING_MSG(fmt::format("BlowfishFilter::recv: "
-				"Dropping packet to {} due to invalid filter\n",
-				pChannel->addr().c_str()));
+// 			WARNING_MSG(fmt::format("BlowfishFilter::recv: "
+// 				"Dropping packet to {} due to invalid filter\n",
+// 				pChannel->addr().c_str()));
 
 			return Reason_GeneralNetwork;
 		}
@@ -253,3 +252,4 @@ void BlowfishFilter::decrypt(Packet * pInPacket, Packet * pOutPacket)
 		pInPacket->rpos(0);
 	}
 }
+#endif

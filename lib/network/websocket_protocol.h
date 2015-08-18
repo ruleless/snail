@@ -22,7 +22,6 @@ along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
 #define KBE_WEBSOCKET_PROTOCOL_H
 
 #include "common/common.h"
-#include "helper/debug_helper.h"
 
 class MemoryStream;
 

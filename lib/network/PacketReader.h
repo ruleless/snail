@@ -2,7 +2,6 @@
 #define __PACKETREADER_H__
 
 #include "common/memorystream.h"
-#include "helper/debug_helper.h"
 #include "network/NetworkDef.h"
 
 class Channel;

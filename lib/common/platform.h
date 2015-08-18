@@ -20,6 +20,7 @@
 #include <list>
 #include <set>
 #include <deque>
+#include <queue>
 #include <limits>
 #include <algorithm>
 #include <utility>
@@ -45,7 +46,9 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h> 
+#if _MSC_VER >= 1500
 #include <unordered_map>
+#endif
 #include <functional>
 #include <memory>
 #define _SCL_SECURE_NO_WARNINGS
@@ -91,6 +94,33 @@
 #define SIGUSR1 10
 #define SIGPIPE 13
 #define SIGSYS	32
+#endif
+
+
+//////////////////////////////////////////////////////////////////////////
+// 常量定义
+#ifndef NAME_PATH
+#define NAME_PATH 255
+#endif
+
+#ifndef NAME_MAX
+#define NAME_MAX 255
+#endif
+
+#ifndef MAX_NAME
+#define MAX_NAME 256
+#endif
+
+#ifndef MAX_IP
+#define MAX_IP 50
+#endif
+
+#ifndef MAX_BUF
+#define MAX_BUF 256
+#endif
+
+#ifndef MAX_PATH
+#define MAX_PATH 260
 #endif
 
 
@@ -275,8 +305,11 @@ typedef uint32					uintptr;
 #endif
 #endif
 
-#define KBEShared_ptr			std::tr1::shared_ptr
-#define KBEUnordered_map		std::tr1::unordered_map
+#if _MSC_VER >= 1500
+#define UnorderedMap			std::tr1::unordered_map
+#else
+#define UnorderedMap			std::map
+#endif
 
 typedef uint64					COMPONENT_ID;
 typedef int32					COMPONENT_ORDER;	// 组件的启动顺序
@@ -341,7 +374,7 @@ typedef int					SOCKET;
 
 //////////////////////////////////////////////////////////////////////////
 // 获得系统产生的最后一次错误描述
-inline char* kbe_strerror(int ierrorno = 0)
+inline char* __strerror(int ierrorno = 0)
 {
 #if PLATFORM == PLATFORM_WIN32
 	if(ierrorno == 0)
@@ -349,7 +382,7 @@ inline char* kbe_strerror(int ierrorno = 0)
 
 	static char lpMsgBuf[256] = {0};
 	
-	kbe_snprintf(lpMsgBuf, 256, "errorno=%d",  ierrorno);
+	__snprintf(lpMsgBuf, 256, "errorno=%d",  ierrorno);
 	return lpMsgBuf;
 #else
 	if(ierrorno != 0)
@@ -358,7 +391,7 @@ inline char* kbe_strerror(int ierrorno = 0)
 #endif
 }
 
-INLINE int kbe_lasterror()
+inline int __lasterror()
 {
 #if PLATFORM == PLATFORM_WIN32
 	return GetLastError();
@@ -367,8 +400,8 @@ INLINE int kbe_lasterror()
 #endif
 }
 
-/** 获取用户UID */
-INLINE int32 getUserUID()
+// 用户UID
+inline int32 getUserUID()
 {
 	static int32 iuid = 0;
 
@@ -396,8 +429,8 @@ INLINE int32 getUserUID()
 	return iuid;
 }
 
-/** 获取用户名 */
-INLINE const char * getUsername()
+// 用户名
+inline const char * getUsername()
 {
 #if PLATFORM == PLATFORM_WIN32
 	DWORD dwSize = MAX_NAME;
@@ -411,8 +444,8 @@ INLINE const char * getUsername()
 #endif
 }
 
-/** 获取进程ID */
-INLINE int32 getProcessPID()
+// 进程ID
+inline int32 getProcessPID()
 {
 #if PLATFORM != PLATFORM_WIN32
 	return getpid();
@@ -421,114 +454,61 @@ INLINE int32 getProcessPID()
 #endif
 }
 
-/** 获取系统时间(精确到毫秒) */
+// 获取系统时间(精确到毫秒)
 #if PLATFORM == PLATFORM_WIN32
-	INLINE uint32 getSystemTime() 
-	{ 
-		// 注意这个函数windows上只能正确维持49天。
-		return ::GetTickCount(); 
-	};
+inline uint32 getSystemTime() 
+{ 
+	return ::GetTickCount(); // 注意这个函数windows上只能正确维持49天。
+};
 #else
-	INLINE uint32 getSystemTime()
-	{
-		struct timeval tv;
-		struct timezone tz;
-		gettimeofday(&tv, &tz);
-		return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-	};
+inline uint32 getSystemTime()
+{
+	struct timeval tv;
+	struct timezone tz;
+	gettimeofday(&tv, &tz);
+	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+};
 #endif
 
-/** 获取2个系统时间差 */
-INLINE uint32 getSystemTimeDiff(uint32 oldTime, uint32 newTime)
+// 获取2个系统时间差
+inline uint32 getSystemTimeDiff(uint32 oldTime, uint32 newTime)
 {
-    // getSystemTime() have limited data range and this is case when it overflow in this tick
     if (oldTime > newTime)
         return (0xFFFFFFFF - oldTime) + newTime;
     else
         return newTime - oldTime;
 }
 
-/* 产生一个64位的uuid 
-*/
-extern COMPONENT_ORDER g_componentGlobalOrder;
-extern COMPONENT_ORDER g_componentGroupOrder;
-
-extern int32 g_genuuid_sections;
-
-INLINE uint64 genUUID64()
-{
 #if PLATFORM == PLATFORM_WIN32
-	static uint64 tv = (uint64)(time(NULL));
-	uint64 now = (uint64)(time(NULL));
-#else
-	static uint64 tv = (uint64)(getSystemTime() * 0.001f);
-	uint64 now = (uint64)(getSystemTime() * 0.001f);
-#endif
-
-	static uint16 lastNum = 0;
-
-	if(now != tv)
-	{
-		tv = now;
-		lastNum = 0;
-	}
-	
-	if(g_genuuid_sections <= 0)
-	{
-		// 时间戳32位，随机数16位，16位迭代数（最大为65535-1）
-		static uint32 rnd = 0;
-		if(rnd == 0)
-		{
-			srand(getSystemTime());
-			rnd = (uint32)(rand() << 16);
-		}
-		
-		assert(lastNum < 65535 && "genUUID64(): overflow!");
-		
-		return (tv << 32) | rnd | lastNum++;
-	}
-	else
-	{
-		// 时间戳32位，app组ID16位，16位迭代数（最大为65535-1）
-		static uint32 sections = g_genuuid_sections << 16;
-		
-		assert(lastNum < 65535 && "genUUID64(): overflow!");
-		
-		return (tv << 32) | sections | lastNum++;
-	}
+inline void sleep(uint32 ms)
+{ 
+	::Sleep(ms); 
 }
-
-/** sleep 跨平台 */
-#if PLATFORM == PLATFORM_WIN32
-	INLINE void sleep(uint32 ms)
-	{ 
-		::Sleep(ms); 
-	}
 #else
-	INLINE void sleep(uint32 ms)
-	{ 
-	  struct timeval tval;
-	  tval.tv_sec	= ms / 1000;
-	  tval.tv_usec	= ( ms * 1000) % 1000000;
-	  select(0, NULL, NULL, NULL, &tval);
-	}	
+inline void sleep(uint32 ms)
+{ 
+	struct timeval tval;
+	tval.tv_sec	= ms / 1000;
+	tval.tv_usec	= ( ms * 1000) % 1000000;
+	select(0, NULL, NULL, NULL, &tval);
+}	
 #endif
 
-/** 判断平台是否为小端字节序 */
-INLINE bool isPlatformLittleEndian()
+// 判断平台是否为小端字节序
+inline bool isPlatformLittleEndian()
 {
    int n = 1;
    return *((char*)&n) ? true : false;
 }
 
-/** 设置环境变量 */
+// 设置环境变量
 #if PLATFORM == PLATFORM_WIN32
-	INLINE void setenv(const std::string& name, const std::string& value, int overwrite)
-	{
-		_putenv_s(name.c_str(), value.c_str());
-	}
+inline void setenv(const std::string& name, const std::string& value, int overwrite)
+{
+	_putenv_s(name.c_str(), value.c_str());
+}
 #else
-	// Linux下面直接使用setenv
+// Linux下面直接使用setenv
 #endif
 
 #endif

@@ -1,29 +1,8 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2012 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#ifndef KBE_MEMORYSTREAM_H
-#define KBE_MEMORYSTREAM_H
+#ifndef __MEMORYSTREAM_H__
+#define __MEMORYSTREAM_H__
 
 #include "common/common.h"
 #include "common/ObjectPool.h"
-#include "helper/debug_helper.h"
 #include "common/memorystream_converter.h"
 
 class MemoryStreamException
@@ -37,8 +16,8 @@ class MemoryStreamException
 
         void PrintPosError() const
         {
-			ERROR_MSG(fmt::format("Attempted to {} in MemoryStream (pos:{}  size: {}).\n", 
-				(_m_add ? "put" : "get"), _m_pos, _m_size));
+// 			ERROR_MSG(fmt::format("Attempted to {} in MemoryStream (pos:{}  size: {}).\n", 
+// 				(_m_add ? "put" : "get"), _m_pos, _m_size));
         }
     private:
         bool 		_m_add;
@@ -208,18 +187,6 @@ public:
         return *this;
     }
 
-    MemoryStream &operator<<(COMPONENT_TYPE value)
-    {
-        append<int32>(value);
-        return *this;
-    }
-
-    MemoryStream &operator<<(ENTITY_MAILBOX_TYPE value)
-    {
-        append<int32>(value);
-        return *this;
-    }
-
     MemoryStream &operator<<(bool value)
     {
         append<int8>(value);
@@ -319,18 +286,6 @@ public:
         }
 
 		*value = '\0';
-        return *this;
-    }
-    
-    MemoryStream &operator>>(COMPONENT_TYPE &value)
-    {
-        value = static_cast<COMPONENT_TYPE>(read<int32>());
-        return *this;
-    }
-
-    MemoryStream &operator>>(ENTITY_MAILBOX_TYPE &value)
-    {
-        value = static_cast<ENTITY_MAILBOX_TYPE>(read<int32>());
         return *this;
     }
 
@@ -693,17 +648,17 @@ public:
 		std::string fbuffer;
 		size_t trpos = rpos_;
 
-		kbe_snprintf(buf, 1024, "STORAGE_SIZE: %lu, rpos=%lu.\n", (unsigned long)wpos(), (unsigned long)rpos());
+		__snprintf(buf, 1024, "STORAGE_SIZE: %lu, rpos=%lu.\n", (unsigned long)wpos(), (unsigned long)rpos());
 		fbuffer += buf;
 
         for(uint32 i = rpos(); i < wpos(); ++i)
 		{
-			kbe_snprintf(buf, 1024, "%u ", read<uint8>(i));
+			__snprintf(buf, 1024, "%u ", read<uint8>(i));
 			fbuffer += buf;
 		}
 
 		fbuffer += " \n";
-        DEBUG_MSG(fbuffer.c_str());
+        // DEBUG_MSG(fbuffer.c_str());
 
 		rpos_ = trpos;
     }
@@ -715,17 +670,17 @@ public:
 		std::string fbuffer;
 		size_t trpos = rpos_;
 
-		kbe_snprintf(buf, 1024, "STORAGE_SIZE: %lu, rpos=%lu.\n", (unsigned long)wpos(), (unsigned long)rpos());
+		__snprintf(buf, 1024, "STORAGE_SIZE: %lu, rpos=%lu.\n", (unsigned long)wpos(), (unsigned long)rpos());
 		fbuffer += buf;
 
         for(uint32 i = rpos(); i < wpos(); ++i)
 		{
-			kbe_snprintf(buf, 1024, "%c", read<uint8>(i));
+			__snprintf(buf, 1024, "%c", read<uint8>(i));
 			fbuffer += buf;
 		}
 
 		fbuffer += " \n";
-        DEBUG_MSG(fbuffer.c_str());
+        // DEBUG_MSG(fbuffer.c_str());
 
 		rpos_ = trpos;
     }
@@ -737,7 +692,7 @@ public:
 		std::string fbuffer;
 		size_t trpos = rpos_;
 
-		kbe_snprintf(buf, 1024, "STORAGE_SIZE: %lu, rpos=%lu.\n", (unsigned long)wpos(), (unsigned long)rpos());
+		__snprintf(buf, 1024, "STORAGE_SIZE: %lu, rpos=%lu.\n", (unsigned long)wpos(), (unsigned long)rpos());
 		fbuffer += buf;
 		
 		uint32 i = 0;
@@ -748,12 +703,12 @@ public:
             {
                 if (read<uint8>(idx) < 0x10)
                 {
-					kbe_snprintf(buf, 1024, "| 0%X ", read<uint8>(idx));
+					__snprintf(buf, 1024, "| 0%X ", read<uint8>(idx));
 					fbuffer += buf;
                 }
                 else
                 {
-					kbe_snprintf(buf, 1024, "| %X ", read<uint8>(idx));
+					__snprintf(buf, 1024, "| %X ", read<uint8>(idx));
 					fbuffer += buf;
                 }
                 ++j;
@@ -762,12 +717,12 @@ public:
             {
                 if (read<uint8>(idx) < 0x10)
                 {
-					kbe_snprintf(buf, 1024, "\n0%X ", read<uint8>(idx));
+					__snprintf(buf, 1024, "\n0%X ", read<uint8>(idx));
 					fbuffer += buf;
                 }
                 else
                 {
-					kbe_snprintf(buf, 1024, "\n%X ", read<uint8>(idx));
+					__snprintf(buf, 1024, "\n%X ", read<uint8>(idx));
 					fbuffer += buf;
                 }
 
@@ -778,12 +733,12 @@ public:
             {
                 if (read<uint8>(idx) < 0x10)
                 {
-					kbe_snprintf(buf, 1024, "0%X ", read<uint8>(idx));
+					__snprintf(buf, 1024, "0%X ", read<uint8>(idx));
 					fbuffer += buf;
                 }
                 else
                 {
-					kbe_snprintf(buf, 1024, "%X ", read<uint8>(idx));
+					__snprintf(buf, 1024, "%X ", read<uint8>(idx));
 					fbuffer += buf;
                 }
             }
@@ -791,7 +746,7 @@ public:
 
 		fbuffer += "\n";
 
-		DEBUG_MSG(fbuffer.c_str());
+		// DEBUG_MSG(fbuffer.c_str());
 
 		rpos_ = trpos;
     }
@@ -907,4 +862,4 @@ INLINE void MemoryStream::read_skip<std::string>()
 #define NEW_MEMORY_STREAM() MemoryStream::ObjPool().createObject()
 #define DELETE_MEMORY_STREAM(obj) { MemoryStream::ObjPool().reclaimObject(obj); obj = NULL; }
 
-#endif
+#endif // __MEMORYSTREAM_H__

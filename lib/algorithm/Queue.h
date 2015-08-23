@@ -67,6 +67,17 @@ template<typename T, int N> class Queue
 		mFront = (mFront+1) % (N+1);
 		return true;
 	}
+	bool popFront(T &e)
+	{
+		if (empty())
+		{
+			return false;
+		}
+
+		e = mQueue[mFront];
+		mFront = (mFront+1) % (N+1);
+		return true;
+	}
 
 	void clear()
 	{

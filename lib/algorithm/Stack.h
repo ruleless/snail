@@ -58,6 +58,20 @@ public:
 		*e = mStack[--mTop];
 		return true;
 	}
+	bool pop(T &e)
+	{
+		if (empty())
+			return false;
+
+		e = mStack[--mTop];
+		return true;
+	}	
+
+	void clear()
+	{
+		memset(mStack, 0, sizeof(mStack));
+		mTop = 0;
+	}
 private:
 	T mStack[N];
 	int mTop;

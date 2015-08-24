@@ -2,7 +2,7 @@
 #define __DELAYEDCHANNELS_H__
 
 #include "common/Tasks.h"
-#include "common/smartpointer.h"
+#include "common/SmartPointer.h"
 #include "common/Singleton.h"
 
 class Channel;

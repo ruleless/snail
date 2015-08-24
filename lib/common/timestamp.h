@@ -3,30 +3,26 @@
 
 #include "common/platform.h"
 
-// 指示是否可以通过调用RDTSC（时间戳计数器）
-// 计算时间戳。使用此的好处是，它能快速和精确的返回实际的时钟滴答
-// 不足之处是，这并不使用SpeedStep技术来改变他们的时钟速度的CPU
 #ifdef unix
 //#define USE_RDTSC
 #else
 //#define USE_RDTSC
 #endif // unix
 
-enum KBETimingMethod
+enum TimingMethod
 {
-	RDTSC_TIMING_METHOD, // 自CPU上电以来所经过的时钟周期数,达到纳秒级的计时精度
+	RDTSC_TIMING_METHOD, // 自CPU上电以来所经过的时钟周期数,纳秒级的计时精度
 	GET_TIME_OF_DAY_TIMING_METHOD,
 	GET_TIME_TIMING_METHOD,
 	NO_TIMING_METHOD,
 };
 
-extern KBETimingMethod g_timingMethod;
-
-const char* getTimingMethodName();
+extern TimingMethod gTimingMethod;
+extern const char* getTimingMethodName();
 
 #ifdef unix
 
-INLINE uint64 timestamp_rdtsc()
+inline uint64 timestamp_rdtsc()
 {
 	uint32 rethi, retlo;
 	__asm__ __volatile__ (
@@ -37,13 +33,11 @@ INLINE uint64 timestamp_rdtsc()
 	return uint64(rethi) << 32 | retlo; 
 }
 
-// 使用 gettimeofday. 测试大概比RDTSC20倍-600倍。
-// 此外，有一个问题
-// 2.4内核下，连续两次调用gettimeofday的可能
-// 返回一个结果是倒着走。
+// 使用 gettimeofday. 测试大概比慢RDTSC20倍-600倍。
+// 此外，有一个问题：2.4内核下，连续两次调用gettimeofday的可能返回一个结果是倒着走。
 #include <sys/time.h>
 
-INLINE uint64 timestamp_gettimeofday()
+inline uint64 timestamp_gettimeofday()
 {
 	timeval tv;
 	gettimeofday( &tv, NULL );
@@ -53,25 +47,23 @@ INLINE uint64 timestamp_gettimeofday()
 #include <time.h>
 #include <asm/unistd.h>
 
-INLINE uint64 timestamp_gettime()
+inline uint64 timestamp_gettime()
 {
 	timespec tv;
-	KBE_VERIFY(syscall( __NR_clock_gettime, CLOCK_MONOTONIC, &tv ) == 0);
 	return 1000000000ULL * tv.tv_sec + tv.tv_nsec;
 }
 
-INLINE uint64 timestamp()
+inline uint64 timestamp()
 {
 #ifdef USE_RDTSC
 	return timestamp_rdtsc();
 #else // USE_RDTSC
-	if (g_timingMethod == RDTSC_TIMING_METHOD)
+	if (gTimingMethod == RDTSC_TIMING_METHOD)
 		return timestamp_rdtsc();
-	else if (g_timingMethod == GET_TIME_OF_DAY_TIMING_METHOD)
+	else if (gTimingMethod == GET_TIME_OF_DAY_TIMING_METHOD)
 		return timestamp_gettimeofday();
-	else //if (g_timingMethod == GET_TIME_TIMING_METHOD)
+	else
 		return timestamp_gettime();
-
 #endif // USE_RDTSC
 }
 
@@ -80,7 +72,7 @@ INLINE uint64 timestamp()
 #ifdef USE_RDTSC
 #pragma warning (push)
 #pragma warning (disable: 4035)
-INLINE uint64 timestamp()
+inline uint64 timestamp()
 {
 	__asm rdtsc
 }
@@ -92,43 +84,42 @@ INLINE uint64 timestamp()
 inline uint64 timestamp()
 {
 	LARGE_INTEGER counter;
-	QueryPerformanceCounter( &counter );
+	QueryPerformanceCounter(&counter);
 	return counter.QuadPart;
 }
 
 #endif // USE_RDTSC
 
 #else
-	#error Unsupported platform!
+#    error Unsupported platform!
 #endif
 
-uint64 stampsPerSecond();
-double stampsPerSecondD();
+extern uint64 stampsPerSecond_rdtsc();
+extern double stampsPerSecondD_rdtsc();
 
-uint64 stampsPerSecond_rdtsc();
-double stampsPerSecondD_rdtsc();
+extern uint64 stampsPerSecond_gettimeofday();
+extern double stampsPerSecondD_gettimeofday();
 
-uint64 stampsPerSecond_gettimeofday();
-double stampsPerSecondD_gettimeofday();
+extern uint64 stampsPerSecond();
+extern double stampsPerSecondD();
 
 inline double stampsToSeconds( uint64 stamps )
 {
 	return double( stamps )/stampsPerSecondD();
 }
 
-// -----------------------------------------------------------------------------
 class TimeStamp
 {
 public:
-	TimeStamp( uint64 stamps = 0 ) : stamp_( stamps ) {}
+	TimeStamp(uint64 stamps = 0) : stamp_(stamps) {}
 
-	operator uint64 &()				{ return stamp_; }
-	operator uint64() const			{ return stamp_; }
+	operator uint64 &() { return stamp_; }
+	operator uint64() const { return stamp_; }
 	
-	uint64 stamp(){ return stamp_; }
+	uint64 stamp() { return stamp_; }
 
 	double inSeconds() const;
-	void setInSeconds( double seconds );
+	void setInSeconds(double seconds);
 
 	TimeStamp ageInStamps() const;
 	double ageInSeconds() const;
@@ -136,28 +127,28 @@ public:
 	static double toSeconds( uint64 stamps );
 	static TimeStamp fromSeconds( double seconds );
 
-	uint64	stamp_;
+	uint64 stamp_;
 };
 
 
-double TimeStamp::toSeconds( uint64 stamps )
+double TimeStamp::toSeconds(uint64 stamps)
 {
-	return double( stamps )/stampsPerSecondD();
+	return double(stamps) / stampsPerSecondD();
 }
 
-TimeStamp TimeStamp::fromSeconds( double seconds )
+TimeStamp TimeStamp::fromSeconds(double seconds)
 {
-	return uint64( seconds * stampsPerSecondD() );
+	return uint64(seconds * stampsPerSecondD());
 }
 
 double TimeStamp::inSeconds() const
 {
-	return toSeconds( stamp_ );
+	return toSeconds(stamp_);
 }
 
-void TimeStamp::setInSeconds( double seconds )
+void TimeStamp::setInSeconds(double seconds)
 {
-	stamp_ = fromSeconds( seconds );
+	stamp_ = fromSeconds(seconds);
 }
 
 TimeStamp TimeStamp::ageInStamps() const
@@ -167,7 +158,7 @@ TimeStamp TimeStamp::ageInStamps() const
 
 double TimeStamp::ageInSeconds() const
 {
-	return toSeconds( this->ageInStamps() );
+	return toSeconds(this->ageInStamps());
 }
 
 #endif // __TIMESTAMP_H__

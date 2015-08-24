@@ -2,8 +2,8 @@
 #define __PACKETFILTER_H__
 
 #include "network/NetworkDef.h"
-#include "common/smartpointer.h"
-#include "common/refcountable.h"
+#include "common/SmartPointer.h"
+#include "common/RefCountable.h"
 
 class Channel;
 class NetworkManager;

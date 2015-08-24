@@ -8,7 +8,7 @@
 
 #ifdef USE_OPENSSL
 BlowfishFilter::BlowfishFilter(const Key & key):
-KBEBlowfish(key),
+Blowfish(key),
 pPacket_(NULL),
 packetLen_(0),
 padSize_(0)
@@ -16,7 +16,7 @@ padSize_(0)
 }
 
 BlowfishFilter::BlowfishFilter():
-KBEBlowfish(),
+Blowfish(),
 pPacket_(NULL),
 packetLen_(0),
 padSize_(0)
@@ -53,7 +53,7 @@ EReason BlowfishFilter::send(Channel * pChannel, PacketSender& sender, Packet * 
 		pOutPacket = mallocPacket(pPacket->isTCPPacket());
 
 		PacketLength oldlen = pPacket->length();
-		pOutPacket->wpos(PACKET_LENGTH_SIZE + 1);
+		pOutPacket->wpos(sizeof(PacketLength) + 1);
 		encrypt(pPacket, pOutPacket);
 
 		PacketLength packetLen = pPacket->length() + 1;
@@ -102,7 +102,7 @@ EReason BlowfishFilter::recv(Channel * pChannel, PacketReceiver & receiver, Pack
 		if(packetLen_ <= 0)
 		{
 			// 如果满足一个最小包则尝试解包, 否则缓存这个包待与下一个包合并然后解包
-			if(pPacket->length() >= (PACKET_LENGTH_SIZE + 1 + BLOCK_SIZE))
+			if(pPacket->length() >= (sizeof(PacketLength) + 1 + BLOCK_SIZE))
 			{
 				(*pPacket) >> packetLen_;
 				(*pPacket) >> padSize_;
@@ -208,7 +208,7 @@ void BlowfishFilter::encrypt(Packet * pInPacket, Packet * pOutPacket)
 	if(pInPacket != pOutPacket)
 	{
 		pOutPacket->data_resize(pInPacket->size() + pOutPacket->wpos());
-		int size = KBEBlowfish::encrypt(pInPacket->data(), pOutPacket->data() + pOutPacket->wpos(),  pInPacket->wpos());
+		int size = Blowfish::encrypt(pInPacket->data(), pOutPacket->data() + pOutPacket->wpos(),  pInPacket->wpos());
 		pOutPacket->wpos(size + pOutPacket->wpos());
 	}
 	else
@@ -220,7 +220,7 @@ void BlowfishFilter::encrypt(Packet * pInPacket, Packet * pOutPacket)
 
 		pOutPacket->data_resize(pInPacket->size() + 1);
 
-		int size = KBEBlowfish::encrypt(pInPacket->data(), pOutPacket->data() + pOutPacket->wpos(),  pInPacket->wpos());
+		int size = Blowfish::encrypt(pInPacket->data(), pOutPacket->data() + pOutPacket->wpos(),  pInPacket->wpos());
 		pOutPacket->wpos(size);
 
 		pInPacket->swap(*(static_cast<MemoryStream*>(pOutPacket)));
@@ -237,7 +237,7 @@ void BlowfishFilter::decrypt(Packet * pInPacket, Packet * pOutPacket)
 	{
 		pOutPacket->data_resize(pInPacket->size());
 
-		int size = KBEBlowfish::decrypt(pInPacket->data() + pInPacket->rpos(), 
+		int size = Blowfish::decrypt(pInPacket->data() + pInPacket->rpos(), 
 			pOutPacket->data() + pOutPacket->rpos(),  
 			pInPacket->wpos() - pInPacket->rpos());
 
@@ -245,7 +245,7 @@ void BlowfishFilter::decrypt(Packet * pInPacket, Packet * pOutPacket)
 	}
 	else
 	{
-		KBEBlowfish::decrypt(pInPacket->data() + pInPacket->rpos(), pInPacket->data(),  
+		Blowfish::decrypt(pInPacket->data() + pInPacket->rpos(), pInPacket->data(),  
 			pInPacket->wpos() - pInPacket->rpos());
 
 		pInPacket->wpos(pInPacket->wpos() - pInPacket->rpos());

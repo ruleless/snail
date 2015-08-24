@@ -593,10 +593,102 @@ bool EndPoint::waitSend()
 
 void EndPoint::send(Bundle *pBundle)
 {
-	SEND_BUNDLE((*this), (*pBundle));
+	pBundle->finiMessage();
+	Bundle::Packets::iterator iter = pBundle->packets().begin();
+	for (; iter != pBundle->packets().end(); ++iter)
+	{
+		Packet *pPacket = (*iter);
+		int retries = 0;
+		EReason reason = Reason_Success;
+		pPacket->sentSize = 0;
+
+		while(true)
+		{
+			++retries;
+			int slen = this->send(pPacket->data() + pPacket->sentSize, pPacket->length() - pPacket->sentSize);
+
+			if(slen > 0)
+				pPacket->sentSize += slen;
+
+			if(pPacket->sentSize != pPacket->length())
+			{
+				reason = PacketSender::checkSocketErrors(this);
+
+				if (reason == Reason_NoSuchPort && retries <= 3)
+				{
+					continue;
+				}
+
+				// 如果系统发送缓冲已经满了，则我们等待10ms
+				if ((reason == Reason_ResourceUnavailable || reason == Reason_GeneralNetwork) && retries <= 60)
+				{
+					this->waitSend();
+					continue;
+				}
+
+				if(retries > 60 && reason != Reason_Success)
+				{
+					break;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+
+	}
+
+	pBundle->clearPackets();
 }
 
 void EndPoint::sendto(Bundle *pBundle, u_int16_t networkPort, u_int32_t networkAddr)
 {
-	SENDTO_BUNDLE((*this), networkAddr, networkPort, (*pBundle));
+	pBundle->finiMessage();
+	Bundle::Packets::iterator iter = pBundle->packets().begin();
+	for (; iter != pBundle->packets().end(); ++iter)
+	{
+		Packet *pPacket = (*iter);
+		int retries = 0;
+		EReason reason = Reason_Success;
+		pPacket->sentSize = 0;
+
+		while(true)
+		{
+			++retries;
+			int slen = this->sendto(pPacket->data() + pPacket->sentSize, pPacket->length() - pPacket->sentSize, networkPort, networkAddr);
+
+			if(slen > 0)
+				pPacket->sentSize += slen;
+
+			if(pPacket->sentSize != pPacket->length())
+			{
+				reason = PacketSender::checkSocketErrors(this);
+
+				if (reason == Reason_NoSuchPort && retries <= 3)
+				{
+					continue;
+				}
+
+				// 如果系统发送缓冲已经满了，则我们等待10ms
+				if ((reason == Reason_ResourceUnavailable || reason == Reason_GeneralNetwork) && retries <= 60)
+				{
+					this->waitSend();
+					continue;
+				}
+
+				if(retries > 60 && reason != Reason_Success)
+				{
+					break;
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+
+	}
+
+	pBundle->clearPackets();
 }

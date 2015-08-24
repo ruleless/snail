@@ -1,7 +1,7 @@
 #ifndef __NETWORKMANAGER_H__
 #define __NETWORKMANAGER_H__
 
-#include "common/memorystream.h"
+#include "common/MemoryStream.h"
 #include "network/NetworkDef.h"
 #include "common/common.h"
 #include "common/Timer.h"

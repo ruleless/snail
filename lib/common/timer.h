@@ -37,7 +37,7 @@ private:
 	TimeBase *mpTime;
 };
 
-inline bool operator==( TimerHandle h1, TimerHandle h2 )
+inline bool operator==(TimerHandle h1, TimerHandle h2)
 {
 	return h1.mpTime == h2.mpTime;
 }

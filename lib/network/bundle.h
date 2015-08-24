@@ -10,7 +10,7 @@
 #include "network/NetworkDef.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
-#include "network/interface_defs.h"
+// #include "network/interface_defs.h"
 
 class NetworkManager;
 class Channel;

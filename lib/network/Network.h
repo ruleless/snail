@@ -1,5 +1,5 @@
-#ifndef __NETWORKDEF_H__
-#define __NETWORKDEF_H__
+#ifndef __NETWORK_H__
+#define __NETWORK_H__
 
 class Channel;
 class MessageHandler;

@@ -7,7 +7,7 @@
 #include <functional>
 #include <cctype>
 #include "utf8cpp/utf8.h"
-#include "memorystream.h"
+#include "MemoryStream.h"
 
 int bytes2string(unsigned char *src, int srcsize, unsigned char *dst, int dstsize)     
 {     

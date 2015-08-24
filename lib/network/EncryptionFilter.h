@@ -17,7 +17,7 @@ public:
 };
 
 #ifdef USE_OPENSSL
-class BlowfishFilter : public EncryptionFilter, public KBEBlowfish
+class BlowfishFilter : public EncryptionFilter, public Blowfish
 {
 public:
 	virtual ~BlowfishFilter();

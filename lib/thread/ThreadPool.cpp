@@ -664,7 +664,7 @@ bool ThreadPool::addTask(TPTask* tptask)
 			// ERROR_MSG("ThreadPool::addTask: the ThreadPool create thread is error! ... \n");
 #else
 // 			ERROR_MSG(fmt::format("ThreadPool::addTask: the ThreadPool create thread is error:{0}\n", 
-// 				kbe_strerror()));
+// 				__strerror()));
 #endif				
 		}
 

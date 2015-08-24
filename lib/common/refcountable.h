@@ -1,73 +1,28 @@
-/*
-This source file is part of KBEngine
-For the latest info, see http://www.kbengine.org/
-
-Copyright (c) 2008-2012 KBEngine.
-
-KBEngine is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-KBEngine is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
- 
-You should have received a copy of the GNU Lesser General Public License
-along with KBEngine.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-/*
-	引用计数实现类
-
-	使用方法:
-		class AA:public RefCountable
-		{
-		public:
-			AA(){}
-			~AA(){ printf("析构"); }
-		};
-		
-		--------------------------------------------
-		AA* a = new AA();
-		RefCountedPtr<AA>* s = new RefCountedPtr<AA>(a);
-		RefCountedPtr<AA>* s1 = new RefCountedPtr<AA>(a);
-		
-		int i = (*s)->getRefCount();
-		
-		delete s;
-		delete s1;
-		
-		执行结果:
-			析构
-*/
-#ifndef KBE_REFCOUNTABLE_H
-#define KBE_REFCOUNTABLE_H
+#ifndef __REFCOUNTABLE_H__
+#define __REFCOUNTABLE_H__
 	
 #include "common.h"
 
 class RefCountable 
 {
 public:
-	INLINE void incRef(void) const
+	void incRef(void) const
 	{
 		++refCount_;
 	}
 
-	INLINE void decRef(void) const
+	void decRef(void) const
 	{
 		
 		int currRef = --refCount_;
 		assert(currRef >= 0 && "RefCountable:currRef maybe a error!");
 		if (0 >= currRef)
-			onRefOver();											// 引用结束了
+			onRefOver();
 	}
 
 	virtual void onRefOver(void) const
 	{
-		delete const_cast<RefCountable*>(this);
+		delete const_cast<RefCountable *>(this);
 	}
 
 	void setRefCount(int n)
@@ -79,7 +34,6 @@ public:
 	{ 
 		return refCount_; 
 	}
-
 protected:
 	RefCountable(void) : refCount_(0) 
 	{
@@ -89,7 +43,6 @@ protected:
 	{ 
 		assert(0 == refCount_ && "RefCountable:currRef maybe a error!"); 
 	}
-
 protected:
 	volatile mutable long refCount_;
 };
@@ -98,12 +51,12 @@ protected:
 class SafeRefCountable 
 {
 public:
-	INLINE void incRef(void) const
+	void incRef(void) const
 	{
 		::InterlockedIncrement(&refCount_);
 	}
 
-	INLINE void decRef(void) const
+	void decRef(void) const
 	{
 		
 		long currRef =::InterlockedDecrement(&refCount_);
@@ -126,7 +79,6 @@ public:
 	{ 
 		return InterlockedExchange((long *)&refCount_, refCount_);
 	}
-
 protected:
 	SafeRefCountable(void) : refCount_(0) 
 	{
@@ -144,7 +96,7 @@ protected:
 class SafeRefCountable 
 {
 public:
-	INLINE void incRef(void) const
+	void incRef(void) const
 	{
 		__asm__ volatile (
 			"lock addl $1, %0"
@@ -154,13 +106,13 @@ public:
 		);
 	}
 
-	INLINE void decRef(void) const
+	void decRef(void) const
 	{
 		
 		long currRef = intDecRef();
 		assert(currRef >= 0 && "RefCountable:currRef maybe a error!");
 		if (0 >= currRef)
-			onRefOver();											// 引用结束了
+			onRefOver();
 	}
 
 	virtual void onRefOver(void) const
@@ -188,14 +140,13 @@ protected:
 	{ 
 		assert(0 == refCount_ && "SafeRefCountable:currRef maybe a error!"); 
 	}
-
 protected:
 	volatile mutable long refCount_;
 private:
 	/**
 	 *	This private method decreases the reference count by 1.
 	 */
-	INLINE int intDecRef() const
+	int intDecRef() const
 	{
 		int ret;
 		__asm__ volatile (
@@ -214,13 +165,13 @@ template<class T>
 class RefCountedPtr 
 {
 public:
-	RefCountedPtr(T* ptr):ptr_(ptr) 
+	RefCountedPtr(T* ptr) : ptr_(ptr) 
 	{
 		if (ptr_)
 			ptr_->addRef();
 	}
 
-	RefCountedPtr(RefCountedPtr<T>* refptr):ptr_(refptr->getObject()) 
+	RefCountedPtr(RefCountedPtr<T>* refptr) : ptr_(refptr->getObject()) 
 	{
 		if (ptr_)
 			ptr_->addRef();
@@ -251,4 +202,4 @@ private:
 	T* ptr_;
 };
 
-#endif // KBE_REFCOUNTABLE_H
+#endif // __REFCOUNTABLE_H__

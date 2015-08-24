@@ -3,7 +3,7 @@
 
 #include "common/common.h"
 #include "common/Timer.h"
-#include "common/smartpointer.h"
+#include "common/SmartPointer.h"
 #include "common/timestamp.h"
 #include "common/ObjectPool.h"
 #include "network/address.h"
@@ -130,9 +130,6 @@ public:
 	COMPONENT_ID componentID() const{ return mComponentID; }
 	void componentID(COMPONENT_ID cid){ mComponentID = cid; }
 
-	MessageHandlers* pMsgHandlers() const { return mpMsgHandlers; }
-	void pMsgHandlers(MessageHandlers* pMsgHandlers) { mpMsgHandlers = pMsgHandlers; }
-
 	bool waitSend();
 
 	virtual void onTimeout(TimerHandle, void * pUser);
@@ -184,8 +181,6 @@ private:
 	EChannelTypes mChannelType;
 	COMPONENT_ID mComponentID;
 	uint32 mFlags;
-
-	MessageHandlers *mpMsgHandlers;
 
 	// ¿©’π”√
 	std::string	mStrExtra;

@@ -122,7 +122,7 @@ class BasicBuffer
 		n >= 0 ? inc((size_t)n) : dec((size_t)-n);
 	}
   protected:
-	INLINE void clear_ex()
+	void clear_ex()
 	{
 		_data  = 0;
 		_cur   = 0;
@@ -130,28 +130,28 @@ class BasicBuffer
 		_state = good;
 	}
 
-	INLINE void state(int state)
+	void state(int state)
 	{
 		_state = state;
 	}
 
-	INLINE void check_eof()
+	void check_eof()
 	{
 		if (_cur == 0 || _cur == _cap) 
 			state(eof);
 	}
 
-	INLINE size_t left() const
+	size_t left() const
 	{
 		return _cur;
 	}
 
-	INLINE size_t right() const
+	size_t right() const
 	{
 		return _cap - _cur;
 	}
 
-	INLINE void inc(size_t n)
+	void inc(size_t n)
 	{
 		if (n <= right()) 
 			_cur += n; 
@@ -160,7 +160,7 @@ class BasicBuffer
 		check_eof();
 	}
 
-	INLINE void dec(size_t n)
+	void dec(size_t n)
 	{
 		if (n <= left())
 			_cur -= n;
@@ -169,7 +169,7 @@ class BasicBuffer
 		check_eof(); 
 	}
 
-	INLINE void copy(const void* buf, size_t bytes)
+	void copy(const void* buf, size_t bytes)
 	{
 		if (_data && buf && bytes <= right())
 		{
@@ -691,13 +691,13 @@ typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<8192>>>      obuf
 typedef OutBuffer<BufferAllocatorDummy>                                     ofixbuf;
 
 template <class Allocator>
-INLINE OutBuffer<Allocator>& _cdecl operator<<(OutBuffer<Allocator>& ob, const std::string& val)
+OutBuffer<Allocator>& _cdecl operator<<(OutBuffer<Allocator>& ob, const std::string& val)
 {
 	ob<<val.c_str();
 	return ob;
 }
 
-INLINE InBuffer& _cdecl operator>>(InBuffer& ib, std::string& val)
+InBuffer& _cdecl operator>>(InBuffer& ib, std::string& val)
 {
 	const char* str = 0;
 	ib>>str;

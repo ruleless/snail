@@ -1,10 +1,10 @@
 #ifndef __PACKET_H__
 #define __PACKET_H__
 
-#include "common/memorystream.h"
+#include "common/MemoryStream.h"
 #include "common/common.h"
 #include "common/ObjectPool.h"
-#include "common/smartpointer.h"	
+#include "common/SmartPointer.h"	
 #include "network/NetworkDef.h"
 
 class EndPoint;
@@ -67,12 +67,12 @@ public:
 		// memset(data(), 0, size());
 	};
 	
-	INLINE void setMessageID(MessageID msgID)
+	inline void setMessageID(MessageID msgID)
 	{ 
 		mMsgID = msgID; 
 	}
 
-	INLINE MessageID getMessageID() const
+	inline MessageID getMessageID() const
 	{
 		return mMsgID; 
 	}

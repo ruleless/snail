@@ -15,6 +15,7 @@
 #define OBJECT_POOL_INIT_SIZE	16
 #define OBJECT_POOL_INIT_MAX_SIZE	OBJECT_POOL_INIT_SIZE*16
 
+// 对象池管理容器
 template<typename T> class ObjectPool
 {
 public:
@@ -251,6 +252,7 @@ protected:
 	size_t mMaxSize;
 };
 
+// 池对象
 class PoolObject
 {
 public:
@@ -269,6 +271,7 @@ public:
 	}
 };
 
+// 智能池对象
 template<typename T> class SmartPoolObject
 {
 public:

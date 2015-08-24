@@ -170,14 +170,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\network\bundle_broadcast.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\bundle_broadcast.h"
-				>
-			</File>
-			<File
 				RelativePath="..\network\Channel.cpp"
 				>
 			</File>
@@ -231,10 +223,6 @@
 			</File>
 			<File
 				RelativePath="..\network\HttpUtility.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\interface_defs.h"
 				>
 			</File>
 			<File
@@ -390,19 +378,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\kbemalloc.h"
+				RelativePath="..\common\MemoryStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\common\memorystream.cpp"
+				RelativePath="..\common\MemoryStream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\memorystream.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\memorystream_converter.h"
+				RelativePath="..\common\MemorystreamConverter.h"
 				>
 			</File>
 			<File
@@ -414,7 +398,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\refcountable.h"
+				RelativePath="..\common\RefCountable.h"
 				>
 			</File>
 			<File
@@ -422,7 +406,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\smartpointer.h"
+				RelativePath="..\common\SmartPointer.h"
 				>
 			</File>
 			<File

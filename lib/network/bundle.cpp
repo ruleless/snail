@@ -3,6 +3,7 @@
 #include "network/NetworkManager.h"
 #include "network/Channel.h"
 #include "network/PacketSender.h"
+#include "network/MessageHandler.h"
 
 
 static ObjectPool<Bundle> s_ObjPool("Bundle");
@@ -284,7 +285,7 @@ void Bundle::_calcPacketMaxSize()
 		mPacketMaxSize = mIsTCPPacket ? (TCPPacket::maxBufferSize() - ENCRYPTTION_WASTAGE_SIZE):
 			(PACKET_MAX_SIZE_UDP - ENCRYPTTION_WASTAGE_SIZE);
 
-		mPacketMaxSize -= mPacketMaxSize % KBEBlowfish::BLOCK_SIZE;
+		mPacketMaxSize -= mPacketMaxSize % Blowfish::BLOCK_SIZE;
 	}
 	else
 	{

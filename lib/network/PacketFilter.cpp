@@ -1,6 +1,5 @@
 #include "PacketFilter.h"
 #include "network/Channel.h"
-#include "network/NetworkManager.h"
 #include "network/PacketReceiver.h"
 #include "network/PacketSender.h"
 

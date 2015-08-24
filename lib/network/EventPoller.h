@@ -4,8 +4,8 @@
 #include "common/common.h"
 #include "common/timestamp.h"
 #include "network/Network.h"
-#include "thread/concurrency.h"
 #include "network/NetworkDef.h"
+#include "thread/concurrency.h"
 #include <map>
 
 #ifndef _WIN32

@@ -8,14 +8,14 @@
 #include "network/EventPoller.h"
 
 PacketSender::PacketSender() 
-:mpEndpoint(NULL)
-,mpNetworkManager(NULL)
+		:mpEndpoint(NULL)
+		,mpNetworkManager(NULL)
 {
 }
 
-PacketSender::PacketSender(EndPoint & endpoint, NetworkManager & networkInterface)
-:mpEndpoint(&endpoint)
-,mpNetworkManager(&networkInterface)
+PacketSender::PacketSender(EndPoint &endpoint, NetworkManager &networkMgr)
+		:mpEndpoint(&endpoint)
+		,mpNetworkManager(&networkMgr)
 {
 }
 

@@ -1,12 +1,13 @@
 #ifndef __TCPPACKET_H__
 #define __TCPPACKET_H__
 
-#include "network/Packet.h"
 #include "common/ObjectPool.h"
+#include "network/NetworkDef.h"
+#include "network/Packet.h"
 
 class TCPPacket : public Packet
 {
-public:
+  public:
 	static ObjectPool<TCPPacket>& ObjPool();
 	static void destroyObjPool();
 

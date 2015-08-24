@@ -1,10 +1,10 @@
 #ifndef __NETWORKMANAGER_H__
 #define __NETWORKMANAGER_H__
 
-#include "common/MemoryStream.h"
-#include "network/NetworkDef.h"
 #include "common/common.h"
 #include "common/Timer.h"
+#include "common/MemoryStream.h"
+#include "network/NetworkDef.h"
 #include "network/EndPoint.h"
 
 class Address;
@@ -20,37 +20,37 @@ class MessageHandlers;
 
 class NetworkManager : public TimerHandler
 {
-public:
+  public:
 	typedef std::map<Address, Channel *> ChannelMap;
 	
 	NetworkManager(EventDispatcher *pDispatcher,
-		int32 extlisteningPort_min = -1, 
-		int32 extlisteningPort_max = -1,
-		const char *extlisteningInterface = "",
-		uint32 extrbuffer = 0, 
-		uint32 extwbuffer = 0, 
-		int32 intlisteningPort = 0,
-		const char *intlisteningInterface = "",
-		uint32 intrbuffer = 0,
-		uint32 intwbuffer = 0);
+				   int32 extlisteningPort_min = -1, 
+				   int32 extlisteningPort_max = -1,
+				   const char *extlisteningInterface = "",
+				   uint32 extrbuffer = 0, 
+				   uint32 extwbuffer = 0, 
+				   int32 intlisteningPort = 0,
+				   const char *intlisteningInterface = "",
+				   uint32 intrbuffer = 0,
+				   uint32 intwbuffer = 0);
 
 	~NetworkManager();
 
-	const char * c_str() const { return mExtEndpoint.c_str(); }
+	const char* c_str() const { return mExtEndpoint.c_str(); }
 
-	const Address & extaddr() const { return mExtEndpoint.addr(); }
-	const Address & intaddr() const { return mIntEndpoint.addr(); }
+	const Address& extaddr() const { return mExtEndpoint.addr(); }
+	const Address& intaddr() const { return mIntEndpoint.addr(); }
 
-	int32 NetworkManager::numExtChannels() const { return mNumExtChannels; }
+	int32 numExtChannels() const { return mNumExtChannels; }
 
 	bool recreateListeningSocket(const char *pEndPointName,
-		uint16 minListeningPort, 
-		uint16 maxListeningPort, 
-		const char *listeningInterface, 
-		EndPoint *pEndPoint,
-		Listener *pListener,
-		uint32 rbuffer = 0, 
-		uint32 wbuffer = 0);
+								 uint16 minListeningPort, 
+								 uint16 maxListeningPort, 
+								 const char *listeningInterface, 
+								 EndPoint *pEndPoint,
+								 Listener *pListener,
+								 uint32 rbuffer = 0, 
+								 uint32 wbuffer = 0);
 
 	const ChannelMap& channels(void) { return mChannels; }
 	void processChannels(MessageHandlers* pMsgHandlers);
@@ -81,11 +81,11 @@ public:
 	void pExtensionData(void * pData) { mpExtensionData = pData; }
 	
 	bool good() const{ return (!isExternal() || mExtEndpoint.good()) && (mIntEndpoint.good()); }
-private:
+  private:
 	virtual void onTimeout(TimerHandle handle, void * arg);
 
 	void closeSocket();
-private:
+  private:
 	Listener *mpExtListenerReceiver;
 	EndPoint mExtEndpoint;
 	

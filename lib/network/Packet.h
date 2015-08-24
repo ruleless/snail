@@ -13,14 +13,14 @@ class Bundle;
 
 class Packet : public MemoryStream, public RefCountable
 {
-public:
+  public:
 	Packet(MessageID msgID = 0, bool isTCPPacket = true, size_t res = 200)
-		:MemoryStream(res)
-		,mMsgID(msgID)
-		,mIsTCPPacket(isTCPPacket)
-		,mbEncrypted(false)
-		,mpBundle(NULL)
-		,sentSize(0)
+			:MemoryStream(res)
+			,sentSize(0)
+			,mMsgID(msgID)
+			,mIsTCPPacket(isTCPPacket)
+			,mbEncrypted(false)
+			,mpBundle(NULL)			
 	{
 	}
 	
@@ -95,9 +95,9 @@ public:
 	{
 		mbEncrypted = v; 
 	}
-public:
+  public:
 	uint32 sentSize;
-protected:
+  protected:
 	MessageID mMsgID;
 	bool mIsTCPPacket;
 	bool mbEncrypted;

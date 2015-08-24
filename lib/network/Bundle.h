@@ -2,22 +2,17 @@
 #define __BUNDLE_H__
 
 #include "common/common.h"
-#include "common/Timer.h"
 #include "common/ObjectPool.h"
-#include "network/Address.h"
-#include "network/EventDispatcher.h"
-#include "network/EndPoint.h"
 #include "network/NetworkDef.h"
-#include "network/TCPPacket.h"
-#include "network/UDPPacket.h"
-// #include "network/interface_defs.h"
+#include "network/Packet.h"
 
+class MessageHandler;
 class NetworkManager;
 class Channel;
 
 class Bundle : public PoolObject
 {
-public:
+  public:
 	static ObjectPool<Bundle>& ObjPool();
 	static void destroyObjPool();
 	virtual void onReclaimObject();
@@ -57,23 +52,23 @@ public:
 	
 	MessageID getMessageID() const { return mCurrMsgID; }
 	int32 numMessages() const { return mNumMessages; }
-protected:
+  protected:
 	void _calcPacketMaxSize();
 	int32 onPacketAppend(int32 addsize, bool inseparable = true);
-public:
-    Bundle &operator<<(uint8 value);
-    Bundle &operator<<(uint16 value);
-    Bundle &operator<<(uint32 value);
-    Bundle &operator<<(uint64 value);
-    Bundle &operator<<(int8 value);
-    Bundle &operator<<(int16 value);
-    Bundle &operator<<(int32 value);
-    Bundle &operator<<(int64 value);
-    Bundle &operator<<(float value);
-    Bundle &operator<<(double value);
-    Bundle &operator<<(bool value);
-    Bundle &operator<<(const std::string &value);	
-    Bundle &operator<<(const char *str);    
+  public:
+	Bundle &operator<<(uint8 value);
+	Bundle &operator<<(uint16 value);
+	Bundle &operator<<(uint32 value);
+	Bundle &operator<<(uint64 value);
+	Bundle &operator<<(int8 value);
+	Bundle &operator<<(int16 value);
+	Bundle &operator<<(int32 value);
+	Bundle &operator<<(int64 value);
+	Bundle &operator<<(float value);
+	Bundle &operator<<(double value);
+	Bundle &operator<<(bool value);
+	Bundle &operator<<(const std::string &value);	
+	Bundle &operator<<(const char *str);    
 
 	Bundle &append(Bundle* pBundle);
 	Bundle &append(Bundle& bundle);
@@ -88,23 +83,23 @@ public:
 
 	Bundle &assign(const char *str, int n);
 
-    Bundle &operator>>(bool &value);
-    Bundle &operator>>(uint8 &value);
-    Bundle &operator>>(uint16 &value);
-    Bundle &operator>>(uint32 &value);
-    Bundle &operator>>(uint64 &value);
-    Bundle &operator>>(int8 &value);
-    Bundle &operator>>(int16 &value);
-    Bundle &operator>>(int32 &value);
-    Bundle &operator>>(int64 &value);
-    Bundle &operator>>(float &value);
-    Bundle &operator>>(double &value);
-    Bundle &operator>>(std::string& value);
+	Bundle &operator>>(bool &value);
+	Bundle &operator>>(uint8 &value);
+	Bundle &operator>>(uint16 &value);
+	Bundle &operator>>(uint32 &value);
+	Bundle &operator>>(uint64 &value);
+	Bundle &operator>>(int8 &value);
+	Bundle &operator>>(int16 &value);
+	Bundle &operator>>(int32 &value);
+	Bundle &operator>>(int64 &value);
+	Bundle &operator>>(float &value);
+	Bundle &operator>>(double &value);
+	Bundle &operator>>(std::string& value);
 
 	ArraySize readBlob(std::string& datas);
-private:
+  private:
 	template<typename T> Bundle &outputValue(T &v);
-private:
+  private:
 	Channel *mpChannel;
 	int32 mNumMessages;
 	
@@ -121,7 +116,6 @@ private:
 	int32 mPacketMaxSize;
 
 	const MessageHandler* mpCurrMsgHandler;
-
 };
 
 #include "Bundle.inl"

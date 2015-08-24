@@ -9,34 +9,34 @@
 #include "network/Network.h"
 #include "network/MessageHandler.h"
 
-NetworkManager::NetworkManager(EventDispatcher * pDispatcher,
-		int32 extlisteningPort_min,
-		int32 extlisteningPort_max, 
-		const char * extlisteningInterface,
-		uint32 extrbuffer, 
-		uint32 extwbuffer,
-		int32 intlisteningPort,
-		const char * intlisteningInterface,
-		uint32 intrbuffer, 
-		uint32 intwbuffer)
-		:mExtEndpoint()
+NetworkManager::NetworkManager(EventDispatcher *pDispatcher,
+							   int32 extlisteningPort_min,
+							   int32 extlisteningPort_max, 
+							   const char *extlisteningInterface,
+							   uint32 extrbuffer, 
+							   uint32 extwbuffer,
+							   int32 intlisteningPort,
+							   const char * intlisteningInterface,
+							   uint32 intrbuffer, 
+							   uint32 intwbuffer)
+		:mpExtListenerReceiver(NULL)
+		,mExtEndpoint()
+		,mpIntListenerReceiver(NULL)
 		,mIntEndpoint()
 		,mChannels()
-		,mpDispatcher(pDispatcher)
 		,mpExtensionData(NULL)
-		,mpExtListenerReceiver(NULL)
-		,mpIntListenerReceiver(NULL)
+		,mIsExternal(extlisteningPort_min != -1)
+		,mNumExtChannels(0)
 		,mpDelayedChannels(new DelayedChannels())
 		,mpChannelTimeOutHandler(NULL)
 		,mpChannelDeregisterHandler(NULL)
-		,mIsExternal(extlisteningPort_min != -1)
-		,mNumExtChannels(0)
+		,mpDispatcher(pDispatcher)
 {
 	if(isExternal())
 	{
 		mpExtListenerReceiver = new Listener(mExtEndpoint, Channel::External, *this);
 		this->recreateListeningSocket("External", htons(extlisteningPort_min), htons(extlisteningPort_max), 
-			extlisteningInterface, &mExtEndpoint, mpExtListenerReceiver, extrbuffer, extwbuffer);
+									  extlisteningInterface, &mExtEndpoint, mpExtListenerReceiver, extrbuffer, extwbuffer);
 
 		if(extlisteningPort_min != -1)
 		{
@@ -48,7 +48,7 @@ NetworkManager::NetworkManager(EventDispatcher * pDispatcher,
 	{
 		mpIntListenerReceiver = new Listener(mIntEndpoint, Channel::Internal, *this);
 		this->recreateListeningSocket("INTERNAL", intlisteningPort, intlisteningPort, 
-			intlisteningInterface, &mIntEndpoint, mpIntListenerReceiver, intrbuffer, intwbuffer);
+									  intlisteningInterface, &mIntEndpoint, mpIntListenerReceiver, intrbuffer, intwbuffer);
 	}
 
 	Assert(good() && "NetworkInterface::NetworkInterface: no available port.\n");
@@ -106,8 +106,8 @@ bool NetworkManager::recreateListeningSocket(const char *pEndPointName,
 	pEndPoint->socket(SOCK_STREAM);
 	if (!pEndPoint->good())
 	{
-// 		ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): couldn't create a socket\n",
-// 			pEndPointName));
+		// 		ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): couldn't create a socket\n",
+		// 			pEndPointName));
 
 		return false;
 	}
@@ -123,15 +123,15 @@ bool NetworkManager::recreateListeningSocket(const char *pEndPointName,
 		char szIp[MAX_IP] = {0};
 		Address::ip2string(ifIPAddr, szIp);
 
-// 		INFO_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 				"Creating on interface '{}' (= {})\n",
-// 			pEndPointName, listeningInterface, szIp));
+		// 		INFO_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+		// 				"Creating on interface '{}' (= {})\n",
+		// 			pEndPointName, listeningInterface, szIp));
 	}
 	else if (!listeningInterfaceEmpty)
 	{
-// 		WARNING_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 				"Couldn't parse interface spec '{}' so using all interfaces\n",
-// 			pEndPointName, listeningInterface));
+		// 		WARNING_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+		// 				"Couldn't parse interface spec '{}' so using all interfaces\n",
+		// 			pEndPointName, listeningInterface));
 	}
 	
 	bool foundport = false;
@@ -162,9 +162,9 @@ bool NetworkManager::recreateListeningSocket(const char *pEndPointName,
 
 	if(!foundport)
 	{
-// 		ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 				"Couldn't bind the socket to {}:{} ({})\n",
-// 			pEndPointName, inet_ntoa((struct in_addr&)ifIPAddr), ntohs(listeningPort), __strerror()));
+		// 		ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+		// 				"Couldn't bind the socket to {}:{} ({})\n",
+		// 			pEndPointName, inet_ntoa((struct in_addr&)ifIPAddr), ntohs(listeningPort), __strerror()));
 		
 		pEndPoint->close();
 		return false;
@@ -180,15 +180,15 @@ bool NetworkManager::recreateListeningSocket(const char *pEndPointName,
 
 			char szIp[MAX_IP] = {0};
 			Address::ip2string(address.ip, szIp);
-// 			INFO_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 					"bound to all interfaces with default route "
-// 					"interface on {} ( {} )\n",
-// 				pEndPointName, szIp, address.c_str()));
+			// 			INFO_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+			// 					"bound to all interfaces with default route "
+			// 					"interface on {} ( {} )\n",
+			// 				pEndPointName, szIp, address.c_str()));
 		}
 		else
 		{
-// 			ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 				"Couldn't determine ip addr of default interface\n", pEndPointName));
+			// 			ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+			// 				"Couldn't determine ip addr of default interface\n", pEndPointName));
 
 			pEndPoint->close();
 			return false;
@@ -203,18 +203,18 @@ bool NetworkManager::recreateListeningSocket(const char *pEndPointName,
 	{
 		if (!pEndPoint->setBufferSize(SO_RCVBUF, rbuffer))
 		{
-// 			WARNING_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 				"Operating with a receive buffer of only {} bytes (instead of {})\n",
-// 				pEndPointName, pEndPoint->getBufferSize(SO_RCVBUF), rbuffer));
+			// 			WARNING_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+			// 				"Operating with a receive buffer of only {} bytes (instead of {})\n",
+			// 				pEndPointName, pEndPoint->getBufferSize(SO_RCVBUF), rbuffer));
 		}
 	}
 	if(wbuffer > 0)
 	{
 		if (!pEndPoint->setBufferSize(SO_SNDBUF, wbuffer))
 		{
-// 			WARNING_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 				"Operating with a send buffer of only {} bytes (instead of {})\n",
-// 				pEndPointName, pEndPoint->getBufferSize(SO_SNDBUF), wbuffer));
+			// 			WARNING_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+			// 				"Operating with a send buffer of only {} bytes (instead of {})\n",
+			// 				pEndPointName, pEndPoint->getBufferSize(SO_SNDBUF), wbuffer));
 		}
 	}
 
@@ -224,16 +224,16 @@ bool NetworkManager::recreateListeningSocket(const char *pEndPointName,
 
 	if(pEndPoint->listen(backlog) == -1)
 	{
-// 		ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
-// 			"listen to {} ({})\n",
-// 			pEndPointName, address.c_str(), __strerror()));
+		// 		ERROR_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): "
+		// 			"listen to {} ({})\n",
+		// 			pEndPointName, address.c_str(), __strerror()));
 
 		pEndPoint->close();
 		return false;
 	}
 	
-// 	INFO_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): address {}, SOMAXCONN={}.\n", 
-// 		pEndPointName, address.c_str(), backlog));
+	// 	INFO_MSG(fmt::format("NetworkInterface::recreateListeningSocket({}): address {}, SOMAXCONN={}.\n", 
+	// 		pEndPointName, address.c_str(), backlog));
 
 	return true;
 }
@@ -277,8 +277,8 @@ bool NetworkManager::registerChannel(Channel* pChannel)
 
 	if(pExisting)
 	{
-// 		CRITICAL_MSG(fmt::format("NetworkInterface::registerChannel: channel {} is exist.\n",
-// 			pChannel->c_str()));
+		// 		CRITICAL_MSG(fmt::format("NetworkInterface::registerChannel: channel {} is exist.\n",
+		// 			pChannel->c_str()));
 		return false;
 	}
 
@@ -300,9 +300,9 @@ bool NetworkManager::deregisterChannel(Channel* pChannel)
 
 	if (!mChannels.erase(addr))
 	{
-// 		CRITICAL_MSG(fmt::format("NetworkInterface::deregisterChannel: "
-// 			"Channel not found {}!\n",
-// 			pChannel->c_str()));
+		// 		CRITICAL_MSG(fmt::format("NetworkInterface::deregisterChannel: "
+		// 			"Channel not found {}!\n",
+		// 			pChannel->c_str()));
 
 		return false;
 	}
@@ -362,9 +362,9 @@ void NetworkManager::onChannelTimeOut(Channel * pChannel)
 	}
 	else
 	{
-// 		ERROR_MSG(fmt::format("NetworkInterface::onChannelTimeOut: "
-// 			"Channel {} timed out but no handler is registered.\n",
-// 			pChannel->c_str()));
+		// 		ERROR_MSG(fmt::format("NetworkInterface::onChannelTimeOut: "
+		// 			"Channel {} timed out but no handler is registered.\n",
+		// 			pChannel->c_str()));
 	}
 }
 
@@ -380,8 +380,8 @@ void NetworkManager::sendIfDelayed(Channel & channel)
 
 void NetworkManager::onTimeout(TimerHandle handle, void * arg)
 {
-// 	INFO_MSG(fmt::format("NetworkInterface::onTimeout: External({}), INTERNAL({}).\n", 
-// 		extaddr().c_str(), intaddr().c_str()));
+	// 	INFO_MSG(fmt::format("NetworkInterface::onTimeout: External({}), INTERNAL({}).\n", 
+	// 		extaddr().c_str(), intaddr().c_str()));
 }
 
 void NetworkManager::closeSocket()

@@ -5,7 +5,6 @@
 #include "network/EndPoint.h"
 #include "network/EventDispatcher.h"
 #include "network/NetworkManager.h"
-#include "network/EventPoller.h"
 
 static ObjectPool<UDPPacketReceiver> s_ObjPool("UDPPacketReceiver");
 ObjectPool<UDPPacketReceiver>& UDPPacketReceiver::ObjPool()
@@ -15,14 +14,14 @@ ObjectPool<UDPPacketReceiver>& UDPPacketReceiver::ObjPool()
 
 void UDPPacketReceiver::destroyObjPool()
 {
-// 	DEBUG_MSG(fmt::format("UDPPacketReceiver::destroyObjPool(): size {}.\n", 
-// 		s_ObjPool.size()));
+	// 	DEBUG_MSG(fmt::format("UDPPacketReceiver::destroyObjPool(): size {}.\n", 
+	// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
 
 UDPPacketReceiver::UDPPacketReceiver(EndPoint & endpoint, NetworkManager &networkMgr) 
-:PacketReceiver(endpoint, networkMgr)
+		:PacketReceiver(endpoint, networkMgr)
 {
 }
 
@@ -54,8 +53,8 @@ bool UDPPacketReceiver::processRecv(bool expectingPacket)
 		bool ret = pSrcChannel->initialize(*mpNetworkManager, pNewEndPoint, Channel::External, Protocol_UDP);
 		if(!ret)
 		{
-// 			ERROR_MSG(fmt::format("UDPPacketReceiver::processRecv: initialize({}) is failed!\n",
-// 				pSrcChannel->c_str()));
+			// 			ERROR_MSG(fmt::format("UDPPacketReceiver::processRecv: initialize({}) is failed!\n",
+			// 				pSrcChannel->c_str()));
 
 			pSrcChannel->destroy();
 			Channel::ObjPool().reclaimObject(pSrcChannel);
@@ -65,8 +64,8 @@ bool UDPPacketReceiver::processRecv(bool expectingPacket)
 
 		if(!mpNetworkManager->registerChannel(pSrcChannel))
 		{
-// 			ERROR_MSG(fmt::format("UDPPacketReceiver::processRecv: registerChannel({}) is failed!\n",
-// 				pSrcChannel->c_str()));
+			// 			ERROR_MSG(fmt::format("UDPPacketReceiver::processRecv: registerChannel({}) is failed!\n",
+			// 				pSrcChannel->c_str()));
 
 			UDPPacket::ObjPool().reclaimObject(pChannelReceiveWindow);
 			pSrcChannel->destroy();
@@ -86,10 +85,9 @@ bool UDPPacketReceiver::processRecv(bool expectingPacket)
 		return false;
 	}
 
-	EReason ret = this->processPacket(pSrcChannel, pChannelReceiveWindow);
-
-// 	if(ret != Reason_Success)
-// 		;
+	// EReason ret = this->processPacket(pSrcChannel, pChannelReceiveWindow);
+	// if(ret != Reason_Success)
+	// 	;
 	
 	return true;
 }
@@ -108,9 +106,9 @@ PacketReceiver::ERecvState UDPPacketReceiver::checkSocketErrors(int len, bool ex
 {
 	if (len == 0)
 	{
-// 		WARNING_MSG(fmt::format("PacketReceiver::processPendingEvents: "
-// 			"Throwing REASON_GENERAL_NETWORK (1)- {}\n",
-// 			strerror( errno )));
+		// 		WARNING_MSG(fmt::format("PacketReceiver::processPendingEvents: "
+		// 			"Throwing REASON_GENERAL_NETWORK (1)- {}\n",
+		// 			strerror( errno )));
 
 		return RecvState_Continue;
 	}
@@ -121,9 +119,9 @@ PacketReceiver::ERecvState UDPPacketReceiver::checkSocketErrors(int len, bool ex
 
 	if (
 #ifdef _WIN32
-		wsaErr == WSAEWOULDBLOCK && !expectingPacket
+			wsaErr == WSAEWOULDBLOCK && !expectingPacket
 #else
-		errno == EAGAIN && !expectingPacket
+			errno == EAGAIN && !expectingPacket
 #endif
 		)
 	{
@@ -152,8 +150,8 @@ PacketReceiver::ERecvState UDPPacketReceiver::checkSocketErrors(int len, bool ex
 		}
 		else
 		{
-			WARNING_MSG("UDPPacketReceiver::processPendingEvents: "
-				"getClosedPort() failed\n");
+			// WARNING_MSG("UDPPacketReceiver::processPendingEvents: "
+			// 	"getClosedPort() failed\n");
 		}
 	}
 #else
@@ -164,13 +162,13 @@ PacketReceiver::ERecvState UDPPacketReceiver::checkSocketErrors(int len, bool ex
 #endif // unix
 
 #ifdef _WIN32
-// 	WARNING_MSG(fmt::format("UDPPacketReceiver::processPendingEvents: "
-// 				"Throwing REASON_GENERAL_NETWORK - {}\n",
-// 				wsaErr));
+	// 	WARNING_MSG(fmt::format("UDPPacketReceiver::processPendingEvents: "
+	// 				"Throwing REASON_GENERAL_NETWORK - {}\n",
+	// 				wsaErr));
 #else
-// 	WARNING_MSG(fmt::format("UDPPacketReceiver::processPendingEvents: "
-// 				"Throwing REASON_GENERAL_NETWORK - {}\n",
-// 			__strerror()));
+	// 	WARNING_MSG(fmt::format("UDPPacketReceiver::processPendingEvents: "
+	// 				"Throwing REASON_GENERAL_NETWORK - {}\n",
+	// 			__strerror()));
 #endif	
 
 	return RecvState_Continue;

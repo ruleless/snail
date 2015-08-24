@@ -65,6 +65,7 @@
 #include <langinfo.h>
 #include <stdint.h>
 #include <signal.h>
+#include <dirent.h>
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h> 
@@ -75,11 +76,12 @@
 #include <tr1/memory>
 #include <linux/types.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/uio.h>
-#include <sys/resource.h> 
+#include <sys/resource.h>
 #include <linux/errqueue.h>
 #endif
 
@@ -126,8 +128,12 @@
 
 //////////////////////////////////////////////////////////////////////////
 // 字节序
-#define LITTLE_ENDIAN	0
-#define BIG_ENDIAN		1
+#ifndef LITTLE_ENDIAN
+#	define LITTLE_ENDIAN	0
+#endif
+#ifndef BIG_ENDIAN
+#	define BIG_ENDIAN		1
+#endif
 #if !defined(ENDIAN)
 #	if defined (USE_BIG_ENDIAN)
 #		define ENDIAN BIG_ENDIAN
@@ -208,9 +214,9 @@
 // 类型定义
 #ifndef TCHAR
 #  ifdef _UNICODE
-     typedef wchar_t TCHAR;
+typedef wchar_t TCHAR;
 #  else
-     typedef char TCHAR;
+typedef char TCHAR;
 #  endif
 #endif
 
@@ -409,18 +415,18 @@ inline int32 getUserUID()
 	{
 #if PLATFORM == PLATFORM_WIN32
 		// VS2005:
-		#if _MSC_VER >= 1400
-			char uid[16];
-			size_t sz;
-			iuid = getenv_s( &sz, uid, sizeof( uid ), "UID" ) == 0 ? atoi( uid ) : 0;
+#if _MSC_VER >= 1400
+		char uid[16];
+		size_t sz;
+		iuid = getenv_s( &sz, uid, sizeof( uid ), "UID" ) == 0 ? atoi( uid ) : 0;
 
 		// VS2003:
-		#elif _MSC_VER < 1400
-			char * uid = getenv( "UID" );
-			iuid = uid ? atoi( uid ) : 0;
-		#endif
+#elif _MSC_VER < 1400
+		char * uid = getenv( "UID" );
+		iuid = uid ? atoi( uid ) : 0;
+#endif
 #else
-	// Linux:
+		// Linux:
 		char * uid = getenv( "UID" );
 		iuid = uid ? atoi( uid ) : getuid();
 #endif
@@ -480,25 +486,25 @@ inline uint32 getSystemTimeDiff(uint32 oldTime, uint32 newTime)
 }
 
 #if PLATFORM == PLATFORM_WIN32
-inline void sleep(uint32 ms)
+inline void sleepms(uint32 ms)
 { 
-	::Sleep(ms); 
+	::Sleep(ms);
 }
 #else
-inline void sleep(uint32 ms)
+inline void sleepms(uint32 ms)
 { 
 	struct timeval tval;
 	tval.tv_sec	= ms / 1000;
-	tval.tv_usec	= ( ms * 1000) % 1000000;
+	tval.tv_usec = (ms * 1000) % 1000000;
 	select(0, NULL, NULL, NULL, &tval);
-}	
+}
 #endif
 
 // 判断平台是否为小端字节序
 inline bool isPlatformLittleEndian()
 {
-   int n = 1;
-   return *((char*)&n) ? true : false;
+	int n = 1;
+	return *((char*)&n) ? true : false;
 }
 
 // 设置环境变量

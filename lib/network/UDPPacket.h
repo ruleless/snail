@@ -1,12 +1,13 @@
 #ifndef __UDPPACKET_H__
 #define __UDPPACKET_H__
 
-#include "network/Packet.h"
 #include "common/ObjectPool.h"
+#include "network/NetworkDef.h"
+#include "network/Packet.h"
 
 class UDPPacket : public Packet
 {
-public:
+  public:
 	static ObjectPool<UDPPacket>& ObjPool();
 	static void destroyObjPool();
 	static size_t maxBufferSize();

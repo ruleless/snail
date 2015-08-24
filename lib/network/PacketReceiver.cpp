@@ -1,21 +1,18 @@
 #include "PacketReceiver.h"
-#include "network/Address.h"
-#include "network/Bundle.h"
 #include "network/Channel.h"
 #include "network/EndPoint.h"
 #include "network/EventDispatcher.h"
 #include "network/NetworkManager.h"
-#include "network/EventPoller.h"
 
 PacketReceiver::PacketReceiver()
-:mpEndpoint(NULL)
-,mpNetworkManager(NULL)
+		:mpEndpoint(NULL)
+		,mpNetworkManager(NULL)
 {
 }
 
-PacketReceiver::PacketReceiver(EndPoint &endpoint,NetworkManager &networkMgr)
-:mpEndpoint(&endpoint)
-,mpNetworkManager(&networkMgr)
+PacketReceiver::PacketReceiver(EndPoint &endpoint, NetworkManager &networkMgr)
+		:mpEndpoint(&endpoint)
+		,mpNetworkManager(&networkMgr)
 {
 }
 

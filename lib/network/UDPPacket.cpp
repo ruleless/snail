@@ -1,8 +1,6 @@
 #include "UDPPacket.h"
-#include "network/Bundle.h"
+#include "network/Address.h"
 #include "network/EndPoint.h"
-#include "network/NetworkManager.h"
-#include "network/MessageHandler.h"
 
 static ObjectPool<UDPPacket> s_ObjPool("UDPPacket");
 ObjectPool<UDPPacket>& UDPPacket::ObjPool()
@@ -12,14 +10,14 @@ ObjectPool<UDPPacket>& UDPPacket::ObjPool()
 
 void UDPPacket::destroyObjPool()
 {
-// 	DEBUG_MSG(fmt::format("UDPPacket::destroyObjPool(): size {}.\n", 
-// 		s_ObjPool.size()));
+	// 	DEBUG_MSG(fmt::format("UDPPacket::destroyObjPool(): size {}.\n", 
+	// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
 
 UDPPacket::UDPPacket(MessageID msgID, size_t res)
-:Packet(msgID, false, res)
+		:Packet(msgID, false, res)
 {
 	data_resize(maxBufferSize());
 	wpos(0);

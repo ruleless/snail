@@ -5,9 +5,7 @@
 #include "network/EndPoint.h"
 #include "network/EventDispatcher.h"
 #include "network/NetworkManager.h"
-#include "network/EventPoller.h"
 #include "network/TCPPacket.h"
-#include "network/UDPPacket.h"
 
 static ObjectPool<TCPPacketSender> s_ObjPool("TCPPacketSender");
 ObjectPool<TCPPacketSender>& TCPPacketSender::ObjPool()

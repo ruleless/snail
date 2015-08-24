@@ -7,7 +7,7 @@
 #include <sstream>
 #include <iomanip>
 
-#if defined( unix )
+#if defined (unix)
 #define __isnan isnan
 #define __isinf isinf
 #define __snprintf snprintf
@@ -17,8 +17,10 @@
 #define __stricmp strcasecmp
 #define __strnicmp strncasecmp
 #define __fileno fileno
-#define __va_copy va_copy
-#else
+#ifndef __va_copy
+#	define __va_copy va_copy
+#endif // __va_copy
+#else // unix
 #define __isnan _isnan
 #define __isinf(x) (!_finite(x) && !_isnan(x))
 #define __snprintf _snprintf
@@ -35,7 +37,7 @@
 #define __strtoll _strtoi64
 #define __strtoull _strtoui64
 #define __atoll _atoi64
-#endif 
+#endif // unix
 
 class MemoryStream;
 

@@ -1,7 +1,4 @@
 #include "MessageHandler.h"
-#include "network/Channel.h"
-#include "network/NetworkManager.h"
-#include "network/PacketReceiver.h"
 
 MessageHandler::MessageHandler()
 :name("unknown")

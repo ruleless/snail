@@ -9,7 +9,7 @@ class MessageHandlers;
 
 class PacketReader
 {
-public:
+  public:
 	enum EPacketReaderType
 	{
 		PacketReaderType_Socket = 0,
@@ -30,7 +30,7 @@ public:
 	void currMsgLen(MessageLength len) { mCurrMsgLen = len; }
 
 	virtual PacketReader::EPacketReaderType type()const { return PacketReaderType_Socket; }
-protected:
+  protected:
 	enum EFragmentDataTypes
 	{
 		FragmentData_Unknown,
@@ -42,7 +42,7 @@ protected:
 	
 	virtual void writeFragmentMessage(EFragmentDataTypes fragmentDatasFlag, Packet* pPacket, uint32 datasize);
 	virtual void mergeFragmentMessage(Packet* pPacket);
-protected:
+  protected:
 	MessageID mCurrMsgID;
 	MessageLength1 mCurrMsgLen;
 	MemoryStream *mpFragmentStream;

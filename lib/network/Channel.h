@@ -4,15 +4,13 @@
 #include "common/common.h"
 #include "common/Timer.h"
 #include "common/SmartPointer.h"
-#include "common/timestamp.h"
 #include "common/ObjectPool.h"
-#include "network/address.h"
-#include "network/EventDispatcher.h"
+#include "network/Network.h"
+#include "network/NetworkDef.h"
+#include "network/Address.h"
 #include "network/EndPoint.h"
 #include "network/Packet.h"
-#include "network/NetworkDef.h"
 #include "network/Bundle.h"
-#include "network/Network.h"
 #include "network/PacketFilter.h"
 
 class Bundle;
@@ -23,7 +21,7 @@ class PacketSender;
 
 class Channel : public TimerHandler, public PoolObject
 {
-public:
+  public:
 	static ObjectPool<Channel>& ObjPool();
 	static void destroyObjPool();
 	virtual void onReclaimObject();
@@ -44,11 +42,11 @@ public:
 	Channel();
 
 	Channel(NetworkManager &networkInterface, 
-		const EndPoint *pEndPoint,
-		ETraits traits,
-		ProtocolType pt = Protocol_TCP, 
-		PacketFilterPtr pFilter = NULL, 
-		ChannelID id = CHANNEL_ID_NULL);
+			const EndPoint *pEndPoint,
+			ETraits traits,
+			ProtocolType pt = Protocol_TCP, 
+			PacketFilterPtr pFilter = NULL, 
+			ChannelID id = CHANNEL_ID_NULL);
 
 	virtual ~Channel();
 
@@ -56,11 +54,11 @@ public:
 	ChannelID id() const { return mID; }
 
 	bool initialize(NetworkManager & networkInterface, 
-		const EndPoint * pEndPoint, 
-		ETraits traits, 
-		ProtocolType pt = Protocol_TCP, 
-		PacketFilterPtr pFilter = NULL, 
-		ChannelID id = CHANNEL_ID_NULL);
+					const EndPoint * pEndPoint, 
+					ETraits traits, 
+					ProtocolType pt = Protocol_TCP, 
+					PacketFilterPtr pFilter = NULL, 
+					ChannelID id = CHANNEL_ID_NULL);
 
 	bool finalise();
 
@@ -133,7 +131,7 @@ public:
 	bool waitSend();
 
 	virtual void onTimeout(TimerHandle, void * pUser);
-private:
+  private:
 	enum EFlags
 	{
 		Flag_Sending	= 0x00000001,	// 发送信息中

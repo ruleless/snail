@@ -1,8 +1,8 @@
 EndPoint::EndPoint(u_int32_t networkAddr, u_int16_t networkPort)
 #if PLATFORM == PLATFORM_WIN32
-:mSocket(INVALID_SOCKET)
+		:mSocket(INVALID_SOCKET)
 #else
-:mSocket(-1)
+		 :mSocket(-1)
 #endif
 {
 	if(networkAddr)
@@ -14,9 +14,9 @@ EndPoint::EndPoint(u_int32_t networkAddr, u_int16_t networkPort)
 
 EndPoint::EndPoint(Address address)
 #if PLATFORM == PLATFORM_WIN32
-:mSocket(INVALID_SOCKET)
+		:mSocket(INVALID_SOCKET)
 #else
-:mSocket(-1)
+		 :mSocket(-1)
 #endif
 {
 	if(address.ip > 0)
@@ -76,7 +76,7 @@ INLINE void EndPoint::socket(int type)
 		EndPoint::initNetwork();
 		this->setFileDescriptor(::socket(AF_INET, type, 0));
 		Assert((mSocket != INVALID_SOCKET) && (WSAGetLastError() != WSANOTINITIALISED) && \
-				"EndPoint::socket: create socket is error!");
+			   "EndPoint::socket: create socket is error!");
 	}
 #endif
 }
@@ -123,7 +123,7 @@ INLINE int EndPoint::setreuseaddr(bool reuseaddr)
 #endif
 	val = reuseaddr ? 1 : 0;
 	return ::setsockopt(mSocket, SOL_SOCKET, SO_REUSEADDR,
-		(char*)&val, sizeof(val));
+						(char*)&val, sizeof(val));
 }
 
 INLINE int EndPoint::setlinger(uint16 onoff, uint16 linger)
@@ -143,7 +143,7 @@ INLINE int EndPoint::setkeepalive(bool keepalive)
 #endif
 	val = keepalive ? 1 : 0;
 	return ::setsockopt(mSocket, SOL_SOCKET, SO_KEEPALIVE,
-		(char*)&val, sizeof(val));
+						(char*)&val, sizeof(val));
 }
 
 INLINE int EndPoint::bind(u_int16_t networkPort, u_int32_t networkAddr)
@@ -258,7 +258,7 @@ INLINE int EndPoint::getremotehostname(std::string * host) const
 	if (ret == 0)
 	{
 		hostent* h = gethostbyaddr((char*) &sin.sin_addr,
-				sizeof(sin.sin_addr), AF_INET);
+								   sizeof(sin.sin_addr), AF_INET);
 
 		if (h)
 		{
@@ -416,7 +416,7 @@ INLINE int EndPoint::getInterfaceAddress(const char * name, u_int32_t & address)
 }
 
 INLINE int EndPoint::getInterfaceNetmask(const char * name,
-	u_int32_t & netmask)
+										 u_int32_t & netmask)
 {
 	struct ifreq request;
 	strncpy(request.ifr_name, name, IFNAMSIZ);
@@ -437,7 +437,7 @@ INLINE int EndPoint::getInterfaceFlags(char * name, int & flags)
 	if (!strcmp(name,"eth0"))
 	{
 		flags = IFF_UP | IFF_BROADCAST | IFF_NOTRAILERS |
-			IFF_RUNNING | IFF_MULTICAST;
+				IFF_RUNNING | IFF_MULTICAST;
 		return 0;
 	}
 	else if (!strcmp(name,"lo"))

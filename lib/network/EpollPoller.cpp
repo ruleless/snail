@@ -9,8 +9,8 @@ EpollPoller::EpollPoller(int expectedSize)
 	mEpfd = epoll_create(expectedSize);
 	if (mEpfd == -1)
 	{
-// 		ERROR_MSG(fmt::format("EpollPoller::EpollPoller: epoll_create failed: {}\n",
-// 				__strerror()));
+		// 		ERROR_MSG(fmt::format("EpollPoller::EpollPoller: epoll_create failed: {}\n",
+		// 				__strerror()));
 	}
 }
 
@@ -81,23 +81,23 @@ bool EpollPoller::doRegister(int fd, bool isRead, bool isRegister)
 
 	if (epoll_ctl(mEpfd, op, fd, &ev) < 0)
 	{
-		const char* MESSAGE = "EpollPoller::doRegister: Failed to {} {} file "
-			"descriptor {} ({})\n";
+		// const char* MESSAGE = "EpollPoller::doRegister: Failed to {} {} file "
+		// 					  "descriptor {} ({})\n";
 		if (errno == EBADF)
 		{
-// 			WARNING_MSG(fmt::format(MESSAGE,
-// 				(isRegister ? "add" : "remove"),
-// 				(isRead ? "read" : "write"),
-// 				fd,
-// 				__strerror()));
+			// 			WARNING_MSG(fmt::format(MESSAGE,
+			// 				(isRegister ? "add" : "remove"),
+			// 				(isRead ? "read" : "write"),
+			// 				fd,
+			// 				__strerror()));
 		}
 		else
 		{
-// 			ERROR_MSG(fmt::format(MESSAGE,
-// 				(isRegister ? "add" : "remove"),
-// 				(isRead ? "read" : "write"),
-// 				fd,
-// 				__strerror()));
+			// 			ERROR_MSG(fmt::format(MESSAGE,
+			// 				(isRegister ? "add" : "remove"),
+			// 				(isRead ? "read" : "write"),
+			// 				fd,
+			// 				__strerror()));
 		}
 
 		return false;

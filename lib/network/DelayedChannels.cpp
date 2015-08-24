@@ -10,7 +10,7 @@ void DelayedChannels::initialize(EventDispatcher &dispatcher, NetworkManager *pN
 	dispatcher.addTask( this );
 }
 
-void DelayedChannels::finalise(EventDispatcher & dispatcher)
+void DelayedChannels::finalise(EventDispatcher &dispatcher)
 {
 	dispatcher.cancelTask(this);
 }

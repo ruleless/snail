@@ -4,6 +4,8 @@
 #include "network/Channel.h"
 #include "network/PacketSender.h"
 #include "network/MessageHandler.h"
+#include "network/TCPPacket.h"
+#include "network/UDPPacket.h"
 
 
 static ObjectPool<Bundle> s_ObjPool("Bundle");
@@ -14,8 +16,8 @@ ObjectPool<Bundle>& Bundle::ObjPool()
 
 void Bundle::destroyObjPool()
 {
-// 	DEBUG_MSG(fmt::format("Bundle::destroyObjPool(): size {}.\n", 
-// 		s_ObjPool.size()));
+	// 	DEBUG_MSG(fmt::format("Bundle::destroyObjPool(): size {}.\n", 
+	// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
@@ -28,30 +30,30 @@ void Bundle::onReclaimObject()
 size_t Bundle::getPoolObjectBytes()
 {
 	size_t bytes = sizeof(mpCurrMsgHandler) + sizeof(mIsTCPPacket) + 
-		sizeof(mCurrMsgLengthPos) + sizeof(mCurrMsgHandlerLength) + sizeof(mCurrMsgLength) + 
-		sizeof(mCurrMsgPacketCount) + sizeof(mCurrMsgID) + sizeof(mNumMessages) + sizeof(mpChannel)
-		+ (mPackets.size() * sizeof(Packet*));
+				   sizeof(mCurrMsgLengthPos) + sizeof(mCurrMsgHandlerLength) + sizeof(mCurrMsgLength) + 
+				   sizeof(mCurrMsgPacketCount) + sizeof(mCurrMsgID) + sizeof(mNumMessages) + sizeof(mpChannel)
+				   + (mPackets.size() * sizeof(Packet*));
 
 	return bytes;
 }
 
 
 Bundle::Bundle(Channel * pChannel, ProtocolType pt)
-:mpChannel(pChannel)
-,mNumMessages(0)
-,mpCurrPacket(NULL)
-,mCurrMsgID(0)
-,mCurrMsgPacketCount(0)
-,mCurrMsgLength(0)
-,mCurrMsgHandlerLength(0)
-,mCurrMsgLengthPos(0)
-,mPackets()
-,mIsTCPPacket(pt == Protocol_TCP)
-,mPacketMaxSize(0)
-,mpCurrMsgHandler(NULL)
+		:mpChannel(pChannel)
+		,mNumMessages(0)
+		,mpCurrPacket(NULL)
+		,mCurrMsgID(0)
+		,mCurrMsgPacketCount(0)
+		,mCurrMsgLength(0)
+		,mCurrMsgHandlerLength(0)
+		,mCurrMsgLengthPos(0)
+		,mPackets()
+		,mIsTCPPacket(pt == Protocol_TCP)
+		,mPacketMaxSize(0)
+		,mpCurrMsgHandler(NULL)
 {
 	_calcPacketMaxSize();
-	 newPacket();
+	newPacket();
 }
 
 Bundle::Bundle(const Bundle& bundle)
@@ -283,7 +285,7 @@ void Bundle::_calcPacketMaxSize()
 	if(g_channelExternalEncryptType == 1)
 	{
 		mPacketMaxSize = mIsTCPPacket ? (TCPPacket::maxBufferSize() - ENCRYPTTION_WASTAGE_SIZE):
-			(PACKET_MAX_SIZE_UDP - ENCRYPTTION_WASTAGE_SIZE);
+						 (PACKET_MAX_SIZE_UDP - ENCRYPTTION_WASTAGE_SIZE);
 
 		mPacketMaxSize -= mPacketMaxSize % Blowfish::BLOCK_SIZE;
 	}

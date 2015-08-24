@@ -1,13 +1,10 @@
 #include "Channel.h"
-#include "network/websocket_protocol.h"
-#include "network/WebSocketPacketFilter.h"
-#include "network/websocket_packet_reader.h"
-#include "network/Bundle.h"
 #include "network/PacketReader.h"
 #include "network/NetworkManager.h"
+#include "network/EventDispatcher.h"
 #include "network/TCPPacketReceiver.h"
-#include "network/TCPPacketSender.h"
 #include "network/UDPPacketReceiver.h"
+#include "network/TCPPacketSender.h"
 #include "network/TCPPacket.h"
 #include "network/UDPPacket.h"
 #include "network/MessageHandler.h"
@@ -22,8 +19,8 @@ ObjectPool<Channel>& Channel::ObjPool()
 
 void Channel::destroyObjPool()
 {
-// 	DEBUG_MSG(fmt::format("Channel::destroyObjPool(): size {}.\n", 
-// 		s_ObjPool.size()));
+	// 	DEBUG_MSG(fmt::format("Channel::destroyObjPool(): size {}.\n", 
+	// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
@@ -31,12 +28,12 @@ void Channel::destroyObjPool()
 size_t Channel::getPoolObjectBytes()
 {
 	size_t bytes = sizeof(mpNetworkManager) + sizeof(mTraits) + 
-		sizeof(mID) + sizeof(mInactivityTimerHandle) + sizeof(mInactivityExceptionPeriod) + 
-		sizeof(mLastReceivedTime) + (mBufferedReceives.size() * sizeof(Packet*)) + sizeof(mpPacketReader)
-		+ sizeof(mFlags) + sizeof(mNumPacketsSent) + sizeof(mNumPacketsReceived) + sizeof(mNumBytesSent) + sizeof(mNumBytesReceived)
-		+ sizeof(mLastTickBytesReceived) + sizeof(mLastTickBytesSent) + sizeof(mpFilter) + sizeof(mpEndPoint) + sizeof(mpPacketReceiver) + sizeof(mpPacketSender)
-		+ sizeof(proxyID_) + mStrExtra.size() + sizeof(mChannelType)
-		+ sizeof(mComponentID);
+				   sizeof(mID) + sizeof(mInactivityTimerHandle) + sizeof(mInactivityExceptionPeriod) + 
+				   sizeof(mLastReceivedTime) + (mBufferedReceives.size() * sizeof(Packet*)) + sizeof(mpPacketReader)
+				   + sizeof(mFlags) + sizeof(mNumPacketsSent) + sizeof(mNumPacketsReceived) + sizeof(mNumBytesSent) + sizeof(mNumBytesReceived)
+				   + sizeof(mLastTickBytesReceived) + sizeof(mLastTickBytesSent) + sizeof(mpFilter) + sizeof(mpEndPoint) + sizeof(mpPacketReceiver) + sizeof(mpPacketSender)
+				   + sizeof(proxyID_) + mStrExtra.size() + sizeof(mChannelType)
+				   + sizeof(mComponentID);
 
 	return bytes;
 }
@@ -47,64 +44,66 @@ void Channel::onReclaimObject()
 }
 
 
-Channel::Channel(NetworkManager & networkInterface,
-				 const EndPoint * pEndPoint,
-				 ETraits traits, ProtocolType pt,
-				 PacketFilterPtr pFilter, ChannelID id)
-				 :mpNetworkManager(NULL)
-				 ,mTraits(traits)
-				 ,mProtocolType(pt)
-				 ,mID(id)
-				 ,mInactivityTimerHandle()
-				 ,mInactivityExceptionPeriod(0)
-				 ,mLastReceivedTime(0)
-				 ,mBundles()
-				 ,mpPacketReader(0)
-				 ,mNumPacketsSent(0)
-				 ,mNumPacketsReceived(0)
-				 ,mNumBytesSent(0)
-				 ,mNumBytesReceived(0)
-				 ,mLastTickBytesReceived(0)
-				 ,mLastTickBytesSent(0)
-				 ,mpFilter(pFilter)
-				 ,mpEndPoint(NULL)
-				 ,mpPacketReceiver(NULL)
-				 ,mpPacketSender(NULL)
-				 ,proxyID_(0)
-				 ,mStrExtra()
-				 ,mChannelType(Chanel_Normal)
-				 ,mComponentID(-1)
-				 ,mFlags(0)
+Channel::Channel(NetworkManager &networkInterface,
+				 const EndPoint *pEndPoint,
+				 ETraits traits,
+				 ProtocolType pt,
+				 PacketFilterPtr pFilter,
+				 ChannelID id)
+		:mpNetworkManager(NULL)
+		,mID(id)
+		,mTraits(traits)
+		,mProtocolType(pt)
+		,mInactivityTimerHandle()
+		,mInactivityExceptionPeriod(0)
+		,mLastReceivedTime(0)
+		,mBundles()
+		,mpEndPoint(NULL)
+		,mpFilter(pFilter)
+		,mpPacketReader(NULL)
+		,mpPacketReceiver(NULL)
+		,mpPacketSender(NULL)
+		,mNumPacketsSent(0)
+		,mNumPacketsReceived(0)
+		,mNumBytesSent(0)
+		,mNumBytesReceived(0)
+		,mLastTickBytesReceived(0)
+		,mLastTickBytesSent(0)
+		,proxyID_(0)		
+		,mChannelType(Chanel_Normal)
+		,mComponentID(-1)
+		,mFlags(0)
+		,mStrExtra()
 {
 	this->clearBundle();
 	initialize(networkInterface, pEndPoint, traits, pt, pFilter, id);
 }
 
 Channel::Channel()
-:mpNetworkManager(NULL)
-,mTraits(External)
-,mProtocolType(Protocol_TCP)
-,mID(0)
-,mInactivityTimerHandle()
-,mInactivityExceptionPeriod(0)
-,mLastReceivedTime(0)
-,mBundles()
-,mpPacketReader(0)
-,mNumPacketsSent(0)
-,mNumPacketsReceived(0)
-,mNumBytesSent(0)
-,mNumBytesReceived(0)
-,mLastTickBytesReceived(0)
-,mLastTickBytesSent(0)
-,mpFilter(NULL)
-,mpEndPoint(NULL)
-,mpPacketReceiver(NULL)
-,mpPacketSender(NULL)
-,proxyID_(0)
-,mStrExtra()
-,mChannelType(Chanel_Normal)
-,mComponentID(-1)
-,mFlags(0)
+		:mpNetworkManager(NULL)
+		,mID(0)
+		,mTraits(External)
+		,mProtocolType(Protocol_TCP)		
+		,mInactivityTimerHandle()
+		,mInactivityExceptionPeriod(0)
+		,mLastReceivedTime(0)
+		,mBundles()		
+		,mpEndPoint(NULL)
+		,mpFilter(NULL)
+		,mpPacketReader(NULL)
+		,mpPacketReceiver(NULL)
+		,mpPacketSender(NULL)
+		,mNumPacketsSent(0)
+		,mNumPacketsReceived(0)
+		,mNumBytesSent(0)
+		,mNumBytesReceived(0)
+		,mLastTickBytesReceived(0)
+		,mLastTickBytesSent(0)
+		,proxyID_(0)		
+		,mChannelType(Chanel_Normal)
+		,mComponentID(-1)
+		,mFlags(0)
+		,mStrExtra()
 {
 	this->clearBundle();
 }
@@ -186,7 +185,7 @@ bool Channel::initialize(NetworkManager &networkMgr,
 		mpPacketSender->setEndPoint(mpEndPoint);
 
 	startInactivityDetection((mTraits == Internal) ? gChannelInternalTimeout : gChannelExternalTimeout,
-		(mTraits == Internal) ? gChannelInternalTimeout / 2.f : gChannelExternalTimeout / 2.f);
+							 (mTraits == Internal) ? gChannelInternalTimeout / 2.f : gChannelExternalTimeout / 2.f);
 
 	return true;
 }
@@ -235,9 +234,9 @@ void Channel::clearState(bool warnOnDiscard)
 
 		if (hasDiscard > 0 && warnOnDiscard)
 		{
-// 			WARNING_MSG(fmt::format("Channel::clearState( {} ): "
-// 				"Discarding {} buffered packet(s)\n",
-// 				this->c_str(), hasDiscard));
+			// 			WARNING_MSG(fmt::format("Channel::clearState( {} ): "
+			// 				"Discarding {} buffered packet(s)\n",
+			// 				this->c_str(), hasDiscard));
 		}
 
 		mBufferedReceives.clear();
@@ -337,7 +336,7 @@ void Channel::onTimeout(TimerHandle, void *arg)
 {
 	switch (reinterpret_cast<uintptr>(arg))
 	{
-		case Timeout_InactivityCheck:
+	case Timeout_InactivityCheck:
 		{
 			if (timestamp() - mLastReceivedTime >= mInactivityExceptionPeriod)
 			{
@@ -345,8 +344,8 @@ void Channel::onTimeout(TimerHandle, void *arg)
 			}
 			break;
 		}
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -402,13 +401,13 @@ void Channel::send(Bundle *pBundle)
 	{
 		if(this->isExternal())
 		{
-// 			WARNING_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}).\n", 
-// 				(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
+			// 			WARNING_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}).\n", 
+			// 				(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
 
 			if(gExtSendWindowMessagesOverflow > 0 && bundleSize > gExtSendWindowMessagesOverflow)
 			{
-// 				ERROR_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}), Try adjusting the ngine_defs.xml->windowOverflow->send.\n", 
-// 					(void*)this, this->c_str(), bundleSize, gExtSendWindowMessagesOverflow));
+				// 				ERROR_MSG(fmt::format("Channel::send[{:p}]: external channel({}), send window has overflowed({} > {}), Try adjusting the ngine_defs.xml->windowOverflow->send.\n", 
+				// 					(void*)this, this->c_str(), bundleSize, gExtSendWindowMessagesOverflow));
 
 				this->condemn();
 			}
@@ -417,15 +416,15 @@ void Channel::send(Bundle *pBundle)
 		{
 			if(gIntSendWindowMessagesOverflow > 0 && bundleSize > gIntSendWindowMessagesOverflow)
 			{
-// 				ERROR_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
-// 					(void*)this, this->c_str(), bundleSize, gIntSendWindowMessagesOverflow));
+				// 				ERROR_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
+				// 					(void*)this, this->c_str(), bundleSize, gIntSendWindowMessagesOverflow));
 
 				this->condemn();
 			}
 			else
 			{
-// 				WARNING_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
-// 					(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
+				// 				WARNING_MSG(fmt::format("Channel::send[{:p}]: internal channel({}), send window has overflowed({} > {}).\n", 
+				// 					(void*)this, this->c_str(), bundleSize, gSendWindowMessagesOverflowCritical));
 			}
 		}
 	}
@@ -468,8 +467,8 @@ void Channel::onPacketSent(int bytes, bool sentCompleted)
 	{
 		if(gExtSendWindowBytesOverflow > 0 && mLastTickBytesSent >= gExtSendWindowBytesOverflow)
 		{
-// 			ERROR_MSG(fmt::format("Channel::onPacketSent[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
-// 				(void*)this, this->c_str(), mLastTickBytesSent, g_extSendWindowBytesOverflow));
+			// 			ERROR_MSG(fmt::format("Channel::onPacketSent[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
+			// 				(void*)this, this->c_str(), mLastTickBytesSent, g_extSendWindowBytesOverflow));
 
 			this->condemn();
 		}
@@ -478,8 +477,8 @@ void Channel::onPacketSent(int bytes, bool sentCompleted)
 	{
 		if(gIntSendWindowBytesOverflow > 0 && mLastTickBytesSent >= gIntSendWindowBytesOverflow)
 		{
-// 			WARNING_MSG(fmt::format("Channel::onPacketSent[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
-// 				(void*)this, this->c_str(), mLastTickBytesSent, g_intSendWindowBytesOverflow));
+			// 			WARNING_MSG(fmt::format("Channel::onPacketSent[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
+			// 				(void*)this, this->c_str(), mLastTickBytesSent, g_intSendWindowBytesOverflow));
 		}
 	}
 }
@@ -498,8 +497,8 @@ void Channel::onPacketReceived(int bytes)
 	{
 		if(gExtReceiveWindowBytesOverflow > 0 && mLastTickBytesReceived >= gExtReceiveWindowBytesOverflow)
 		{
-// 			ERROR_MSG(fmt::format("Channel::onPacketReceived[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
-// 				(void*)this, this->c_str(), mLastTickBytesReceived, g_extReceiveWindowBytesOverflow));
+			// 			ERROR_MSG(fmt::format("Channel::onPacketReceived[{:p}]: external channel({}), bufferedBytes has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive.\n", 
+			// 				(void*)this, this->c_str(), mLastTickBytesReceived, g_extReceiveWindowBytesOverflow));
 
 			this->condemn();
 		}
@@ -508,8 +507,8 @@ void Channel::onPacketReceived(int bytes)
 	{
 		if(gIntReceiveWindowBytesOverflow > 0 && mLastTickBytesReceived >= gIntReceiveWindowBytesOverflow)
 		{
-// 			WARNING_MSG(fmt::format("Channel::onPacketReceived[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
-// 				(void*)this, this->c_str(), mLastTickBytesReceived, g_intReceiveWindowBytesOverflow));
+			// 			WARNING_MSG(fmt::format("Channel::onPacketReceived[{:p}]: internal channel({}), bufferedBytes has overflowed({} > {}).\n", 
+			// 				(void*)this, this->c_str(), mLastTickBytesReceived, g_intReceiveWindowBytesOverflow));
 		}
 	}
 }
@@ -525,23 +524,23 @@ void Channel::addReceiveWindow(Packet* pPacket)
 		{
 			if(gExtReceiveWindowMessagesOverflow > 0 && size > gExtReceiveWindowMessagesOverflow)
 			{
-// 				ERROR_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive->messages->external.\n", 
-// 					(void*)this, this->c_str(), size, g_extReceiveWindowMessagesOverflow));
+				// 				ERROR_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}), Try adjusting the kbengine_defs.xml->windowOverflow->receive->messages->external.\n", 
+				// 					(void*)this, this->c_str(), size, g_extReceiveWindowMessagesOverflow));
 
 				this->condemn();
 			}
 			else
 			{
-// 				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}).\n", 
-// 					(void*)this, this->c_str(), size, g_receiveWindowMessagesOverflowCritical));
+				// 				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: external channel({}), receive window has overflowed({} > {}).\n", 
+				// 					(void*)this, this->c_str(), size, g_receiveWindowMessagesOverflowCritical));
 			}
 		}
 		else
 		{
 			if(gIntReceiveWindowMessagesOverflow > 0 && size > gIntReceiveWindowMessagesOverflow)
 			{
-// 				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: internal channel({}), receive window has overflowed({} > {}).\n", 
-// 					(void*)this, this->c_str(), size, g_intReceiveWindowMessagesOverflow));
+				// 				WARNING_MSG(fmt::format("Channel::addReceiveWindow[{:p}]: internal channel({}), receive window has overflowed({} > {}).\n", 
+				// 					(void*)this, this->c_str(), size, g_intReceiveWindowMessagesOverflow));
 			}
 		}
 	}
@@ -554,16 +553,16 @@ void Channel::processPackets(MessageHandlers* pMsgHandlers)
 
 	if (this->isDestroyed())
 	{
-// 		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is destroyed.\n", 
-// 			this->c_str(), (void*)this));
+		// 		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is destroyed.\n", 
+		// 			this->c_str(), (void*)this));
 
 		return;
 	}
 
 	if(this->isCondemn())
 	{
-// 		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is condemn.\n", 
-// 			this->c_str(), (void*)this));
+		// 		ERROR_MSG(fmt::format("Channel::processPackets({}): channel[{:p}] is condemn.\n", 
+		// 			this->c_str(), (void*)this));
 
 		return;
 	}
@@ -585,13 +584,13 @@ void Channel::processPackets(MessageHandlers* pMsgHandlers)
 	}
 	catch(MemoryStreamException &)
 	{
-		MessageHandler* pMsgHandler = pMsgHandlers->find(mpPacketReader->currMsgID());
-// 		WARNING_MSG(fmt::format("Channel::processPackets({}): packet invalid. currMsg=(name={}, id={}, len={}), currMsgLen={}\n",
-// 			this->c_str()
-// 			, (pMsgHandler == NULL ? "unknown" : pMsgHandler->name) 
-// 			, mpPacketReader->currMsgID() 
-// 			, (pMsgHandler == NULL ? -1 : pMsgHandler->msgLen) 
-// 			, mpPacketReader->currMsgLen()));
+		// MessageHandler* pMsgHandler = pMsgHandlers->find(mpPacketReader->currMsgID());
+		// 		WARNING_MSG(fmt::format("Channel::processPackets({}): packet invalid. currMsg=(name={}, id={}, len={}), currMsgLen={}\n",
+		// 			this->c_str()
+		// 			, (pMsgHandler == NULL ? "unknown" : pMsgHandler->name) 
+		// 			, mpPacketReader->currMsgID() 
+		// 			, (pMsgHandler == NULL ? -1 : pMsgHandler->msgLen) 
+		// 			, mpPacketReader->currMsgLen()));
 
 		mpPacketReader->currMsgID(0);
 		mpPacketReader->currMsgLen(0);
@@ -615,38 +614,37 @@ void Channel::handshake()
 		return;
 
 	if(mBufferedReceives.size() > 0)
-	{
-		BufferedReceives::iterator packetIter = mBufferedReceives.begin();
-		Packet* pPacket = (*packetIter);
-		
+	{		
 		mFlags |= Flag_HandShake;
 
 		// 此处判定是否为websocket或者其他协议的握手
-		if(WebSocketProtocol::isWebSocketProtocol(pPacket))
-		{
-			mChannelType = Chanel_Web;
-			if(WebSocketProtocol::handshake(this, pPacket))
-			{
-				if(pPacket->length() == 0)
-				{
-					mBufferedReceives.erase(packetIter);
-				}
+		// BufferedReceives::iterator packetIter = mBufferedReceives.begin();		
+		// Packet* pPacket = (*packetIter);
+		// if(WebSocketProtocol::isWebSocketProtocol(pPacket))
+		// {
+		// 	mChannelType = Chanel_Web;
+		// 	if(WebSocketProtocol::handshake(this, pPacket))
+		// 	{
+		// 		if(pPacket->length() == 0)
+		// 		{
+		// 			mBufferedReceives.erase(packetIter);
+		// 		}
 
-				if(!mpPacketReader || mpPacketReader->type() != PacketReader::PacketReaderType_WebSocket)
-				{
-					SafeDelete(mpPacketReader);
-					mpPacketReader = new WebSocketPacketReader(this);
-				}
+		// 		if(!mpPacketReader || mpPacketReader->type() != PacketReader::PacketReaderType_WebSocket)
+		// 		{
+		// 			SafeDelete(mpPacketReader);
+		// 			mpPacketReader = new WebSocketPacketReader(this);
+		// 		}
 
-				mpFilter = new WebSocketPacketFilter(this);
-				// DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) successfully!\n", this->c_str()));
-				return;
-			}
-			else
-			{
-				// DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) error!\n", this->c_str()));
-			}
-		}
+		// 		mpFilter = new WebSocketPacketFilter(this);
+		// 		// DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) successfully!\n", this->c_str()));
+		// 		return;
+		// 	}
+		// 	else
+		// 	{
+		// 		// DEBUG_MSG(fmt::format("Channel::handshake: websocket({}) error!\n", this->c_str()));
+		// 	}
+		// }
 
 		if(!mpPacketReader || mpPacketReader->type() != PacketReader::PacketReaderType_Socket)
 		{

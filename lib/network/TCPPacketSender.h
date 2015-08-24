@@ -2,12 +2,11 @@
 #define __TCPPACKETSENDER_H__
 
 #include "common/common.h"
-#include "common/Timer.h"
 #include "common/ObjectPool.h"
-#include "network/NetworkDef.h"
 #include "network/Network.h"
-#include "network/TCPPacket.h"
+#include "network/NetworkDef.h"
 #include "network/PacketSender.h"
+#include "network/TCPPacket.h"
 
 class EndPoint;
 class Channel;

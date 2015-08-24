@@ -1,15 +1,12 @@
 #include "Listener.h"
-#include "network/Address.h"
-#include "network/Bundle.h"
-#include "network/EndPoint.h"
-#include "network/EventDispatcher.h"
 #include "network/NetworkManager.h"
 #include "network/PacketReceiver.h"
+#include "network/Channel.h"
 
 Listener::Listener(EndPoint &endpoint, Channel::ETraits traits, NetworkManager &networkMgr)
-:mEndpoint(endpoint)
-,mTraits(traits)
-,mNetworkManager(networkMgr)
+		:mNetworkManager(networkMgr)
+		,mEndpoint(endpoint)
+		,mTraits(traits)		
 {
 }
 
@@ -29,8 +26,8 @@ int Listener::handleInputNotification(int fd)
 		{
 			if(newConnections == 1)
 			{
-// 				WARNING_MSG(fmt::format("PacketReceiver::handleInputNotification: accept endpoint({}) {}!\n",
-// 					 fd, __strerror()));
+				// 				WARNING_MSG(fmt::format("PacketReceiver::handleInputNotification: accept endpoint({}) {}!\n",
+				// 					 fd, __strerror()));
 			}
 
 			break;
@@ -41,8 +38,8 @@ int Listener::handleInputNotification(int fd)
 			bool ret = pChannel->initialize(mNetworkManager, pNewEndPoint, mTraits);
 			if(!ret)
 			{
-// 				ERROR_MSG(fmt::format("Listener::handleInputNotification: initialize({}) is failed!\n",
-// 					pChannel->c_str()));
+				// 				ERROR_MSG(fmt::format("Listener::handleInputNotification: initialize({}) is failed!\n",
+				// 					pChannel->c_str()));
 
 				pChannel->destroy();
 				Channel::ObjPool().reclaimObject(pChannel);
@@ -51,8 +48,8 @@ int Listener::handleInputNotification(int fd)
 
 			if(!mNetworkManager.registerChannel(pChannel))
 			{
-// 				ERROR_MSG(fmt::format("Listener::handleInputNotification: registerChannel({}) is failed!\n",
-// 					pChannel->c_str()));
+				// 				ERROR_MSG(fmt::format("Listener::handleInputNotification: registerChannel({}) is failed!\n",
+				// 					pChannel->c_str()));
 
 				pChannel->destroy();
 				Channel::ObjPool().reclaimObject(pChannel);

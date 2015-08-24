@@ -4,14 +4,14 @@
 #include "network/NetworkStats.h"
 
 PacketReader::PacketReader(Channel* pChannel)
-:mpFragmentDatas(NULL)
-,mFragmentDatasWpos(0)
-,mFragmentDatasRemain(0)
-,mFragmentDatasFlag(FragmentData_Unknown)
-,mpFragmentStream(NULL)
-,mCurrMsgID(0)
-,mCurrMsgLen(0)
-,mpChannel(pChannel)
+		:mCurrMsgID(0)
+		,mCurrMsgLen(0)
+		,mpFragmentStream(NULL)
+		,mFragmentDatasFlag(FragmentData_Unknown)
+		,mpFragmentDatas(NULL)
+		,mFragmentDatasWpos(0)
+		,mFragmentDatasRemain(0)		
+		,mpChannel(pChannel)
 {
 }
 
@@ -56,8 +56,8 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 
 			if(pMsgHandler == NULL)
 			{
-// 				ERROR_MSG(fmt::format("PacketReader::processMessages: not found msgID={}, msglen={}, from {}.\n",
-// 					mCurrMsgID, pPacket1->length(), mpChannel->c_str()));
+				// 				ERROR_MSG(fmt::format("PacketReader::processMessages: not found msgID={}, msglen={}, from {}.\n",
+				// 					mCurrMsgID, pPacket1->length(), mpChannel->c_str()));
 
 				mCurrMsgID = 0;
 				mCurrMsgLen = 0;
@@ -82,7 +82,7 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 						mCurrMsgLen = currlen;
 
 						NetworkStats::getSingleton().trackMessage(NetworkStats::Opt_Recv, *pMsgHandler, 
-							mCurrMsgLen + sizeof(MessageID) + sizeof(MessageLength));
+																  mCurrMsgLen + sizeof(MessageID) + sizeof(MessageLength));
 
 						if(mCurrMsgLen == NETWORK_MESSAGE_MAX_SIZE) // 消息包长度超过了65535
 						{
@@ -96,7 +96,7 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 								(*pPacket) >> mCurrMsgLen;
 
 								NetworkStats::getSingleton().trackMessage(NetworkStats::Opt_Recv, *pMsgHandler, 
-									mCurrMsgLen + sizeof(MessageID) + sizeof(MessageLength1));
+																		  mCurrMsgLen + sizeof(MessageID) + sizeof(MessageLength1));
 							}
 						}
 					}
@@ -106,14 +106,14 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 					mCurrMsgLen = pMsgHandler->msgLen;
 
 					NetworkStats::getSingleton().trackMessage(NetworkStats::Opt_Recv, *pMsgHandler, 
-						mCurrMsgLen + sizeof(MessageLength));
+															  mCurrMsgLen + sizeof(MessageLength));
 				}
 			}
 
 			if(this->mpChannel->isExternal() && mCurrMsgLen > NETWORK_MESSAGE_MAX_SIZE) // 消息包过大，断掉连接！
 			{
-// 				WARNING_MSG(fmt::format("PacketReader::processMessages({0}): msglen exceeds the limit! msgID={1}, msglen=({2}:{3}), maxlen={5}, from {4}.\n", 
-// 					pMsgHandler->name.c_str(), mCurrMsgID, mCurrMsgLen, pPacket1->length(), mpChannel->c_str(), NETWORK_MESSAGE_MAX_SIZE));
+				// 				WARNING_MSG(fmt::format("PacketReader::processMessages({0}): msglen exceeds the limit! msgID={1}, msglen=({2}:{3}), maxlen={5}, from {4}.\n", 
+				// 					pMsgHandler->name.c_str(), mCurrMsgID, mCurrMsgLen, pPacket1->length(), mpChannel->c_str(), NETWORK_MESSAGE_MAX_SIZE));
 
 				mCurrMsgLen = 0;
 				mpChannel->condemn();
@@ -147,8 +147,8 @@ void PacketReader::processMessages(MessageHandlers* pMsgHandlers, Packet* pPacke
 				{
 					if(frpos != pPacket->rpos())
 					{
-// 						WARNING_MSG(fmt::format("PacketReader::processMessages({}): rpos({}) invalid, expect={}. msgID={}, msglen={}.\n",
-// 							pMsgHandler->name.c_str(), pPacket->rpos(), frpos, mCurrMsgID, mCurrMsgLen));
+						// 						WARNING_MSG(fmt::format("PacketReader::processMessages({}): rpos({}) invalid, expect={}. msgID={}, msglen={}.\n",
+						// 							pMsgHandler->name.c_str(), pPacket->rpos(), frpos, mCurrMsgID, mCurrMsgLen));
 
 						pPacket->rpos(frpos);
 					}

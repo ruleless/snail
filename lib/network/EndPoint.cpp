@@ -32,7 +32,7 @@ struct if_nameindex
 struct if_nameindex* if_nameindex(void)
 {
 	static struct if_nameindex staticIfList[3] =
-	{ { 1, "eth0" }, { 2, "lo" }, { 0, 0 } };
+			{ { 1, "eth0" }, { 2, "lo" }, { 0, 0 } };
 
 	return staticIfList;
 }
@@ -51,8 +51,8 @@ ObjectPool<EndPoint>& EndPoint::ObjPool()
 
 void EndPoint::destroyObjPool()
 {
-// 	DEBUG_MSG(fmt::format("EndPoint::destroyObjPool(): size {}.\n", 
-// 		s_ObjPool.size()));
+	// 	DEBUG_MSG(fmt::format("EndPoint::destroyObjPool(): size {}.\n", 
+	// 		s_ObjPool.size()));
 
 	s_ObjPool.destroy();
 }
@@ -73,7 +73,7 @@ bool EndPoint::getClosedPort(Address & closedPort)
 	bool isResultSet = false;
 
 #ifdef unix
-//	Assert(errno == ECONNREFUSED);
+	//	Assert(errno == ECONNREFUSED);
 
 	struct sockaddr_in	offender;
 	offender.sin_family = 0;
@@ -106,8 +106,8 @@ bool EndPoint::getClosedPort(Address & closedPort)
 	struct cmsghdr * ctlHeader;
 
 	for (ctlHeader = CMSG_FIRSTHDR(&errHeader);
-		ctlHeader != NULL;
-		ctlHeader = CMSG_NXTHDR(&errHeader,ctlHeader))
+		 ctlHeader != NULL;
+		 ctlHeader = CMSG_NXTHDR(&errHeader,ctlHeader))
 	{
 		if (ctlHeader->cmsg_level == SOL_IP &&
 			ctlHeader->cmsg_type == IP_RECVERR) break;
@@ -118,7 +118,7 @@ bool EndPoint::getClosedPort(Address & closedPort)
 	if (ctlHeader != NULL)
 	{
 		struct sock_extended_err * extError =
-			(struct sock_extended_err*)CMSG_DATA(ctlHeader);
+				(struct sock_extended_err*)CMSG_DATA(ctlHeader);
 
 		// Only use this address if the kernel has the bug where it does not
 		// report the packet details.
@@ -131,8 +131,8 @@ bool EndPoint::getClosedPort(Address & closedPort)
 			offender = *(sockaddr_in*)SO_EE_OFFENDER(extError);
 			offender.sin_port = 0;
 
-// 			ERROR_MSG("EndPoint::getClosedPort: "
-// 				"Kernel has a bug: recv_msg did not set msg_name.\n");
+			// 			ERROR_MSG("EndPoint::getClosedPort: "
+			// 				"Kernel has a bug: recv_msg did not set msg_name.\n");
 		}
 
 		closedPort.ip = offender.sin_addr.s_addr;
@@ -157,10 +157,10 @@ int EndPoint::getBufferSize(int optname) const
 	if (rberr == 0 && rbargsize == sizeof(int))
 		return recvbuf;
 
-// 	ERROR_MSG(fmt::format("EndPoint::getBufferSize: "
-// 		"Failed to read option {}: {}\n",
-// 		(optname == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"),
-// 		__strerror()));
+	// 	ERROR_MSG(fmt::format("EndPoint::getBufferSize: "
+	// 		"Failed to read option {}: {}\n",
+	// 		(optname == SO_SNDBUF ? "SO_SNDBUF" : "SO_RCVBUF"),
+	// 		__strerror()));
 
 	return -1;
 }
@@ -209,7 +209,7 @@ bool EndPoint::getInterfaces(std::map< u_int32_t, std::string > &interfaces)
 		struct ifreq *item = &ifr[i];
 
 		interfaces[ ((struct sockaddr_in *)&item->ifr_addr)->sin_addr.s_addr ] =
-			item->ifr_name;
+				item->ifr_name;
 	}
 
 	return true;
@@ -333,9 +333,9 @@ int EndPoint::getInterfaceAddressByMAC(const char *mac, u_int32_t &address)
 	// macµØÖ·×ª»»
 	unsigned char macAddress[16] = {0};
 	unsigned char macAddressIdx = 0;
-	char szTemp[2] = {0};
-	char szTempIdx = 0;
-	char* pMac = (char*)mac;
+	char szTemp[2] = {0};	
+	char* pMac = (char *)mac;
+	int szTempIdx = 0;
 	while(*pMac && macAddressIdx < sizeof(macAddress))
 	{
 		if(('a' <= *pMac && *pMac <= 'f') || ('A' <= *pMac && *pMac <= 'F') || ('0' <= *pMac && *pMac <= '9'))
@@ -470,9 +470,9 @@ int EndPoint::findDefaultInterface(char * name)
 	}
 	else
 	{
-// 		ERROR_MSG(fmt::format("EndPoint::findDefaultInterface: "
-// 							"if_nameindex returned NULL ({})\n",
-// 						__strerror()));
+		// 		ERROR_MSG(fmt::format("EndPoint::findDefaultInterface: "
+		// 							"if_nameindex returned NULL ({})\n",
+		// 						__strerror()));
 	}
 
 	return ret;
@@ -529,8 +529,8 @@ bool EndPoint::recvAll(void *gramData, int gramSize)
 			}
 			else
 			{
-// 				WARNING_MSG(fmt::format("EndPoint::recvAll: Got error '{}'\n",
-// 					__strerror()));
+				// 				WARNING_MSG(fmt::format("EndPoint::recvAll: Got error '{}'\n",
+				// 					__strerror()));
 			}
 
 			return false;
@@ -547,7 +547,7 @@ Address EndPoint::getLocalAddress() const
 	Address addr(0, 0);
 
 	if (this->getlocaladdress((u_int16_t*)&addr.port,
-				(u_int32_t*)&addr.ip) == -1)
+							  (u_int32_t*)&addr.ip) == -1)
 	{
 		/*ERROR_MSG("EndPoint::getLocalAddress: Failed\n");*/
 	}
@@ -560,7 +560,7 @@ Address EndPoint::getRemoteAddress() const
 	Address addr(0, 0);
 
 	if (this->getremoteaddress((u_int16_t*)&addr.port,
-				(u_int32_t*)&addr.ip) == -1)
+							   (u_int32_t*)&addr.ip) == -1)
 	{
 		/*ERROR_MSG("EndPoint::getRemoteAddress: Failed\n");*/
 	}

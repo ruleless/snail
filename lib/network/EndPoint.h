@@ -9,7 +9,7 @@
 class Bundle;
 class EndPoint : public PoolObject
 {
-public:
+  public:
 	static ObjectPool<EndPoint>& ObjPool();
 	static void destroyObjPool();
 	virtual void onReclaimObject();
@@ -99,7 +99,7 @@ public:
 	void addr(u_int16_t newNetworkPort, u_int32_t newNetworkAddress);
 
 	bool waitSend();
-protected:
+  protected:
 	SOCKET	mSocket;
 	Address mAddress;
 };

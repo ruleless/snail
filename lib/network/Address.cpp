@@ -1,5 +1,4 @@
 #include "Address.h"
-#include "EndPoint.h"
 
 char Address::s_stringBuf[2][32] = {{0}, {0}};
 

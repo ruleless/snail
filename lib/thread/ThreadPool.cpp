@@ -271,7 +271,7 @@ void ThreadPool::destroy()
 	int itry = 0;
 	while(true)
 	{
-		sleep(300);
+		sleepms(300);
 		itry++;
 
 		std::string taskaddrs = "";
@@ -308,7 +308,7 @@ void ThreadPool::destroy()
 	}
 
 	THREAD_MUTEX_LOCK(mThreadStateListMutex);
-	sleep(100);
+	sleepms(100);
 	std::list<TPThread*>::iterator itr = mAllThreadList.begin();
 	for(; itr != mAllThreadList.end(); ++itr)
 	{
@@ -385,7 +385,7 @@ bool ThreadPool::createThreadPool(uint32 inewThreadCount, uint32 inormalMaxThrea
 	}
 
 	mIsInitialize = true;
-	sleep(100);
+	sleepms(100);
 	return true;
 }
 

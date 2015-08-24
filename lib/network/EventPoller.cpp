@@ -3,9 +3,9 @@
 #include "EpollPoller.h"
 
 EventPoller::EventPoller()
-		:mFdReadHandlers()
-		,mFdWriteHandlers()
-		,mSpareTime(0)
+		:mSpareTime(0)
+		,mFdReadHandlers()
+		,mFdWriteHandlers()		
 {
 }
 
@@ -92,7 +92,7 @@ bool EventPoller::triggerError(int fd)
 bool EventPoller::isRegistered(int fd, bool isForRead) const
 {
 	return isForRead ? (mFdReadHandlers.find(fd) != mFdReadHandlers.end()) : 
-		(mFdWriteHandlers.find(fd) != mFdWriteHandlers.end());
+			(mFdWriteHandlers.find(fd) != mFdWriteHandlers.end());
 }
 
 int EventPoller::getFileDescriptor() const

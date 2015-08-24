@@ -103,7 +103,7 @@ float SystemInfo::getCPUPer()
 
 		// std::cout << "CPU " << perc.combined * 100 << "%\n";
 		_g_old_cpu = current;
-		//	sleep(1000);
+		//	sleepms(1000);
 	}
 
 
@@ -156,7 +156,7 @@ _TRYGET:
 		}
     }
 	*/
-  // sleep(1000);
+  // sleepms(1000);
 
 	// for (size_t i = 0; i < proclist.number; i++)
     {

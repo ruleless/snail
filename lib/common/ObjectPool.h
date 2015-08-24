@@ -18,28 +18,28 @@
 // 对象池管理容器
 template<typename T> class ObjectPool
 {
-public:
+  public:
 	typedef std::list<T *> OBJECTS;
 
 	ObjectPool(std::string name)
-		:mObjects()
-		,mMaxSize(OBJECT_POOL_INIT_MAX_SIZE)
-		,mIsDestroyed(false)
-		,mMutex()
-		,mName(name)
-		,mTotalAllocs(0)
-		,mObjCount(0)
+			:mName(name)
+			,mMutex()
+			,mIsDestroyed(false)
+			,mObjects()
+			,mTotalAllocs(0)
+			,mObjCount(0)
+			,mMaxSize(OBJECT_POOL_INIT_MAX_SIZE)
 	{
 	}
 
 	ObjectPool(std::string name, unsigned int preAssignVal, size_t max)
-		:mObjects()
-		,mMaxSize((max == 0 ? 1 : max))
-		,mIsDestroyed(false)
-		,mMutex()
-		,mName(name)
-		,mTotalAllocs(0)
-		,mObjCount(0)
+			:mObjects()
+			,mMaxSize((max == 0 ? 1 : max))
+			,mIsDestroyed(false)
+			,mMutex()
+			,mName(name)
+			,mTotalAllocs(0)
+			,mObjCount(0)
 	{
 	}
 
@@ -201,7 +201,7 @@ public:
 		mMutex.lockMutex();
 
 		sprintf(buf, "ObjectPool::c_str(): name=%s, objs=%d/%d, isDestroyed=%s.\n", 
-			mName.c_str(), (int)mObjCount, (int)mMaxSize, (isDestroyed ? "true" : "false"));
+				mName.c_str(), (int)mObjCount, (int)mMaxSize, (isDestroyed ? "true" : "false"));
 
 		mMutex.unlockMutex();
 
@@ -220,7 +220,7 @@ public:
 	{
 		return mIsDestroyed; 
 	}
-protected:
+  protected:
 	void _reclaimObject(T* obj)
 	{
 		if(obj != NULL)
@@ -240,7 +240,7 @@ protected:
 			}
 		}
 	}
-protected:
+  protected:
 	std::string mName;
 	ThreadMutex mMutex;
 	bool mIsDestroyed;
@@ -255,7 +255,7 @@ protected:
 // 池对象
 class PoolObject
 {
-public:
+  public:
 	virtual ~PoolObject() {}
 	virtual void onReclaimObject() = 0;
 	virtual void onEabledPoolObject() {}
@@ -274,10 +274,10 @@ public:
 // 智能池对象
 template<typename T> class SmartPoolObject
 {
-public:
+  public:
 	SmartPoolObject(T *pPoolObject, ObjectPool<T> &objectPool)
-		:mPoolObject(pPoolObject)
-		,mObjectPool(objectPool)
+			:mPoolObject(pPoolObject)
+			,mObjectPool(objectPool)
 	{
 	}
 
@@ -309,7 +309,7 @@ public:
 	{
 		return *mPoolObject;
 	}
-private:
+  private:
 	T* mPoolObject;
 	ObjectPool<T> &mObjectPool;
 };

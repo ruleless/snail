@@ -2,10 +2,9 @@
 #define __UDPPACKETRECEIVER_H__
 
 #include "common/common.h"
-#include "common/Timer.h"
 #include "common/ObjectPool.h"
-#include "network/NetworkDef.h"
 #include "network/Network.h"
+#include "network/NetworkDef.h"
 #include "network/UDPPacket.h"
 #include "network/PacketReceiver.h"
 

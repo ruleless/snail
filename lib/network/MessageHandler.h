@@ -2,7 +2,6 @@
 #define __MESSAGEHANDLER_H__
 
 #include "common/MemoryStream.h"
-#include "common/SmartPointer.h"
 #include "network/NetworkDef.h"
 
 class Channel;

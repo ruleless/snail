@@ -14,7 +14,7 @@ class PacketSender;
 
 class PacketFilter : public RefCountable
 {
-public:
+  public:
 	virtual ~PacketFilter() {}
 
 	virtual EReason send(Channel *pChannel, PacketSender &sender, Packet *pPacket);

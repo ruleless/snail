@@ -1,9 +1,9 @@
 #ifndef __NETWORKSTATS_H__
 #define __NETWORKSTATS_H__
 
-#include "network/Network.h"
 #include "common/common.h"
 #include "common/Singleton.h"
+#include "network/Network.h"
 
 class MessageHandler;
 

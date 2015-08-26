@@ -30,7 +30,7 @@ INLINE EndPoint::~EndPoint()
 	this->close();
 }
 
-uint32 EndPoint::getRTT()
+INLINE uint32 EndPoint::getRTT()
 {
 #if PLATFORM != PLATFORM_WIN32
 	struct tcp_info tcpinfo;

@@ -130,35 +130,4 @@ public:
 	uint64 stamp_;
 };
 
-
-double TimeStamp::toSeconds(uint64 stamps)
-{
-	return double(stamps) / stampsPerSecondD();
-}
-
-TimeStamp TimeStamp::fromSeconds(double seconds)
-{
-	return uint64(seconds * stampsPerSecondD());
-}
-
-double TimeStamp::inSeconds() const
-{
-	return toSeconds(stamp_);
-}
-
-void TimeStamp::setInSeconds(double seconds)
-{
-	stamp_ = fromSeconds(seconds);
-}
-
-TimeStamp TimeStamp::ageInStamps() const
-{
-	return timestamp() - stamp_;
-}
-
-double TimeStamp::ageInSeconds() const
-{
-	return toSeconds(this->ageInStamps());
-}
-
 #endif // __TIMESTAMP_H__

@@ -98,7 +98,43 @@ class Bundle : public PoolObject
 
 	ArraySize readBlob(std::string& datas);
   private:
-	template<typename T> Bundle &outputValue(T &v);
+	template<typename T> Bundle &outputValue(T &v)
+	{
+		Assert(packetsLength() >= (int32)sizeof(T));
+
+		size_t currSize = 0;
+		size_t reclaimCount = 0;
+		Packets::iterator iter = mPackets.begin();
+
+		for (; iter != mPackets.end(); ++iter)
+		{
+			Packet* pPacket = (*iter);
+			size_t remainSize = (size_t)sizeof(T) - currSize;
+			if(pPacket->length() >= remainSize)
+			{
+				memcpy(((uint8*)&v) + currSize, pPacket->data() + pPacket->rpos(), remainSize);
+				pPacket->rpos(pPacket->rpos() + remainSize);
+				if(pPacket->length() == 0)
+				{
+					reclaimPacket(pPacket->isTCPPacket(), pPacket);
+					++reclaimCount;
+				}
+				break;
+			}
+			else
+			{
+				memcpy(((uint8*)&v) + currSize, pPacket->data() + pPacket->rpos(), pPacket->length());
+				currSize += pPacket->length();
+				pPacket->done();
+				reclaimPacket(pPacket->isTCPPacket(), pPacket);
+				++reclaimCount;
+			}
+		}
+
+		if(reclaimCount > 0)
+			mPackets.erase(mPackets.begin(), mPackets.begin() + reclaimCount);
+		return *this;
+	}
   private:
 	Channel *mpChannel;
 	int32 mNumMessages;
@@ -117,7 +153,5 @@ class Bundle : public PoolObject
 
 	const MessageHandler* mpCurrMsgHandler;
 };
-
-#include "Bundle.inl"
 
 #endif // __BUNDLE_H__

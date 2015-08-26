@@ -27,7 +27,7 @@ class EndPoint : public PoolObject
 	
 	static void initNetwork();
 	bool good() const;
-		
+
 	void socket(int type);
 	SOCKET socket() const;
 	

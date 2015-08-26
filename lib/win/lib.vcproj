@@ -106,7 +106,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="../;../deps"
 				PreprocessorDefinitions="WIN32"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
@@ -163,10 +163,6 @@
 			</File>
 			<File
 				RelativePath="..\network\Bundle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\Bundle.inl"
 				>
 			</File>
 			<File
@@ -386,7 +382,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\MemorystreamConverter.h"
+				RelativePath="..\common\MemoryStreamConverter.h"
 				>
 			</File>
 			<File

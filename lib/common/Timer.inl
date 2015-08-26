@@ -1,4 +1,4 @@
-void TimerHandle::cancel()
+inline void TimerHandle::cancel()
 {
 	if (mpTime != NULL)
 	{
@@ -8,6 +8,24 @@ void TimerHandle::cancel()
 	}
 }
 
+inline void TimeBase::cancel()
+{
+	if (this->isCancelled())
+	{
+		return;
+	}
+
+	Assert((mState == Time_Pending) || (mState == Time_Executing));
+	mState = Time_Cancelled;
+
+	if (mpHandler)
+	{
+		mpHandler->release(TimerHandle(this), mpUserData);
+		mpHandler = NULL;
+	}
+
+	mOwner.onCancel();
+}
 
 template<class TIME_STAMP>
 TimersT<TIME_STAMP>::TimersT()
@@ -194,32 +212,6 @@ void TimersT<TIME_STAMP>::purgeCancelledTimes()
 	
 	container.erase(newEnd, container.end());
 	mTimeQueue.make_heap();
-}
-
-
-TimeBase::TimeBase(TimersBase &owner, TimerHandler *pHandler, void *pUserData)
-		:mOwner(owner), mpHandler(pHandler), mpUserData(pUserData), mState(Time_Pending)
-{
-	pHandler->incTimerRegisterCount();
-}
-
-void TimeBase::cancel()
-{
-	if (this->isCancelled())
-	{
-		return;
-	}
-
-	Assert((mState == Time_Pending) || (mState == Time_Executing));
-	mState = Time_Cancelled;
-
-	if (mpHandler)
-	{
-		mpHandler->release(TimerHandle(this), mpUserData);
-		mpHandler = NULL;
-	}
-
-	mOwner.onCancel();
 }
 
 template <class TIME_STAMP>

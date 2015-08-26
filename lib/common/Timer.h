@@ -15,7 +15,7 @@ class TimerHandle
 public:
 	explicit TimerHandle(TimeBase *pTime = NULL) : mpTime( pTime ) {}
 
-	void cancel();
+	inline void cancel();
 
 	void clearWithoutCancel()
 	{
@@ -75,11 +75,15 @@ private:
 class TimeBase
 {
 public:
-	TimeBase(TimersBase &owner, TimerHandler* pHandler, void* pUserData);
+	TimeBase(TimersBase &owner, TimerHandler* pHandler, void* pUserData)
+		:mOwner(owner), mpHandler(pHandler), mpUserData(pUserData), mState(Time_Pending)
+	{
+		pHandler->incTimerRegisterCount();
+	}
 	
 	virtual ~TimeBase(){}
 
-	void cancel();
+	inline void cancel();
 
 	void* getUserData() const { return mpUserData; }
 

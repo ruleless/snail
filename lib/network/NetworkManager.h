@@ -24,8 +24,8 @@ class NetworkManager : public TimerHandler
 	typedef std::map<Address, Channel *> ChannelMap;
 	
 	NetworkManager(EventDispatcher *pDispatcher,
-				   int32 extlisteningPort_min = -1, 
-				   int32 extlisteningPort_max = -1,
+				   int32 minExtlisteningPort = -1, 
+				   int32 maxExtlisteningPort = -1,
 				   const char *extlisteningInterface = "",
 				   uint32 extrbuffer = 0, 
 				   uint32 extwbuffer = 0, 

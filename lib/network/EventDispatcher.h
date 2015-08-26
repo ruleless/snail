@@ -34,7 +34,12 @@ class EventDispatcher
 	void clearSpareTime(); 
 
 	void addTask(Task *pTask);
-	bool cancelTask(Task *pTask);  
+	bool cancelTask(Task *pTask);
+
+	inline TimerHandle addTimer(int64 microseconds, TimerHandler *handler, void *arg = NULL)
+	{
+		return this->addTimerCommon(microseconds, handler, arg, true);
+	}
 
 	inline bool hasBreakProcessing() const
 	{
@@ -64,12 +69,7 @@ class EventDispatcher
 	inline void maxWait(double seconds)
 	{
 		mMaxWait = seconds;
-	}
-
-	inline TimerHandle addTimer(int64 microseconds, TimerHandler * handler, void* arg = NULL)
-	{
-		return this->addTimerCommon(microseconds, handler, arg, true);
-	}
+	}	
 
 	inline EventPoller* pPoller()
 	{

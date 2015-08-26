@@ -10,13 +10,13 @@
 #include "network/MessageHandler.h"
 
 NetworkManager::NetworkManager(EventDispatcher *pDispatcher,
-							   int32 extlisteningPort_min,
-							   int32 extlisteningPort_max, 
+							   int32 minExtlisteningPort,
+							   int32 maxExtlisteningPort, 
 							   const char *extlisteningInterface,
 							   uint32 extrbuffer, 
 							   uint32 extwbuffer,
 							   int32 intlisteningPort,
-							   const char * intlisteningInterface,
+							   const char *intlisteningInterface,
 							   uint32 intrbuffer, 
 							   uint32 intwbuffer)
 		:mpExtListenerReceiver(NULL)
@@ -25,7 +25,7 @@ NetworkManager::NetworkManager(EventDispatcher *pDispatcher,
 		,mIntEndpoint()
 		,mChannels()
 		,mpExtensionData(NULL)
-		,mIsExternal(extlisteningPort_min != -1)
+		,mIsExternal(minExtlisteningPort != -1)
 		,mNumExtChannels(0)
 		,mpDelayedChannels(new DelayedChannels())
 		,mpChannelTimeOutHandler(NULL)
@@ -35,10 +35,10 @@ NetworkManager::NetworkManager(EventDispatcher *pDispatcher,
 	if(isExternal())
 	{
 		mpExtListenerReceiver = new Listener(mExtEndpoint, Channel::External, *this);
-		this->recreateListeningSocket("External", htons(extlisteningPort_min), htons(extlisteningPort_max), 
+		this->recreateListeningSocket("External", htons(minExtlisteningPort), htons(maxExtlisteningPort), 
 									  extlisteningInterface, &mExtEndpoint, mpExtListenerReceiver, extrbuffer, extwbuffer);
 
-		if(extlisteningPort_min != -1)
+		if(minExtlisteningPort != -1)
 		{
 			Assert(mExtEndpoint.good() && "Channel::External: no available port.\n");
 		}

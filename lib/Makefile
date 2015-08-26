@@ -7,6 +7,9 @@ CXX:=clang++
 CXXFLAGS:=-g -Wall -I $(subst :, -I ,$(INCDIR))
 SHARED:=-fPIC --shared
 
+AR:=ar rcu
+RANLIB:=ranlib
+
 objs:=common.o timestamp.o strutil.o MemoryStream.o Tasks.o \
 	EventDispatcher.o EventPoller.o SelectPoller.o EpollPoller.o \
 	Address.o EndPoint.o Listener.o Channel.o PacketReader.o MessageHandler.o \
@@ -20,7 +23,8 @@ objs:=common.o timestamp.o strutil.o MemoryStream.o Tasks.o \
 all:libsnail.a
 
 libsnail.a:$(objs)
-	ar crv $@ $^
+	$(AR) $@ $^
+	$(RANLIB) $@
 
 common.o:common.cpp common.h platform.h
 timestamp.o:timestamp.cpp timestamp.h

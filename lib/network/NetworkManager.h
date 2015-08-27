@@ -53,22 +53,22 @@ class NetworkManager : public TimerHandler
 								 uint32 wbuffer = 0);
 
 	const ChannelMap& channels(void) { return mChannels; }
-	void processChannels(MessageHandlers* pMsgHandlers);
-	bool registerChannel(Channel* pChannel);
-	bool deregisterChannel(Channel* pChannel);
+	void processChannels(MessageHandlers *pMsgHandlers);
+	bool registerChannel(Channel *pChannel);
+	bool deregisterChannel(Channel *pChannel);
 	bool deregisterAllChannels();
-	Channel* findChannel(const Address & addr);
+	Channel* findChannel(const Address &addr);
 	Channel* findChannel(int fd);
-	void onChannelTimeOut(Channel * pChannel);
+	void onChannelTimeOut(Channel *pChannel);
 
-	void delayedSend(Channel & channel);
-	void sendIfDelayed(Channel & channel);
+	void delayedSend(Channel &channel);
+	void sendIfDelayed(Channel &channel);
 
 	ChannelTimeOutHandler* getChannelTimeOutHandler() const { return mpChannelTimeOutHandler; }
-	void setChannelTimeOutHandler(ChannelTimeOutHandler * pHandler) { mpChannelTimeOutHandler = pHandler; }
+	void setChannelTimeOutHandler(ChannelTimeOutHandler *pHandler) { mpChannelTimeOutHandler = pHandler; }
 		
 	ChannelDeregisterHandler* getChannelDeregisterHandler() const { return mpChannelDeregisterHandler; }
-	void setChannelDeregisterHandler(ChannelDeregisterHandler * pHandler)	{ mpChannelDeregisterHandler = pHandler; }
+	void setChannelDeregisterHandler(ChannelDeregisterHandler *pHandler) { mpChannelDeregisterHandler = pHandler; }
 
 	EventDispatcher& dispatcher() { return *mpDispatcher; }
 
@@ -77,12 +77,12 @@ class NetworkManager : public TimerHandler
 	
 	bool isExternal() const { return mIsExternal; }
 
-	void* pExtensionData() const     { return mpExtensionData; }
+	void* pExtensionData() const { return mpExtensionData; }
 	void pExtensionData(void * pData) { mpExtensionData = pData; }
 	
-	bool good() const{ return (!isExternal() || mExtEndpoint.good()) && (mIntEndpoint.good()); }
+	bool good() const { return (!isExternal() || mExtEndpoint.good()) && (mIntEndpoint.good()); }
   private:
-	virtual void onTimeout(TimerHandle handle, void * arg);
+	virtual void onTimeout(TimerHandle handle, void *arg);
 
 	void closeSocket();
   private:

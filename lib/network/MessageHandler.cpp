@@ -1,11 +1,11 @@
 #include "MessageHandler.h"
 
 MessageHandler::MessageHandler()
-:name("unknown")
-,send_size(0)
-,send_count(0)
-,recv_size(0)
-,recv_count(0)
+		:name("unknown")
+		,send_size(0)
+		,send_count(0)
+		,recv_size(0)
+		,recv_count(0)
 {
 }
 
@@ -22,7 +22,7 @@ const char* MessageHandler::c_str()
 
 
 MessageHandlers::MessageHandlers()
-:mMsgHandlers()
+		:mMsgHandlers()
 {
 }
 
@@ -56,4 +56,13 @@ MessageHandler* MessageHandlers::find(MessageID msgID)
 	};
 	
 	return NULL;
+}
+
+void MessageHandlers::remove(MessageID msgID)
+{
+	MessageHandlerMap::iterator iter = mMsgHandlers.find(msgID);
+	if (iter != mMsgHandlers.end())
+	{
+		mMsgHandlers.erase(iter);
+	}
 }

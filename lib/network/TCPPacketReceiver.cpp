@@ -63,10 +63,8 @@ bool TCPPacketReceiver::processRecv(bool expectingPacket)
 		onGetError(pChannel);
 		return false;
 	}
-	
-	// EReason ret = this->processPacket(pChannel, pReceiveWindow);
-	// if(ret != Reason_Success)
-	// 	; // todo
+
+	this->processPacket(pChannel, pReceiveWindow);	
 	
 	return true;
 }

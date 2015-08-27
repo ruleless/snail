@@ -100,7 +100,7 @@ class EndPoint : public PoolObject
 
 	bool waitSend();
   protected:
-	SOCKET	mSocket;
+	SOCKET mSocket;
 	Address mAddress;
 };
 

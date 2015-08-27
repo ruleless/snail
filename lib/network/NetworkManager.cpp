@@ -368,17 +368,17 @@ void NetworkManager::onChannelTimeOut(Channel * pChannel)
 	}
 }
 
-void NetworkManager::delayedSend(Channel & channel)
+void NetworkManager::delayedSend(Channel &channel)
 {
 	mpDelayedChannels->add(channel);
 }
 
-void NetworkManager::sendIfDelayed(Channel & channel)
+void NetworkManager::sendIfDelayed(Channel &channel)
 {
 	mpDelayedChannels->sendIfDelayed(channel);
 }
 
-void NetworkManager::onTimeout(TimerHandle handle, void * arg)
+void NetworkManager::onTimeout(TimerHandle handle, void *arg)
 {
 	// 	INFO_MSG(fmt::format("NetworkInterface::onTimeout: External({}), INTERNAL({}).\n", 
 	// 		extaddr().c_str(), intaddr().c_str()));

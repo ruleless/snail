@@ -85,9 +85,7 @@ bool UDPPacketReceiver::processRecv(bool expectingPacket)
 		return false;
 	}
 
-	// EReason ret = this->processPacket(pSrcChannel, pChannelReceiveWindow);
-	// if(ret != Reason_Success)
-	// 	;
+	this->processPacket(pSrcChannel, pChannelReceiveWindow);
 	
 	return true;
 }

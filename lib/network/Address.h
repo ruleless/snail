@@ -7,7 +7,7 @@
 
 class Address : public PoolObject
 {
-public:
+  public:
 	static const Address NONE;
 
 	static ObjectPool<Address>& ObjPool();
@@ -16,8 +16,7 @@ public:
 
 	virtual size_t getPoolObjectBytes()
 	{
-		size_t bytes = sizeof(ip)
-		 + sizeof(port);
+		size_t bytes = sizeof(ip) + sizeof(port);
 
 		return bytes;
 	}
@@ -38,10 +37,10 @@ public:
 
 	static int string2ip(const char *string, u_int32_t &address);
 	static int ip2string(u_int32_t address, char *string);
-public:
+  public:
 	uint32 ip;
 	uint16 port;
-private:
+  private:
 	static char s_stringBuf[2][32];
 	static int s_currStringBuf;
 	static char *nextStringBuf();

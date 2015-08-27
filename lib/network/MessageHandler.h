@@ -7,7 +7,7 @@
 class Channel;
 class MessageHandler
 {
-public:
+  public:
 	std::string name;
 	MessageID msgID;
 	int32 msgLen; // 如果长度为-1则为变长消息
@@ -17,7 +17,7 @@ public:
 	volatile mutable uint32 send_count;
 	volatile mutable uint32 recv_size;
 	volatile mutable uint32 recv_count;
-public:
+  public:
 	MessageHandler();
 	virtual ~MessageHandler();
 
@@ -40,15 +40,17 @@ public:
 
 class MessageHandlers
 {
-public:
+  public:
 	typedef std::map<MessageID, MessageHandler *> MessageHandlerMap;
 
 	MessageHandlers();
 	~MessageHandlers();
 	
 	MessageHandler* add(MessageID msgID, MessageHandler* msgHandler);
-	MessageHandler* find(MessageID msgID);	
-private:
+	MessageHandler* find(MessageID msgID);
+
+	void remove(MessageID msgID);
+  private:
 	MessageHandlerMap mMsgHandlers;
 };
 

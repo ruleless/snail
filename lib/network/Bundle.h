@@ -20,7 +20,7 @@ class Bundle : public PoolObject
 
 	typedef std::vector<Packet *> Packets;
 	
-	Bundle(Channel * pChannel = NULL, ProtocolType pt = Protocol_TCP);
+	Bundle(Channel *pChannel = NULL, ProtocolType pt = Protocol_TCP);
 	Bundle(const Bundle& bundle);
 	virtual ~Bundle();
 	

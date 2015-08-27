@@ -13,7 +13,6 @@ enum TimingMethod
 {
 	RDTSC_TIMING_METHOD, // 自CPU上电以来所经过的时钟周期数,纳秒级的计时精度
 	GET_TIME_OF_DAY_TIMING_METHOD,
-	GET_TIME_TIMING_METHOD,
 	NO_TIMING_METHOD,
 };
 
@@ -75,7 +74,7 @@ inline uint64 timestamp()
 inline uint64 timestamp()
 {
 	__asm rdtsc
-}
+			}
 #pragma warning (pop)
 #else // USE_RDTSC
 
@@ -110,7 +109,7 @@ inline double stampsToSeconds( uint64 stamps )
 
 class TimeStamp
 {
-public:
+  public:
 	TimeStamp(uint64 stamps = 0) : stamp_(stamps) {}
 
 	operator uint64 &() { return stamp_; }

@@ -38,7 +38,7 @@ size_t Bundle::getPoolObjectBytes()
 }
 
 
-Bundle::Bundle(Channel * pChannel, ProtocolType pt)
+Bundle::Bundle(Channel *pChannel, ProtocolType pt)
 		:mpChannel(pChannel)
 		,mNumMessages(0)
 		,mpCurrPacket(NULL)

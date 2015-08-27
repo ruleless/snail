@@ -2,7 +2,7 @@
 #define __THREADTASK_H__
 
 #include "common/common.h"
-#include "common/task.h"
+#include "common/Task.h"
 
 class TPTask : public Task
 {

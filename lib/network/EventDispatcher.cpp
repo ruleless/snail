@@ -81,8 +81,8 @@ TimerHandle EventDispatcher::addTimerCommon(int64 microseconds, TimerHandler *ha
 		return TimerHandle();
 
 	uint64 interval = int64((((double)microseconds)/1000000.0) * stampsPerSecondD());
-
-	TimerHandle handle = mpTimers->add(timestamp() + interval, recurrent ? interval : 0, handler, arg);
+	uint64 now = timestamp();
+	TimerHandle handle = mpTimers->add(now + interval, recurrent ? interval : 0, handler, arg);
 	
 	return handle;
 }
@@ -143,7 +143,8 @@ void EventDispatcher::processTasks()
 
 void EventDispatcher::processTimers()
 {
-	mNumTimerCalls += mpTimers->process(timestamp());
+	uint64 now = timestamp();
+	mNumTimerCalls += mpTimers->process(now);
 }
 
 void EventDispatcher::processStats()

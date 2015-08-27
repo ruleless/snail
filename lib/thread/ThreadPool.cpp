@@ -140,7 +140,7 @@ TPTask* TPThread::tryGetTask(void)
 #if PLATFORM == PLATFORM_WIN32
 unsigned __stdcall TPThread::threadFunc(void *arg)
 #else	
-void* TPThread::threadFunc(void* arg)
+		void* TPThread::threadFunc(void* arg)
 #endif
 {
 	TPThread *tptd = static_cast<TPThread *>(arg);
@@ -211,8 +211,8 @@ __THREAD_END__:
 		TPTask * task = tptd->task();
 		if(task)
 		{
-// 			WARNING_MSG(fmt::format("TPThread::threadFunc: task {0:p} not finish, thread.{1:p} will exit.\n", 
-// 				(void*)task, (void*)tptd));
+			// 			WARNING_MSG(fmt::format("TPThread::threadFunc: task {0:p} not finish, thread.{1:p} will exit.\n", 
+			// 				(void*)task, (void*)tptd));
 
 			delete task;
 		}
@@ -232,22 +232,22 @@ __THREAD_END__:
 
 
 ThreadPool::ThreadPool()
-:mIsInitialize(false)
-,mBufferedTaskList()
-,mFinishedTaskList()
-,mFiniTaskListCount(0)
-,mBufferedTaskListMutex()
-,mThreadStateListMutex()
-,mFinishedTaskListMutex()
-,mBusyThreadList()
-,mFreeThreadList()
-,mAllThreadList()
-,mMaxThreadCount(0)
-,mExtraNewAddThreadCount(0)
-,mCurrentThreadCount(0)
-,mCurrentFreeThreadCount(0)
-,mNormalThreadCount(0)
-,mIsDestroyed(false)
+		:mIsInitialize(false)
+		,mIsDestroyed(false)
+		,mBufferedTaskList()
+		,mFinishedTaskList()
+		,mFiniTaskListCount(0)
+		,mBufferedTaskListMutex()
+		,mThreadStateListMutex()
+		,mFinishedTaskListMutex()
+		,mBusyThreadList()
+		,mFreeThreadList()
+		,mAllThreadList()
+		,mMaxThreadCount(0)
+		,mExtraNewAddThreadCount(0)
+		,mCurrentThreadCount(0)
+		,mCurrentFreeThreadCount(0)
+		,mNormalThreadCount(0)
 {		
 	THREAD_MUTEX_INIT(mThreadStateListMutex);	
 	THREAD_MUTEX_INIT(mBufferedTaskListMutex);
@@ -324,8 +324,8 @@ void ThreadPool::destroy()
 	THREAD_MUTEX_LOCK(mFinishedTaskListMutex);
 	if(mFinishedTaskList.size() > 0)
 	{
-// 		WARNING_MSG(fmt::format("ThreadPool::~ThreadPool(): Discarding {0} finished tasks.\n",
-// 			mFinishedTaskList.size()));
+		// 		WARNING_MSG(fmt::format("ThreadPool::~ThreadPool(): Discarding {0} finished tasks.\n",
+		// 			mFinishedTaskList.size()));
 
 		std::list<TPTask*>::iterator finiiter  = mFinishedTaskList.begin();
 		for(; finiiter != mFinishedTaskList.end(); ++finiiter)
@@ -341,8 +341,8 @@ void ThreadPool::destroy()
 	THREAD_MUTEX_LOCK(mBufferedTaskListMutex);
 	if(mBufferedTaskList.size() > 0)
 	{
-// 		WARNING_MSG(fmt::format("ThreadPool::~ThreadPool(): Discarding {0} buffered tasks.\n", 
-// 			mBufferedTaskList.size()));
+		// 		WARNING_MSG(fmt::format("ThreadPool::~ThreadPool(): Discarding {0} buffered tasks.\n", 
+		// 			mBufferedTaskList.size()));
 
 		while(mBufferedTaskList.size() > 0)
 		{
@@ -474,9 +474,9 @@ bool ThreadPool::addBusyThread(TPThread* tptd)
 	else
 	{
 		THREAD_MUTEX_UNLOCK(mThreadStateListMutex);
-// 		ERROR_MSG(fmt::format("ThreadPool::addBusyThread: freeThreadList_ not "
-// 			"found thread.{0}\n",
-// 			(uint32)tptd->id()));
+		// 		ERROR_MSG(fmt::format("ThreadPool::addBusyThread: freeThreadList_ not "
+		// 			"found thread.{0}\n",
+		// 			(uint32)tptd->id()));
 
 		delete tptd;
 		return false;
@@ -511,9 +511,9 @@ bool ThreadPool::removeHangThread(TPThread* tptd)
 		--mCurrentThreadCount;
 		--mCurrentFreeThreadCount;
 
-// 		INFO_MSG(fmt::format("ThreadPool::removeHangThread: thread.{0} is destroy. "
-// 			"currentFreeThreadCount:{1}, currentThreadCount:{2}\n",
-// 			(uint32)tptd->id(), mCurrentFreeThreadCount, mCurrentThreadCount));
+		// 		INFO_MSG(fmt::format("ThreadPool::removeHangThread: thread.{0} is destroy. "
+		// 			"currentFreeThreadCount:{1}, currentThreadCount:{2}\n",
+		// 			(uint32)tptd->id(), mCurrentFreeThreadCount, mCurrentThreadCount));
 
 		SafeDelete(tptd);
 	}
@@ -521,8 +521,8 @@ bool ThreadPool::removeHangThread(TPThread* tptd)
 	{
 		THREAD_MUTEX_UNLOCK(mThreadStateListMutex);		
 
-// 		ERROR_MSG(fmt::format("ThreadPool::removeHangThread: not found thread.{0}\n", 
-// 			(uint32)tptd->id()));
+		// 		ERROR_MSG(fmt::format("ThreadPool::removeHangThread: not found thread.{0}\n", 
+		// 			(uint32)tptd->id()));
 
 		return false;
 	}
@@ -632,51 +632,51 @@ bool ThreadPool::addTask(TPTask* tptask)
 #if PLATFORM == PLATFORM_WIN32
 		if(tptd->sendCondSignal()== 0){
 #else
-		if(tptd->sendCondSignal()!= 0){
+			if(tptd->sendCondSignal()!= 0){
 #endif
-			// ERROR_MSG("ThreadPool::addTask: pthread_cond_signal is error!\n");
+				// ERROR_MSG("ThreadPool::addTask: pthread_cond_signal is error!\n");
+				THREAD_MUTEX_UNLOCK(mThreadStateListMutex);
+				return false;
+			}
+		
 			THREAD_MUTEX_UNLOCK(mThreadStateListMutex);
+			return true;
+		}
+	
+		bufferTask(tptask);
+	
+		if(isThreadCountMax())
+		{
+			THREAD_MUTEX_UNLOCK(mThreadStateListMutex);
+
+			//WARNING_MSG(fmt::format("ThreadPool::addTask: can't createthread, the poolsize is full({}).\n,
+			//	maxThreadCount_));
+
 			return false;
 		}
+
+		for(uint32 i = 0; i < mExtraNewAddThreadCount; ++i)
+		{
+			TPThread* tptd = createThread(300);									// 设定5分钟未使用则退出的线程
+			if(!tptd)
+			{
+#if PLATFORM == PLATFORM_WIN32		
+				// ERROR_MSG("ThreadPool::addTask: the ThreadPool create thread is error! ... \n");
+#else
+				// 			ERROR_MSG(fmt::format("ThreadPool::addTask: the ThreadPool create thread is error:{0}\n", 
+				// 				__strerror()));
+#endif				
+			}
+
+			mAllThreadList.push_back(tptd);										// 所有的线程列表
+			mFreeThreadList.push_back(tptd);									// 闲置的线程列表
+			++mCurrentThreadCount;
+			++mCurrentFreeThreadCount;	
 		
+		}
+	
+		// INFO_MSG(fmt::format("ThreadPool::addTask: new Thread, currThreadCount: {0}\n", mCurrentThreadCount));
+
 		THREAD_MUTEX_UNLOCK(mThreadStateListMutex);
 		return true;
 	}
-	
-	bufferTask(tptask);
-	
-	if(isThreadCountMax())
-	{
-		THREAD_MUTEX_UNLOCK(mThreadStateListMutex);
-
-		//WARNING_MSG(fmt::format("ThreadPool::addTask: can't createthread, the poolsize is full({}).\n,
-		//	maxThreadCount_));
-
-		return false;
-	}
-
-	for(uint32 i = 0; i < mExtraNewAddThreadCount; ++i)
-	{
-		TPThread* tptd = createThread(300);									// 设定5分钟未使用则退出的线程
-		if(!tptd)
-		{
-#if PLATFORM == PLATFORM_WIN32		
-			// ERROR_MSG("ThreadPool::addTask: the ThreadPool create thread is error! ... \n");
-#else
-// 			ERROR_MSG(fmt::format("ThreadPool::addTask: the ThreadPool create thread is error:{0}\n", 
-// 				__strerror()));
-#endif				
-		}
-
-		mAllThreadList.push_back(tptd);										// 所有的线程列表
-		mFreeThreadList.push_back(tptd);									// 闲置的线程列表
-		++mCurrentThreadCount;
-		++mCurrentFreeThreadCount;	
-		
-	}
-	
-	// INFO_MSG(fmt::format("ThreadPool::addTask: new Thread, currThreadCount: {0}\n", mCurrentThreadCount));
-
-	THREAD_MUTEX_UNLOCK(mThreadStateListMutex);
-	return true;
-}

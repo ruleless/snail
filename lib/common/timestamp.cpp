@@ -3,8 +3,8 @@
 #ifdef USE_RDTSC
 TimingMethod gTimingMethod = RDTSC_TIMING_METHOD;
 #else // USE_RDTSC
-const TimingMethod DEFAULT_TIMING_METHOD = GET_TIME_TIMING_METHOD;
-TimingMethod gTimingMethod = NO_TIMING_METHOD;
+const TimingMethod DEFAULT_TIMING_METHOD = GET_TIME_OF_DAY_TIMING_METHOD;
+TimingMethod gTimingMethod = DEFAULT_TIMING_METHOD;
 #endif // USE_RDTSC
 
 const char* getTimingMethodName()
@@ -17,8 +17,6 @@ const char* getTimingMethodName()
 			return "rdtsc";
 		case GET_TIME_OF_DAY_TIMING_METHOD:
 			return "gettimeofday";
-		case GET_TIME_TIMING_METHOD:
-			return "gettime";
 		default:
 			return "Unknown";
 	}
@@ -56,11 +54,6 @@ static uint64 calcStampsPerSecond_rdtsc()
 	return (stampDelta * 1000000ULL) / microDelta;
 }
 
-static uint64 calcStampsPerSecond_gettime()
-{
-	return 1000000000ULL;
-}
-
 static uint64 calcStampsPerSecond_gettimeofday()
 {
 	return 1000000ULL;
@@ -81,11 +74,9 @@ static uint64 calcStampsPerSecond()
 		return calcStampsPerSecond_rdtsc();
 	else if (gTimingMethod == GET_TIME_OF_DAY_TIMING_METHOD)
 		return calcStampsPerSecond_gettimeofday();
-	else if (gTimingMethod == GET_TIME_TIMING_METHOD)
-		return calcStampsPerSecond_gettime();
 	else
 	{
-		char * timingMethod = getenv("TIMING_METHOD");
+		char *timingMethod = getenv("TIMING_METHOD");
 		if (!timingMethod)
 		{
 			gTimingMethod = DEFAULT_TIMING_METHOD;
@@ -97,10 +88,6 @@ static uint64 calcStampsPerSecond()
 		else if (strcmp(timingMethod, "gettimeofday") == 0)
 		{
 			gTimingMethod = GET_TIME_OF_DAY_TIMING_METHOD;
-		}
-		else if (strcmp(timingMethod, "gettime") == 0)
-		{
-			gTimingMethod = GET_TIME_TIMING_METHOD;
 		}
 		else
 		{

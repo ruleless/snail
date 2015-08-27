@@ -10,13 +10,16 @@ SHARED:=-fPIC --shared
 AR:=ar rcu
 RANLIB:=ranlib
 
-objs:=common.o timestamp.o strutil.o MemoryStream.o Tasks.o \
-	EventDispatcher.o EventPoller.o SelectPoller.o EpollPoller.o \
+commonobjs:=common.o timestamp.o strutil.o MemoryStream.o Tasks.o
+threadobjs:=ThreadPool.o  concurrency.o
+netobjs:=EventDispatcher.o EventPoller.o SelectPoller.o EpollPoller.o \
 	Address.o EndPoint.o Listener.o Channel.o PacketReader.o MessageHandler.o \
 	PacketReceiver.o TCPPacketReceiver.o UDPPacketReceiver.o \
 	PacketSender.o TCPPacketSender.o \
 	Bundle.o TCPPacket.o UDPPacket.o PacketFilter.o \
-	NetworkDef.o NetworkManager.o DelayedChannels.o NetworkStats.o \
+	NetworkDef.o NetworkManager.o DelayedChannels.o NetworkStats.o
+
+objs:=$(commonobjs) $(threadobjs) $(netobjs)
 
 .PHONY=all clean
 
@@ -31,6 +34,10 @@ timestamp.o:timestamp.cpp timestamp.h
 strutil.o:strutil.cpp strutil.h
 MemoryStream.o:MemoryStream.cpp MemoryStream.h
 Tasks.o:Tasks.cpp Tasks.h Task.h ThreadGuard.h
+
+ThreadPool.o:ThreadPool.cpp ThreadPool.h ThreadTask.h
+concurrency.o:concurrency.cpp concurrency.h
+
 EventDispatcher.o:EventDispatcher.cpp EventDispatcher.h EventPoller.h Network.h NetworkDef.h Tasks.h Timer.h
 EventPoller.o:EventPoller.cpp EventPoller.h SelectPoller.h EpollPoller.h Network.h NetworkDef.h
 SelectPoller.o:SelectPoller.cpp SelectPoller.h EventPoller.h
@@ -56,7 +63,7 @@ PacketSender.o:PacketSender.cpp PacketSender.h ObjectPool.h \
 	Network.h NetworkDef.h 
 TCPPacketSender.o:TCPPacketSender.cpp TCPPacketSender.h PacketSender.h ObjectPool.h \
 	Network.h NetworkDef.h TCPPacket.h
-Bundle.o:Bundle.cpp Bundle.h Bundle.inl Packet.h ObjectPool.h MessageHandler.h
+Bundle.o:Bundle.cpp Bundle.h Packet.h ObjectPool.h MessageHandler.h
 TCPPacket.o:TCPPacket.cpp TCPPacket.h NetworkDef.h ObjectPool.h Packet.h Address.h EndPoint.h
 UDPPacket.o:UDPPacket.cpp UDPPacket.h NetworkDef.h ObjectPool.h Packet.h Address.h EndPoint.h
 PacketFilter.o:PacketFilter.cpp PacketFilter.h NetworkDef.h RefCountable.h SmartPointer.h \

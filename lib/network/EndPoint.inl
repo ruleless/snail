@@ -304,7 +304,7 @@ INLINE int EndPoint::recvfrom(void *gramData, int gramSize, u_int16_t * networkP
 
 INLINE int EndPoint::recvfrom(void * gramData, int gramSize, struct sockaddr_in & sin)
 {
-	socklen_t		sinLen = sizeof(sin);
+	socklen_t sinLen = sizeof(sin);
 	int ret = ::recvfrom(mSocket, (char*)gramData, gramSize, 0, (sockaddr*)&sin, &sinLen);
 
 	return ret;

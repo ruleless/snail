@@ -278,7 +278,7 @@ void Channel::clearState(bool warnOnDiscard)
 	}
 }
 
-void Channel::startInactivityDetection( float period, float checkPeriod )
+void Channel::startInactivityDetection(float period, float checkPeriod)
 {
 	stopInactivityDetection();
 

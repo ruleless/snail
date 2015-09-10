@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "QueueTest.h"
-
 #include "cppunit/extensions/TestFactoryRegistry.h"
 #include "cppunit/ui/text/TestRunner.h"
 

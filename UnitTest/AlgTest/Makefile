@@ -14,12 +14,13 @@ all:lib TestMain
 lib:
 	cd $(LIBDIR) && $(MAKE)
 
-TestMain:TestMain.o QueueTest.o StackTest.o
+TestMain:TestMain.o QueueTest.o StackTest.o FlexibleArrTest.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 TestMain.o:TestMain.cpp
 QueueTest.o:QueueTest.cpp QueueTest.h algorithm/Queue.h
 StackTest.o:StackTest.cpp StackTest.h algorithm/Stack.h
+FlexibleArrTest.o:FlexibleArrTest.cpp FlexibleArrTest.h algorithm/FlexibleArray.h
 
 clean:
 	rm *.o TestMain

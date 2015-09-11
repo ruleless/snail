@@ -28,18 +28,12 @@ class FlexibleArray
 		T i_val;
 	};
 	
-    FlexibleArray(int log2sz = 6)
+    FlexibleArray(int sz = 8)
 			:node_(NULL)
 			,lastfree_(NULL)
-			,log2size_(log2sz)
+			,log2size_(0)
 	{
-		int sz = 1 << log2size_;
-		this->node_ = new Node[sz];
-		this->lastfree_ = &this->node_[sz-1];
-		for (int i = 0; i < sz; ++i)
-		{
-			this->_setNil(&this->node_[i]);
-		}
+		this->_setNodeVector(sz);
 	}
 	
     virtual ~FlexibleArray()
@@ -86,8 +80,8 @@ class FlexibleArray
 		}
 
 		int sz = 1 << this->log2size_;
-		Node *mainPos = &this->node_[key & (sz-1)];
-		if (!this->_isNil(mainPos) && mainPos->i_key.n != key)
+		Node *mp = &this->node_[key & (sz-1)];
+		if (!this->_isNil(mp) && mp->i_key.n != key)
 		{
 			Node *f = this->_getLastFree();
 			if (NULL == f)
@@ -95,16 +89,34 @@ class FlexibleArray
 				this->_rehash(sz+1);
 				return this->set(key, val);
 			}
+
+			Node *othern = &this->node_[mp->i_key.n & (sz-1)];
+			if (othern != mp)
+			{
+				while (othern + othern->i_key.nk.next != mp)
+					othern += othern->i_key.nk.next;
+
+				othern->i_key.nk.next = f-othern;
+
+				*f = *mp;
+				if (mp->i_key.nk.next != 0)
+				{
+					f->i_key.nk.next += (mp-f);
+					mp->i_key.nk.next = 0;
+				}
+			}
+			else
+			{			
+				if (mp->i_key.nk.next != 0)
+					f->i_key.nk.next = (mp + mp->i_key.nk.next) - f;
+				mp->i_key.nk.next = f-mp;
 			
-			if (mainPos->i_key.nk.next != 0)
-				f->i_key.nk.next = (mainPos + mainPos->i_key.nk.next) - f;
-			mainPos->i_key.nk.next = f-mainPos;
-			
-			mainPos = f;
+				mp = f;
+			}
 		}
-		mainPos->i_key.nk.n = key;
-		mainPos->i_val = val;
-		return &mainPos->i_val;
+		mp->i_key.nk.n = key;
+		mp->i_val = val;
+		return &mp->i_val;
 	}
 
 	void _setNil(Node *n)
@@ -120,7 +132,7 @@ class FlexibleArray
 
 	void _rehash(int sz)
 	{
-		Assert(ceillog2(sz) > this->log2size_);
+		Assert(math::ceillog2(sz) > this->log2size_);
 
 		Node *oldNode = this->node_;
 		int oldSz = 1 << this->log2size_;
@@ -139,11 +151,11 @@ class FlexibleArray
 	
 	void _setNodeVector(int sz)
 	{
-		this->log2size_ = ceillog2(sz);		
+		this->log2size_ = math::ceillog2(sz);		
 		sz = 1 << this->log2size_;
 		
 		this->node_ = new Node[sz];
-		this->lastfree_ = &this->node_[sz-1];
+		this->lastfree_ = &this->node_[sz];
 		for (int i = 0; i < sz; ++i)
 		{
 			this->_setNil(&this->node_[i]);

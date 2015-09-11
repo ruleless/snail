@@ -4,7 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int ceillog2(unsigned int x)
+namespace math
+{
+
+inline int ceillog2(unsigned int x)
 {
 	static const unsigned char log_2[256] = {  /* log_2[i] = ceil(log2(i - 1)) */
 		0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -19,7 +22,12 @@ int ceillog2(unsigned int x)
 	int l = 0;
 	x--;
 	while (x >= 256) { l += 8; x >>= 8; }
-	return l + log_2[x];
+	return l + log_2[x];	
 }
+
+extern void srandom(int seed);
+extern int random(int low, int high);
+		
+} // math
 
 #endif

@@ -9,7 +9,8 @@
 class FlexibleArrTest : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(FlexibleArrTest);
-	CPPUNIT_TEST(visitArray);
+	CPPUNIT_TEST(testRandom);
+	CPPUNIT_TEST(visitArray);	
 	CPPUNIT_TEST_SUITE_END();
   public:
     FlexibleArrTest();
@@ -19,6 +20,7 @@ class FlexibleArrTest : public CppUnit::TestFixture
 	
 	virtual void tearDown();
   protected:
+	void testRandom();
 	void visitArray();
 };
 

@@ -210,6 +210,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\network\EventDispatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\network\EventDispatcher.h"
+				>
+			</File>
+			<File
 				RelativePath="..\network\EventPoller.cpp"
 				>
 			</File>

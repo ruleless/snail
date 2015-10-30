@@ -1,5 +1,5 @@
 LIBDIR:=../../lib
-INCDIR:=../../../cppunit/include:$(LIBDIR)
+INCDIR:=../cppunit/include:$(LIBDIR)
 
 VPATH:=$(INCDIR)
 

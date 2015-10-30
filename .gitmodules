@@ -4,3 +4,6 @@
 [submodule "lib/deps/sigar"]
 	path = lib/deps/sigar
 	url = git@github.com:ruleless/sigar.git
+[submodule "UnitTest/cppunit"]
+	path = UnitTest/cppunit
+	url = git@github.com:ruleless/cppunit.git

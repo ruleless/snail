@@ -29,15 +29,18 @@ libsnail.a:$(objs)
 	$(AR) $@ $^
 	$(RANLIB) $@
 
+# in common dir
 common.o:common.cpp common.h platform.h
 timestamp.o:timestamp.cpp timestamp.h
 strutil.o:strutil.cpp strutil.h
 MemoryStream.o:MemoryStream.cpp MemoryStream.h
 Tasks.o:Tasks.cpp Tasks.h Task.h ThreadGuard.h
 
+# thread pool
 ThreadPool.o:ThreadPool.cpp ThreadPool.h ThreadTask.h
 concurrency.o:concurrency.cpp concurrency.h
 
+# main lib files including event dispatcher, networking
 EventDispatcher.o:EventDispatcher.cpp EventDispatcher.h EventPoller.h Network.h NetworkDef.h Tasks.h Timer.h
 EventPoller.o:EventPoller.cpp EventPoller.h SelectPoller.h EpollPoller.h Network.h NetworkDef.h
 SelectPoller.o:SelectPoller.cpp SelectPoller.h EventPoller.h
@@ -60,7 +63,7 @@ TCPPacketReceiver.o:TCPPacketReceiver.cpp TCPPacketReceiver.h PacketReceiver.h \
 UDPPacketReceiver.o:UDPPacketReceiver.cpp UDPPacketReceiver.h PacketReceiver.h \
 	Network.h NetworkDef.h UDPPacket.h
 PacketSender.o:PacketSender.cpp PacketSender.h ObjectPool.h \
-	Network.h NetworkDef.h 
+	Network.h NetworkDef.h
 TCPPacketSender.o:TCPPacketSender.cpp TCPPacketSender.h PacketSender.h ObjectPool.h \
 	Network.h NetworkDef.h TCPPacket.h
 Bundle.o:Bundle.cpp Bundle.h Packet.h ObjectPool.h MessageHandler.h

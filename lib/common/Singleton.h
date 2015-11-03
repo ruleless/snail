@@ -9,22 +9,22 @@
 
 template <typename T> class Singleton
 {
-protected:
+  protected:
 	static T* mSingleton;
-public:
+  public:
 	Singleton(void)
 	{
 		assert(!mSingleton);
-#if defined(_MSC_VER) && _MSC_VER < 1200	 
+#if defined(_MSC_VER) && _MSC_VER < 1200
 		int offset = (int)(T*)1 - (int)(Singleton <T>*)(T*)1;
 		mSingleton = (T*)((int)this + offset);
 #else
 		mSingleton = static_cast< T* >(this);
 #endif
 	}
-	
+
 	~Singleton(void) { assert(mSingleton);  mSingleton = 0; }
-	
+
 	static T& getSingleton(void)
 	{
 		assert(mSingleton);
@@ -32,7 +32,7 @@ public:
 	}
 	static T* getSingletonPtr(void)
 	{
-		return mSingleton; 
+		return mSingleton;
 	}
 };
 

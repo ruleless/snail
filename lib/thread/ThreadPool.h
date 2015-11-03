@@ -6,10 +6,10 @@
 #include "common/Singleton.h"
 #include "thread/ThreadTask.h"
 
-// windows include	
+// windows include
 #if PLATFORM == PLATFORM_WIN32
 #include <windows.h> // for HANDLE
-#include <process.h> // for _beginthread()	
+#include <process.h> // for _beginthread()
 #else
 // linux include
 #include <errno.h>
@@ -23,7 +23,7 @@
 #include <sys/epoll.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <pthread.h>	
+#include <pthread.h>
 #endif
 
 // 线程池活动线程大于这个数目则处于繁忙状态
@@ -52,7 +52,7 @@ public:
 		initCond();
 		initMutex();
 	}
-		
+
 	virtual ~TPThread()
 	{
 		deleteCond();
@@ -63,6 +63,7 @@ public:
 	bool join(void);
 
 	void onTaskCompleted(void);
+	int sendCondSignal(void) { return THREAD_SINGNAL_SET(mCond); }
 
 	// 线程通知 等待条件信号
 	bool onWaitCondSignal(void);
@@ -71,12 +72,10 @@ public:
 
 #if PLATFORM == PLATFORM_WIN32
 	static unsigned __stdcall threadFunc(void *arg);
-#else	
+#else
 	static void* threadFunc(void* arg);
 #endif
 
-	int sendCondSignal(void) { return THREAD_SINGNAL_SET(mCond); }
-	
 	virtual void onStart() {}
 	virtual void onEnd() {}
 
@@ -86,7 +85,7 @@ public:
 
 	THREAD_ID id(void) const { return mTid; }
 	void id(THREAD_ID tidp) { mTid = tidp; }
-	
+
 	virtual void initCond(void) { THREAD_SINGNAL_INIT(mCond); }
 	virtual void initMutex(void) { THREAD_MUTEX_INIT(mMutex); }
 
@@ -129,13 +128,13 @@ protected:
 
 class ThreadPool
 {
-public:		
+public:
 	ThreadPool();
 	virtual ~ThreadPool();
-	
+
 	void finalise();
 	void destroy();
-	
+
 	/** 创建线程池
 	@param inewThreadCount: 当系统繁忙时线程池会新增加这么多线程（临时）
 	@param inormalMaxThreadCount: 线程池会一直保持这么多个数的线程
@@ -168,27 +167,27 @@ public:
 	uint32 currentThreadCount(void) const { return mCurrentThreadCount; }
 	uint32 currentFreeThreadCount(void) const { return mCurrentFreeThreadCount; }
 	bool isThreadCountMax(void) const { return mCurrentThreadCount >= mMaxThreadCount; }
-	
+
 	bool isBusy(void) const { return mBufferedTaskList.size() > THREAD_BUSY_SIZE; }
 
 	bool isInitialize(void) const { return mIsInitialize; }
 	bool isDestroyed() const { return mIsDestroyed; }
 
 	uint32 bufferTaskSize() const { return mBufferedTaskList.size(); }
-	std::queue<TPTask*>& bufferedTaskList() { return mBufferedTaskList; }
+	std::queue<TPTask *>& bufferedTaskList() { return mBufferedTaskList; }
 
 	void lockBufferedTaskList() { THREAD_MUTEX_LOCK(mBufferedTaskListMutex); }
 	void unlockBufferedTaskList() { THREAD_MUTEX_UNLOCK(mBufferedTaskListMutex); }
 
 	uint32 finiTaskSize() const { return mFiniTaskListCount; }
 
-	virtual std::string name() const{ return "ThreadPool"; }
+	virtual std::string name() const { return "ThreadPool"; }
 public:
 	static int timeout;
 protected:
 	bool mIsInitialize;
 	bool mIsDestroyed;
-	
+
 	std::queue<TPTask *> mBufferedTaskList; // 系统处于繁忙时还未处理的任务列表
 	std::list<TPTask *> mFinishedTaskList; // 已经完成的任务列表
 	size_t mFiniTaskListCount;
@@ -196,7 +195,7 @@ protected:
 	THREAD_MUTEX mBufferedTaskListMutex; // 处理mBufferedTaskList互斥锁
 	THREAD_MUTEX mThreadStateListMutex; // 处理mBufferedTaskList and mFreeThreadList互斥锁
 	THREAD_MUTEX mFinishedTaskListMutex; // 处理mFinishedTaskList互斥锁
-	
+
 	std::list<TPThread *> mBusyThreadList; // 繁忙的线程列表
 	std::list<TPThread *> mFreeThreadList; // 闲置的线程列表
 	std::list<TPThread *> mAllThreadList; // 所有的线程列表

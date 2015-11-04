@@ -1,8 +1,12 @@
 #include "LogSystem.h"
+#include "LogPipeStdout.h"
 #include "thread/ThreadPool.h"
+
+SINGLETON_INIT(LogSystem)
 
 LogSystem::LogSystem(ThreadPool *pThreadPool)
 		:TPTask()
+		,Singleton<LogSystem>()
 		,mrpos(0)
 		,mwpos(0)
 		,mStarted(false)
@@ -23,6 +27,7 @@ bool LogSystem::start()
 {
 	if (!mStarted)
 	{
+		// 信号量初始化
 		mrpos = mwpos = 0;
 		if (sem_init(&mEmpty, 0, MAX_LOGMSG_LEN) < 0)
 		{
@@ -34,12 +39,14 @@ bool LogSystem::start()
 			return false;
 		}
 
+		// 输出管道
 		for (int i = 0; i < LogPipe_Max; ++i)
 		{
-			mLogPipe[i] = ;
+			mLogPipe[i] = new LogPipeStdout();
 			mPipeEnabled[i] = true;
 		}
 
+		// 启动线程
 		mStarted = true;
 		mLogLevel = MaxLevel;
 
@@ -60,6 +67,7 @@ void LogSystem::stop()
 		while (MAX_LOGMSG_LEN != nEmpty)
 			sem_getvalue(&mEmpty, &nEmpty);
 
+		// 销毁输出管道
 		for (int i = 0; i < LogPipe_Max; ++i)
 		{
 			if (mLogPipe[i])
@@ -69,6 +77,7 @@ void LogSystem::stop()
 			}
 		}
 
+		// 销毁信号量
 		sem_destroy(&mEmpty);
 		sem_destroy(&mStored);
 	}
@@ -81,23 +90,25 @@ void LogSystem::log(ELevel level, std::string msg)
 		if (sem_wait(&mEmpty) == 0)
 		{
 			static std::string s_logLevelStr[MaxLevel] = {
-				"Trace", "Warning", "Error",
+				"None", "Trace:", "Warning:", "Error:",
 			};
 
-			static int s_timeStrLen = 100;
+			// 时间
+			static const int s_timeStrLen = 100;
 			static char s_timeStr[s_timeStrLen] = {0};
 			time_t nowtime;
 			struct tm *timeinfo;
 			time(&nowtime);
 			timeinfo = localtime(&nowtime);
-			snprintf(s_timeStr, s_timeStrLen, "[%4d-%2d-%2d %2d:%2d]  ",
+			snprintf(s_timeStr, s_timeStrLen, "[%04d-%02d-%02d %02d:%02d]",
 					 timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday,
-					 timeinfo->tm_hour, timeinfo.tm_sec);
+					 timeinfo->tm_hour, timeinfo->tm_sec);
 
-			mLogMsg[mwpos].clear();
-			mLogMsg[mwpos] += s_timeStr;
-			mLogMsg[mwpos] += s_logLevelStr[level];
-			mLogMsg[mwpos] += msg;
+			mLogMsg[mwpos].level = level;
+			mLogMsg[mwpos].logMsg.clear();
+			mLogMsg[mwpos].logMsg += s_timeStr;
+			mLogMsg[mwpos].logMsg += s_logLevelStr[level];
+			mLogMsg[mwpos].logMsg += msg;
 
 			mwpos = (mwpos+1)%MAX_LOGMSG_LEN;
 
@@ -114,7 +125,7 @@ bool LogSystem::process()
 		{
 			if (mLogPipe[i] && mPipeEnabled[i])
 			{
-				mLogPipe[i]->output(mLogMsg[mrpos]);
+				mLogPipe[i]->output(mLogMsg[mrpos].level, mLogMsg[mrpos].logMsg);
 			}
 		}
 		mrpos = (mrpos+1)%MAX_LOGMSG_LEN;

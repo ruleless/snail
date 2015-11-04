@@ -2,6 +2,7 @@
 #define __LOGSYSTEM_H__
 
 #include "common.h"
+#include "Singleton.h"
 #include "thread/ThreadTask.h"
 #include <semaphore.h>
 
@@ -9,7 +10,7 @@
 
 class ThreadPool;
 class LogPipe;
-class LogSystem : public TPTask
+class LogSystem : public TPTask, public Singleton<LogSystem>
 {
   public:
 	enum ELevel
@@ -40,7 +41,13 @@ class LogSystem : public TPTask
 	virtual bool process();
 	virtual TPTask::TPTaskState presentMainThread();
   private:
-	std::string mLogMsg[MAX_LOGMSG_LEN];
+	struct SLogMsg
+	{
+		std::string logMsg;
+		ELevel level;
+	};
+
+	SLogMsg mLogMsg[MAX_LOGMSG_LEN];
 	int mrpos;
 	int mwpos;
 	sem_t mEmpty;
@@ -51,7 +58,7 @@ class LogSystem : public TPTask
 	ThreadPool *mpThreadPool;
 
 	LogPipe *mLogPipe[LogPipe_Max];
-	LogPipe mPipeEnabled[LogPipe_Max];
+	bool mPipeEnabled[LogPipe_Max];
 };
 
 class LogPipe

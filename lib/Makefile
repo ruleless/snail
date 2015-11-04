@@ -10,7 +10,8 @@ SHARED:=-fPIC --shared
 AR:=ar rcu
 RANLIB:=ranlib
 
-commonobjs:=common.o timestamp.o strutil.o MemoryStream.o Tasks.o
+commonobjs:=common.o timestamp.o strutil.o MemoryStream.o Tasks.o \
+	LogSystem.o LogPipeStdout.o Log.o
 threadobjs:=ThreadPool.o  concurrency.o
 netobjs:=EventDispatcher.o EventPoller.o SelectPoller.o EpollPoller.o \
 	Address.o EndPoint.o Listener.o Channel.o PacketReader.o MessageHandler.o \
@@ -35,6 +36,9 @@ timestamp.o:timestamp.cpp timestamp.h
 strutil.o:strutil.cpp strutil.h
 MemoryStream.o:MemoryStream.cpp MemoryStream.h
 Tasks.o:Tasks.cpp Tasks.h Task.h ThreadGuard.h
+LogSystem.o:LogSystem.cpp LogSystem.h LogPipeStdout.h
+LogPipeStdout.o:LogPipeStdout.cpp LogPipeStdout.h
+Log.o:Log.cpp Log.h LogSystem.h LogPipeStdout.h
 
 # thread pool
 ThreadPool.o:ThreadPool.cpp ThreadPool.h ThreadTask.h

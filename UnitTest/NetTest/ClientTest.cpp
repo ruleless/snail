@@ -27,7 +27,9 @@ void ClientTest::setUp()
 	mpDispatcher->addTask(this);
 
 	// 标准输入
+#if PLATFORM == PLATFORM_UNIX
 	mpDispatcher->registerReadFileDescriptor(STDIN_FILENO, this);
+#endif
 
 	// 建立网络连接
 	Address addr("127.0.0.1", 60000);
@@ -47,7 +49,9 @@ void ClientTest::tearDown()
 	mMsgHandlers.remove(1);
 
 	mpDispatcher->cancelTask(this);
+#if PLATFORM == PLATFORM_UNIX
 	mpDispatcher->deregisterReadFileDescriptor(STDIN_FILENO);
+#endif
 
 	SafeDelete(mpNetMgr);
 	SafeDelete(mpDispatcher);
@@ -63,8 +67,11 @@ int ClientTest::handleInputNotification(int fd)
 {
 	char buff[MAX_BUF];
 	memset(buff, 0, sizeof(buff));
-	
-	int n = read(STDIN_FILENO, buff, MAX_BUF);
+
+	int n = 0;
+#if PLATFORM == PLATFORM_UNIX
+	n = read(STDIN_FILENO, buff, MAX_BUF);
+#endif
 	if (n <= 0)
 		return 0;
 

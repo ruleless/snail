@@ -2,6 +2,8 @@
 *.a
 *.ncb
 *.suo
+*.idc
+*.ini
 *.user
 *.obj
 *.exe

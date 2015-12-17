@@ -45,6 +45,47 @@ public:
 		}
 		return s;
 	}
+
+	template <class T>
+	void serialize(T &ob)
+	{
+		Sections::iterator it = mSec.begin();
+		for (; it != mSec.end(); ++it)
+		{
+			ob.push_back("[", 1);
+			const char *sec = it->first.c_str();
+			ob.push_back(sec, strlen(sec));
+			ob.push_back("]\n", strlen("]\n"));
+
+			Records &records = it->second;
+			Records::iterator itr = records.begin(); 
+			for (; itr != records.end(); ++itr)
+			{
+				const char *key = itr->first.c_str();
+				const char *val = itr->second.c_str();
+				ob.push_back(key, strlen(key));
+				ob.push_back("=", 1);
+				ob.push_back(val, strlen(val));
+				ob.push_back("\n", 1);
+			}
+		}
+		ob.offset(1);
+		*(ob.current()) = '\0';
+	}
+
+	int getInt(const char* section, const char* key, int def = 0) const;
+	bool setInt(const char* section, const char* key, int val);
+
+	std::string getString(const char* section, const char* key, const char* def = 0) const;
+	ulong getString(const char* section, const char* key, char* retStr, size_t size, const char* def = 0) const;
+	bool setString(const char* section, const char* key, const char* val);
+
+	void save();
+
+	inline void setDirty(bool bDirty = true)
+	{
+		mbDirty = bDirty;
+	}
 private:
 	enum EFSMState
 	{
@@ -62,8 +103,12 @@ private:
 		FSMState_KeyVal_4,
 	};
 
+	typedef std::map<std::string, std::string> Records;
+	typedef std::map<std::string, Records> Sections;
+
 	char mPath[MAX_PATH];
-	int mState;
+	Sections mSec;
+	bool mbDirty;
 };
 
 #endif

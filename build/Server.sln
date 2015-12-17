@@ -4,8 +4,18 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppunit", "..\UnitTest\cppunit\src\cppunit\cppunit.vcproj", "{66A87773-261B-45E7-ADF3-6859E4ADB6A1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetTest", "..\UnitTest\Build\NetTest.vcproj", "{211D38CD-1A83-43A8-AFAB-724C847E07D6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{66A87773-261B-45E7-ADF3-6859E4ADB6A1} = {66A87773-261B-45E7-ADF3-6859E4ADB6A1}
+		{E9AAE810-DD1B-462F-98B2-5371F683C2A0} = {E9AAE810-DD1B-462F-98B2-5371F683C2A0}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "snail", "..\lib\build\snail.vcproj", "{E9AAE810-DD1B-462F-98B2-5371F683C2A0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IniTest", "..\UnitTest\Build\IniTest.vcproj", "{70D654E2-3B73-44C3-B770-16E4AB43BC82}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9AAE810-DD1B-462F-98B2-5371F683C2A0} = {E9AAE810-DD1B-462F-98B2-5371F683C2A0}
+		{66A87773-261B-45E7-ADF3-6859E4ADB6A1} = {66A87773-261B-45E7-ADF3-6859E4ADB6A1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +35,10 @@ Global
 		{E9AAE810-DD1B-462F-98B2-5371F683C2A0}.Debug|Win32.Build.0 = Debug|Win32
 		{E9AAE810-DD1B-462F-98B2-5371F683C2A0}.Release|Win32.ActiveCfg = Release|Win32
 		{E9AAE810-DD1B-462F-98B2-5371F683C2A0}.Release|Win32.Build.0 = Release|Win32
+		{70D654E2-3B73-44C3-B770-16E4AB43BC82}.Debug|Win32.ActiveCfg = Debug|Win32
+		{70D654E2-3B73-44C3-B770-16E4AB43BC82}.Debug|Win32.Build.0 = Debug|Win32
+		{70D654E2-3B73-44C3-B770-16E4AB43BC82}.Release|Win32.ActiveCfg = Release|Win32
+		{70D654E2-3B73-44C3-B770-16E4AB43BC82}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -697,13 +697,4 @@ OutBuffer<Allocator>& _cdecl operator<<(OutBuffer<Allocator>& ob, const std::str
 	return ob;
 }
 
-InBuffer& _cdecl operator>>(InBuffer& ib, std::string& val)
-{
-	const char* str = 0;
-	ib>>str;
-	if (str)
-		val = str;
-	return ib;
-}
-
 #endif // __BUFFER_H__

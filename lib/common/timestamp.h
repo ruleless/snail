@@ -74,7 +74,7 @@ inline uint64 timestamp()
 inline uint64 timestamp()
 {
 	__asm rdtsc
-			}
+}
 #pragma warning (pop)
 #else // USE_RDTSC
 
@@ -92,12 +92,6 @@ inline uint64 timestamp()
 #else
 #    error Unsupported platform!
 #endif
-
-extern uint64 stampsPerSecond_rdtsc();
-extern double stampsPerSecondD_rdtsc();
-
-extern uint64 stampsPerSecond_gettimeofday();
-extern double stampsPerSecondD_gettimeofday();
 
 extern uint64 stampsPerSecond();
 extern double stampsPerSecondD();

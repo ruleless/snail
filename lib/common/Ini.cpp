@@ -31,180 +31,184 @@ void Ini::_parse()
 	bool loop = true;
 	while (loop)
 	{
-		int res = fscanf(pFile, "%c", &c);
-		if (res == EOF)
+		static const int BUF_SZ = 256;
+		char buf[BUF_SZ+1] = {0};
+		int n = fread(buf, sizeof(char), BUF_SZ, pFile);
+		if (n <= 0)
 		{
-			s = 's';
 			loop = false;
+			buf[0] = ' ';
+			n = 1;
 		}
-		else
+		for (int i = 0; i < n; ++i)
 		{
+			c = buf[i];
 			s = _toSymbol(c);
-		}
 
-		switch (q)
-		{
-		case FSMState_Start:
-			if (s == 's')
+			switch (q)
 			{
-				q = FSMState_Start;
-			}
-			else if (s == '[')
-			{
-				q = FSMState_Sec_1;
-				sec[secindex=0] = '\0';
-			}
-			else if (s == 'w')
-			{
-				q = FSMState_KeyVal_1;
-				key[keyindex++] = c;
-				key[keyindex] = '\0';
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_Sec_1:
-			if (s == 's')
-			{
-				q = FSMState_Sec_1;
-			}
-			else if (s == 'w')
-			{
-				q = FSMState_Sec_2;
-				sec[secindex++] = c;
-				sec[secindex] = '\0';
-			}
-			else if (s == ']')
-			{
-				q = FSMState_Sec_4;
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_Sec_2:
-			if (s == 's')
-			{
-				q = FSMState_Sec_3;
-			}
-			else if (s == 'w')
-			{
-				q = FSMState_Sec_2;
-				sec[secindex++] = c;
-				sec[secindex] = '\0';
-			}
-			else if(s == ']')
-			{
-				q = FSMState_Sec_4;
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_Sec_3:
-			if (s == 's')
-			{
-				q = FSMState_Sec_3;
-			}
-			else if(s == ']')
-			{
-				q = FSMState_Sec_4;
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_Sec_4:
-			if (s == 's')
-			{
-				q = FSMState_Start;
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_KeyVal_1:
-			if (s == 'w')
-			{
-				q = FSMState_KeyVal_1;
-				key[keyindex++] = c;
-				key[keyindex] = '\0';
-			}
-			else if (s == 's')
-			{
-				q = FSMState_KeyVal_2;
-			}
-			else if (s == '=')
-			{
-				q = FSMState_KeyVal_3;
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_KeyVal_2:
-			if (s == 's')
-			{
-				q = FSMState_KeyVal_2;
-			}
-			else if (s == '=')
-			{
-				q = FSMState_KeyVal_3;
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_KeyVal_3:
-			if (s == 's')
-			{
-				q = FSMState_KeyVal_3;
-			}
-			else if (s == 'w')
-			{
-				q = FSMState_KeyVal_4;
-				val[valindex++] = c;
-				val[valindex] = '\0';
-			}
-			else
-			{
-				q = FSMState_Error;
-			}
-			break;
-		case FSMState_KeyVal_4:
-			if (s == 'w')
-			{
-				q = FSMState_KeyVal_4;
-				val[valindex++] = c;
-				val[valindex] = '\0';
-			}
-			else if (s == 's')
-			{
-				q = FSMState_Start;
-				if (keyindex > 0)
+			case FSMState_Start:
+				if (s == 's')
 				{
-					Records &records = mSec[sec];
-					records[key] = val;
-					key[keyindex=0] = '\0';
-					val[valindex=0] = '\0';
+					q = FSMState_Start;
 				}
-			}
-			else
-			{
+				else if (s == '[')
+				{
+					q = FSMState_Sec_1;
+					sec[secindex=0] = '\0';
+				}
+				else if (s == 'w')
+				{
+					q = FSMState_KeyVal_1;
+					key[keyindex++] = c;
+					key[keyindex] = '\0';
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_Sec_1:
+				if (s == 's')
+				{
+					q = FSMState_Sec_1;
+				}
+				else if (s == 'w')
+				{
+					q = FSMState_Sec_2;
+					sec[secindex++] = c;
+					sec[secindex] = '\0';
+				}
+				else if (s == ']')
+				{
+					q = FSMState_Sec_4;
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_Sec_2:
+				if (s == 's')
+				{
+					q = FSMState_Sec_3;
+				}
+				else if (s == 'w')
+				{
+					q = FSMState_Sec_2;
+					sec[secindex++] = c;
+					sec[secindex] = '\0';
+				}
+				else if(s == ']')
+				{
+					q = FSMState_Sec_4;
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_Sec_3:
+				if (s == 's')
+				{
+					q = FSMState_Sec_3;
+				}
+				else if(s == ']')
+				{
+					q = FSMState_Sec_4;
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_Sec_4:
+				if (s == 's')
+				{
+					q = FSMState_Start;
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_KeyVal_1:
+				if (s == 'w')
+				{
+					q = FSMState_KeyVal_1;
+					key[keyindex++] = c;
+					key[keyindex] = '\0';
+				}
+				else if (s == 's')
+				{
+					q = FSMState_KeyVal_2;
+				}
+				else if (s == '=')
+				{
+					q = FSMState_KeyVal_3;
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_KeyVal_2:
+				if (s == 's')
+				{
+					q = FSMState_KeyVal_2;
+				}
+				else if (s == '=')
+				{
+					q = FSMState_KeyVal_3;
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_KeyVal_3:
+				if (s == 's')
+				{
+					q = FSMState_KeyVal_3;
+				}
+				else if (s == 'w')
+				{
+					q = FSMState_KeyVal_4;
+					val[valindex++] = c;
+					val[valindex] = '\0';
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			case FSMState_KeyVal_4:
+				if (s == 'w')
+				{
+					q = FSMState_KeyVal_4;
+					val[valindex++] = c;
+					val[valindex] = '\0';
+				}
+				else if (s == 's')
+				{
+					q = FSMState_Start;
+					if (keyindex > 0)
+					{
+						Records &records = mSec[sec];
+						records[key] = val;
+						key[keyindex=0] = '\0';
+						val[valindex=0] = '\0';
+					}
+				}
+				else
+				{
+					q = FSMState_Error;
+				}
+				break;
+			default:
 				q = FSMState_Error;
+				break;
 			}
-			break;
-		default:
-			q = FSMState_Error;
-			break;
 		}
 	}
 	fclose(pFile);
@@ -280,7 +284,7 @@ void Ini::save()
 	if (!mbDirty)
 		return;
 
-	FILE *pFile = fopen(mPath, "w");
+	FILE *pFile = fopen(mPath, "w+");
 	if (pFile)
 	{
 		obuf ob;

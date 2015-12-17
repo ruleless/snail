@@ -103,30 +103,6 @@ static uint64 calcStampsPerSecond()
 #endif // USE_RDTSC
 }
 
-uint64 stampsPerSecond_rdtsc()
-{
-	static uint64 stampsPerSecondCache = calcStampsPerSecond_rdtsc();
-	return stampsPerSecondCache;
-}
-
-double stampsPerSecondD_rdtsc()
-{
-	static double stampsPerSecondCacheD = double(stampsPerSecond_rdtsc());
-	return stampsPerSecondCacheD;
-}
-
-uint64 stampsPerSecond_gettimeofday()
-{
-	static uint64 stampsPerSecondCache = calcStampsPerSecond_gettimeofday();
-	return stampsPerSecondCache;
-}
-
-double stampsPerSecondD_gettimeofday()
-{
-	static double stampsPerSecondCacheD = double(stampsPerSecond_gettimeofday());
-	return stampsPerSecondCacheD;
-}
-
 #elif defined(_WIN32)
 
 #include <windows.h>

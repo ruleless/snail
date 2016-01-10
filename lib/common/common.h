@@ -65,29 +65,4 @@ int traverseDir(const char *pathname, FileHandler handler);
 
 #endif
 
-#if defined (__i386__)
-inline uint64 getTimeStamp()
-{
-	uint64 x;
-	__asm__ volatile("rdtsc":"=A"(x));
-	return x;
-}
-#elif defined (__x86_64__)
-inline uint64 getTimeStamp()
-{
-	unsigned hi,lo;
-	__asm__ volatile("rdtsc":"=a"(lo),"=d"(hi));
-	return ((uint64_t)lo)|(((uint64_t)hi)<<32);
-}
-#elif defined (__WIN32__) || defined(_WIN32) || defined(WIN32)
-inline uint64 getTimeStamp()
-{
-    __asm
-    {
-        _emit 0x0F;
-        _emit 0x31;
-    }
-}
-#endif
-
 #endif

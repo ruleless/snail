@@ -3,6 +3,7 @@
 
 #include "common/platform.h"
 
+////////////////////////////////////////////////////////////////////////// TimeMethod
 #ifdef unix
 //#define USE_RDTSC
 #else
@@ -18,7 +19,10 @@ enum TimingMethod
 
 extern TimingMethod gTimingMethod;
 extern const char* getTimingMethodName();
+//////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////// timestamp
 #ifdef unix
 
 inline uint64 timestamp_rdtsc()
@@ -92,15 +96,38 @@ inline uint64 timestamp()
 #else
 #    error Unsupported platform!
 #endif
+//////////////////////////////////////////////////////////////////////////
 
-extern uint64 stampsPerSecond();
-extern double stampsPerSecondD();
 
-inline double stampsToSeconds( uint64 stamps )
+////////////////////////////////////////////////////////////////////////// getTimeStamp
+#if defined (__i386__)
+inline uint64 getTimeStamp()
 {
-	return double( stamps )/stampsPerSecondD();
+	uint64 x;
+	__asm__ volatile("rdtsc":"=A"(x));
+	return x;
 }
+#elif defined (__x86_64__)
+inline uint64 getTimeStamp()
+{
+	unsigned hi,lo;
+	__asm__ volatile("rdtsc":"=a"(lo),"=d"(hi));
+	return ((uint64_t)lo)|(((uint64_t)hi)<<32);
+}
+#elif defined (__WIN32__) || defined(_WIN32) || defined(WIN32)
+inline uint64 getTimeStamp()
+{
+	__asm
+	{
+		_emit 0x0F;
+		_emit 0x31;
+	}
+}
+#endif
+//////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////// TimeStamp
 class TimeStamp
 {
   public:
@@ -122,5 +149,26 @@ class TimeStamp
 
 	uint64 stamp_;
 };
+//////////////////////////////////////////////////////////////////////////
+
+extern uint64 stampsPerSecond();
+extern double stampsPerSecondD();
+
+inline double stampsToSeconds( uint64 stamps )
+{
+	return double( stamps )/stampsPerSecondD();
+}
+
+inline ulong getTickCount()
+{
+#if defined (__WIN32__) || defined(_WIN32) || defined(WIN32)
+	return ::GetTickCount();
+#elif defined(unix)
+	struct timeval tv;
+	struct timezone tz;
+	gettimeofday(&tv , &tz);
+	return (ulong)((tv.tv_sec & 0xfffff) * 1000 + tv.tv_usec / 1000);
+#endif
+}
 
 #endif // __TIMESTAMP_H__

@@ -1,5 +1,6 @@
 #include "timestamp.h"
 
+////////////////////////////////////////////////////////////////////////// TimeMethod
 #ifdef USE_RDTSC
 TimingMethod gTimingMethod = RDTSC_TIMING_METHOD;
 #else // USE_RDTSC
@@ -21,7 +22,10 @@ const char* getTimingMethodName()
 			return "Unknown";
 	}
 }
+//////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////// calcStampsPerSecond
 #ifdef unix
 #include <sys/time.h>
 #include <sys/types.h>
@@ -150,23 +154,10 @@ static uint64 calcStampsPerSecond()
 
 #endif // USE_RDTSC
 #endif // unix
+//////////////////////////////////////////////////////////////////////////
 
 
-// 每秒cpu所耗时间
-uint64 stampsPerSecond()
-{
-	static uint64 _stampsPerSecondCache = calcStampsPerSecond();
-	return _stampsPerSecondCache;
-}
-
-// 每秒cpu所耗时间 double版本
-double stampsPerSecondD()
-{
-	static double stampsPerSecondCacheD = double(stampsPerSecond());
-	return stampsPerSecondCacheD;
-}
-
-
+////////////////////////////////////////////////////////////////////////// TimeStamp
 double TimeStamp::toSeconds(uint64 stamps)
 {
 	return double(stamps) / stampsPerSecondD();
@@ -195,4 +186,20 @@ TimeStamp TimeStamp::ageInStamps() const
 double TimeStamp::ageInSeconds() const
 {
 	return toSeconds(this->ageInStamps());
+}
+//////////////////////////////////////////////////////////////////////////
+
+
+// 每秒cpu所耗时间
+uint64 stampsPerSecond()
+{
+	static uint64 _stampsPerSecondCache = calcStampsPerSecond();
+	return _stampsPerSecondCache;
+}
+
+// 每秒cpu所耗时间 double版本
+double stampsPerSecondD()
+{
+	static double stampsPerSecondCacheD = double(stampsPerSecond());
+	return stampsPerSecondCacheD;
 }

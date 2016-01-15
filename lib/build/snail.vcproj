@@ -211,6 +211,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\strconv.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\strconv.h"
+				>
+			</File>
+			<File
 				RelativePath="..\common\StrConvertor.h"
 				>
 			</File>
@@ -248,6 +256,14 @@
 			</File>
 			<File
 				RelativePath="..\common\timestamp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Trace.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\Trace.h"
 				>
 			</File>
 		</Filter>

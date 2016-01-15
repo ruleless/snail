@@ -26,6 +26,11 @@
 #define SafeDeleteArray(ptr) if ((ptr)) {delete[] (ptr); (ptr) = 0;}
 #define SafeRelease(ptr)     if ((ptr)) {(ptr)->Release(); (ptr) = 0;}
 
+#define SUPPORT_TRACE
+
+#ifdef _UNICODE
+#	define _UTF8
+#endif
 
 #if PLATFORM == PLATFORM_UNIX
 

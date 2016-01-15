@@ -212,12 +212,17 @@
 
 //////////////////////////////////////////////////////////////////////////
 // 类型定义
-#ifndef TCHAR
-#  ifdef _UNICODE
-typedef wchar_t TCHAR;
-#  else
-typedef char TCHAR;
-#  endif
+typedef char					mchar;
+typedef wchar_t					wchar;
+typedef std::string				mstring;
+typedef std::wstring			wstring;
+
+#ifdef _UNICODE
+typedef wchar					tchar;
+typedef wstring					tstring;
+#else
+typedef mchar					tchar;
+typedef mstring					tstring;
 #endif
 
 typedef unsigned char			uchar;

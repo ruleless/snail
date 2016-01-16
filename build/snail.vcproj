@@ -307,10 +307,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\strconv.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\StrConvertor.h"
 				>
 			</File>
@@ -500,10 +496,6 @@
 			</File>
 			<File
 				RelativePath="..\src\SelectPoller.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\strconv.cpp"
 				>
 			</File>
 			<File

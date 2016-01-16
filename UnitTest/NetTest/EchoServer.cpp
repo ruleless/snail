@@ -1,6 +1,6 @@
 #include "EchoMessage.h"
-#include "network/Channel.h"
-#include "network/Bundle.h"
+#include "Channel.h"
+#include "Bundle.h"
 
 void EchoMessage::handle(Channel *pChannel, MemoryStream &s)
 {

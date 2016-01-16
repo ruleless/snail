@@ -211,11 +211,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\strconv.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\strconv.h"
+				RelativePath="..\common\StrBuffer.h"
 				>
 			</File>
 			<File
@@ -264,6 +260,10 @@
 			</File>
 			<File
 				RelativePath="..\common\Trace.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\TraceImpl.cpp"
 				>
 			</File>
 		</Filter>

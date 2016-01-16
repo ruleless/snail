@@ -2,7 +2,7 @@
 #define __PLATFORM_H__
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // common include	
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,18 +28,30 @@
 #include <cctype>
 #include <iterator>
 #include "common/strutil.h"
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // windows include	
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
+
+#ifndef WINVER
+#	define WINVER 0x0501
+#endif
+#ifndef _WIN32_WINNT
+#	define _WIN32_WINNT 0x0501
+#endif
+#ifndef _WIN32_WINDOWS
+#	define _WIN32_WINDOWS 0x0410
+#endif
+
 #pragma warning(disable:4996)
 #pragma warning(disable:4819)
 #pragma warning(disable:4049)
 #pragma warning(disable:4217)
 #include <io.h>
 #include <time.h> 
-// #define FD_SETSIZE 1024
+// # define FD_SETSIZE 1024
 #ifndef WIN32_LEAN_AND_MEAN 
 #include <winsock2.h> // 必须在windows.h之前包含， 否则网络模块编译会出错
 #include <mswsock.h> 
@@ -52,7 +64,9 @@
 #include <functional>
 #include <memory>
 #define _SCL_SECURE_NO_WARNINGS
+
 #else
+
 // linux include
 #include <errno.h>
 #include <float.h>
@@ -97,9 +111,10 @@
 #define SIGPIPE 13
 #define SIGSYS	32
 #endif
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // 常量定义
 #ifndef NAME_PATH
 #define NAME_PATH 255
@@ -124,9 +139,10 @@
 #ifndef MAX_PATH
 #define MAX_PATH 260
 #endif
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // 字节序
 #ifndef LITTLE_ENDIAN
 #	define LITTLE_ENDIAN	0
@@ -141,9 +157,10 @@
 #		define ENDIAN LITTLE_ENDIAN
 #	endif 
 #endif
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // 平台定义
 #define PLATFORM_WIN32 0
 #define PLATFORM_UNIX  1
@@ -185,9 +202,10 @@
 #elif PLATFORM == PLATFORM_WIN32
 #	define PLATFORM_TEXT "Win32"
 #endif
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // 编译器定义
 #define COMPILER_MICROSOFT 0
 #define COMPILER_GNU	   1
@@ -208,9 +226,10 @@
 #else
 #	pragma error "FATAL ERROR: Unknown compiler."
 #endif
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // 类型定义
 typedef char					mchar;
 typedef wchar_t					wchar;
@@ -354,10 +373,11 @@ enum
 #else
 typedef int					SOCKET;
 #endif
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
-// 线程定义
+//--------------------------------------------------------------------------
+//线程定义
 #if PLATFORM == PLATFORM_WIN32
 #	define THREAD_ID							HANDLE
 #	define THREAD_SINGNAL						HANDLE
@@ -381,9 +401,10 @@ typedef int					SOCKET;
 #	define THREAD_MUTEX_LOCK(x)					pthread_mutex_lock(&x)
 #	define THREAD_MUTEX_UNLOCK(x)				pthread_mutex_unlock(&x)		
 #endif
+//--------------------------------------------------------------------------
 
 
-//////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------
 // 获得系统产生的最后一次错误描述
 inline char* __strerror(int ierrorno = 0)
 {
@@ -521,5 +542,6 @@ inline void setenv(const std::string& name, const std::string& value, int overwr
 #else
 // Linux下面直接使用setenv
 #endif
+//--------------------------------------------------------------------------
 
 #endif

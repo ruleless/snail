@@ -16,6 +16,4 @@ class LogTest : public CppUnit::TestFixture
 	virtual void tearDown();
 
 	void printLog();
-  private:
-	ThreadPool *mpThreadPool;
 };

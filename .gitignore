@@ -10,6 +10,7 @@
 *.ilk
 *.pdb
 *.lib
+*.html
 Debug/
 Obj/
 main

@@ -78,6 +78,15 @@ void unregisterTrace(STrace::Listener* sink)
 
 
 //--------------------------------------------------------------------------
+#define  STD_COLOR_NONE		"\033[0m"
+#define  STD_COLOR_BLACK	"\033[30m"
+#define  STD_COLOR_GREEN	"\033[32m"
+#define  STD_COLOR_PURPLE	"\033[35m"
+#define  STD_COLOR_RED		"\033[31m"
+#define  STD_COLOR_EMPHASIS	"\033[46;31m"
+
+#define  STD_COLOR_YELLOW	"\033[33m"
+
 // 输出到控制台
 class TraceConsole : public STrace::Listener
 {
@@ -86,9 +95,30 @@ public:
 	{
 		assert(msg != NULL);
 
+#if PLATFORM == PLATFORM_WIN32
 		if (time && hasTime())
 			std::cout<<time;
 		std::cout<<msg;
+#else
+		static const char* color[] = 
+		{
+			0,
+			STD_COLOR_BLACK,	// Info
+			STD_COLOR_GREEN,	// Trace
+			0,
+			STD_COLOR_PURPLE,	// Warning
+			0,0,0,
+			STD_COLOR_RED,		// Error
+			0,0,0,0,0,0,0,
+			STD_COLOR_EMPHASIS, // Emphasis
+		};
+
+		if (time && hasTime())
+		{
+			printf("%s%s"STD_COLOR_NONE, color[level], time);
+		}
+		printf("%s%s"STD_COLOR_NONE, color[level], msg);
+#endif
 	}
 };
 
@@ -163,7 +193,7 @@ public:
 	{
 		assert(msg != NULL);
 
-		static const mchar* color[] = 
+		static const char* color[] = 
 		{
 			0,
 			"<font color=\"#000000\">", // Info

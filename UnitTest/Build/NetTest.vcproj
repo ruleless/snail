@@ -124,9 +124,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="snail.lib cppunitd.lib ws2_32.lib"
+				AdditionalDependencies="libsnail_d.lib cppunitd.lib ws2_32.lib"
 				OutputFile="$(ProjectName).exe"
-				AdditionalLibraryDirectories="../../lib/build;../cppunit/lib"
+				AdditionalLibraryDirectories="../../lib;../cppunit/lib"
 				GenerateDebugInformation="true"
 			/>
 			<Tool

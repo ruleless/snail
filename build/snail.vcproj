@@ -124,7 +124,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(ProjectName).lib"
+				OutputFile="../lib/lib$(ProjectName)_d.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

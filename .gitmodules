@@ -1,3 +1,9 @@
 [submodule "UnitTest/cppunit"]
 	path = UnitTest/cppunit
 	url = git@github.com:ruleless/cppunit.git
+[submodule "deps/openssl"]
+	path = deps/openssl
+	url = git@github.com:ruleless/openssl.git
+[submodule "deps/sigar"]
+	path = deps/sigar
+	url = git@github.com:ruleless/sigar.git

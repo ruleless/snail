@@ -83,7 +83,7 @@ public:
 		return (*this);
 	}
 
-	template <class T> 
+	template <class T>
 	ostrbuffer& operator<< (T value)
 	{
 		if (sizeof(T) > base::right())
@@ -104,68 +104,60 @@ public:
 			base::check_eof();
 		}
 		else
-		{ 
+		{
 			base::state(base::fail);
 		}
 		return (*this);
 	}
 
-	template <>
 	ostrbuffer& operator<< (const char* value)
 	{
-		_trimEof();
+		this->_trimEof();
 
 		if (value)
-			return push_back((const void*)value, strlen(value) + sizeof(char));;
+			return this->push_back((const void*)value, strlen(value) + sizeof(char));;
 		base::state(base::fail);
 		return *this;
 	}
 
-	template<>
 	ostrbuffer& operator<< (char* value)
 	{
-		return operator<< ((const char*)value);
+		return this->operator<<((const char*)value);
 	}
 
-	template<> 
 	ostrbuffer& operator<< (const wchar_t* value)
 	{
 		_trimEof();
 
 		if (value)
-			return push_back((const void*)value, (wcslen(value) + 1) * sizeof(wchar_t));
+			return this->push_back((const void*)value, (wcslen(value) + 1) * sizeof(wchar_t));
 		base::state(base::fail);
 		return *this;
 	}
 
-	template<> 
 	ostrbuffer& operator<< (wchar_t* value)
 	{
-		return operator<< ((const wchar_t*)value);
+		return this->operator<<((const wchar_t*)value);
 	}
 
-	template<>
 	ostrbuffer& operator<< (const std::string& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
-	template<>
 	ostrbuffer& operator<< (std::string& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
-	template<>
 	ostrbuffer& operator<< (const std::wstring& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
-	template<>
 	ostrbuffer& operator<< (std::wstring& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
 	void _trimEof()
@@ -177,14 +169,10 @@ public:
 	}
 };
 
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<32>>>        ostrbuf32;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<64>>>        ostrbuf64;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<128>>>       ostrbuf128;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<256>>>       ostrbuf256, ostrbuf;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<512>>>       ostrbuf512;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<1024>>>      ostrbuf1024;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<2048>>>      ostrbuf2048;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<4096>>>      ostrbuf4096;
-typedef StrBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<8192>>>      ostrbuf8192;
+typedef StrBuffer<BufferAlctEx32>        ostrbuf32;
+typedef StrBuffer<BufferAlctEx64>        ostrbuf64;
+typedef StrBuffer<BufferAlctEx128>       ostrbuf128;
+typedef StrBuffer<BufferAlctEx256>       ostrbuf256, ostrbuf;
+
 
 #endif // __STRBUFFER_H__

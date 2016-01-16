@@ -29,13 +29,13 @@ class BasicBuffer
 
 	~BasicBuffer() {}
 
-	char* data() const		
-	{ 
-		return _data; 
+	char* data() const
+	{
+		return _data;
 	}
 
 	void set_data(char* d)
-	{ 
+	{
 		_data = d;
 	}
 
@@ -50,13 +50,13 @@ class BasicBuffer
 	}
 
 	void cap(size_t cap)
-	{ 
+	{
 		_cap = cap;
 	}
 
 	int state() const
 	{
-		return _state; 
+		return _state;
 	}
 
 	char* begin() const
@@ -76,7 +76,7 @@ class BasicBuffer
 
 	char* pos(size_t n) const
 	{
-		if (n <= _cap) 
+		if (n <= _cap)
 			return _data + n;
 		return 0;
 	}
@@ -88,7 +88,7 @@ class BasicBuffer
 
 	bool operator!() const
 	{
-		return !is_good(); 
+		return !is_good();
 	}
 
 	operator bool() const
@@ -105,7 +105,7 @@ class BasicBuffer
 	{
 		return _state == eof;
 	}
-		
+
 	bool is_fail() const
 	{
 		return _state == fail;
@@ -113,7 +113,7 @@ class BasicBuffer
 
 	void reset()
 	{
-		_cur   = 0; 
+		_cur   = 0;
 		_state = good;
 	}
 
@@ -137,7 +137,7 @@ class BasicBuffer
 
 	void check_eof()
 	{
-		if (_cur == 0 || _cur == _cap) 
+		if (_cur == 0 || _cur == _cap)
 			state(eof);
 	}
 
@@ -153,8 +153,8 @@ class BasicBuffer
 
 	void inc(size_t n)
 	{
-		if (n <= right()) 
-			_cur += n; 
+		if (n <= right())
+			_cur += n;
 		else
 			state(fail);
 		check_eof();
@@ -164,9 +164,9 @@ class BasicBuffer
 	{
 		if (n <= left())
 			_cur -= n;
-		else 
+		else
 			state(fail);
-		check_eof(); 
+		check_eof();
 	}
 
 	void copy(const void* buf, size_t bytes)
@@ -222,7 +222,7 @@ class BufferAllocatorHeap
 		if (bytes == 0)
 			bytes = _init_size;
 		char* buf = new char[bytes];
-		if (!buf) 
+		if (!buf)
 			bytes = 0;
 		capacity = bytes;
 		return buf;
@@ -236,7 +236,7 @@ class BufferAllocatorHeap
 			void* buf = this->alloc(new_size, capacity);
 			if (buf && ptr && old_size > 0)
 				memcpy(buf, ptr, old_size);
-			if (ptr) 
+			if (ptr)
 				this->free(ptr);
 			return buf;
 		}
@@ -253,7 +253,7 @@ template <size_t _init_size = 256>
 class BufferAllocatorStack
 {
   protected:
-	enum 
+	enum
 	{
 		_buf_size = _init_size ? ((_init_size + 7) & ~7) : 8
 	};
@@ -290,8 +290,8 @@ class BufferAllocatorStackOrHeap : public BufferAllocatorStack<_init_size>,
 	typedef BufferAllocatorStack<_init_size>  stack;
   public:
 	size_t init_size() const
-	{ 
-		return _init_size; 
+	{
+		return _init_size;
 	}
 
 	void* alloc(size_t bytes, size_t& capacity)
@@ -352,7 +352,7 @@ class BufferAllocatorEx : public Allocator
 		if (!ptr || new_size > capacity)
 		{
 			size_t good_size = capacity ? capacity : new_size;
-			while (good_size < new_size) 
+			while (good_size < new_size)
 				good_size += (good_size >> 1);
 			size_t align_size = good_size ? ((good_size + 7) & ~7) : 8;
 
@@ -437,7 +437,7 @@ class OutBuffer : public BasicBuffer, public Allocator
 		return (*this);
 	}
 
-	template <class T> 
+	template <class T>
 	obuffer& operator<< (T value)
 	{
 		if (sizeof(T) > base::right())
@@ -458,64 +458,56 @@ class OutBuffer : public BasicBuffer, public Allocator
 			base::check_eof();
 		}
 		else
-		{ 
+		{
 			base::state(base::fail);
 		}
 		return (*this);
 	}
-		
-	template<> 
+
 	obuffer& operator<< (const char* value)
 	{
 		if (value)
-			return push_back((const void*)value, strlen(value) + sizeof(char));;
+			return this->push_back((const void*)value, strlen(value) + sizeof(char));
 		base::state(base::fail);
 		return *this;
 	}
 
-	template<>
 	obuffer& operator<< (char* value)
 	{
-		return operator<< ((const char*)value);
+		return this->operator<<(((const char*)value));
 	}
 
-	template<> 
 	obuffer& operator<< (const wchar_t* value)
 	{
 		if (value)
-			return push_back((const void*)value, (wcslen(value) + 1) * sizeof(wchar_t));
+			return this->push_back((const void*)value, (wcslen(value) + 1) * sizeof(wchar_t));
 		base::state(base::fail);
 		return *this;
 	}
 
-	template<> 
 	obuffer& operator<< (wchar_t* value)
 	{
-		return operator<< ((const wchar_t*)value);
+		return this->operator<<((const wchar_t*)value);
 	}
 
-	template<>
 	obuffer& operator<< (const std::string& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
-	template<>
 	obuffer& operator<< (std::string& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
-	template<>
 	obuffer& operator<< (const std::wstring& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
-	template<>
 	obuffer& operator<< (std::wstring& value)
 	{
-		return operator<< value.c_str();
+		return this->operator<<(value.c_str());
 	}
 
 	template <class T> obuffer& skip()
@@ -561,7 +553,6 @@ class InBuffer : public BasicBuffer
 		return (*this);
 	}
 
-	template<>
 	InBuffer& operator>> (const char*& value)
 	{
 		char* str = base::current();
@@ -586,13 +577,11 @@ class InBuffer : public BasicBuffer
 		return (*this);
 	}
 
-	template<> 
 	InBuffer& operator>> (char*& value)
 	{
 		return operator>>((const char*&)value);
 	}
 
-	template<>
 	InBuffer& operator>> (const wchar_t*& value)
 	{
 		wchar_t* str = (wchar_t*)base::current();
@@ -619,13 +608,11 @@ class InBuffer : public BasicBuffer
 		return (*this);
 	}
 
-	template<>
 	InBuffer& operator>> (wchar_t*& value)
 	{
 		return operator>>((const wchar_t*&)value);
 	}
 
-	template<> 
 	InBuffer& operator>> (std::string& value)
 	{
 		value.clear();
@@ -637,7 +624,6 @@ class InBuffer : public BasicBuffer
 		return (*this);
 	}
 
-	template<>
 	InBuffer& operator>> (std::wstring& value)
 	{
 		value.clear();
@@ -678,7 +664,24 @@ class InBuffer : public BasicBuffer
 	}
 };
 
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<32>>>        obuf32;
+typedef BufferAllocatorStackOrHeap<32>         AlctStackOrHeap32;
+typedef BufferAllocatorEx<AlctStackOrHeap32>   BufferAlctEx32;
+typedef OutBuffer<BufferAlctEx32>              obuf32;
+
+typedef BufferAllocatorStackOrHeap<64>         AlctStackOrHeap64;
+typedef BufferAllocatorEx<AlctStackOrHeap64>   BufferAlctEx64;
+typedef OutBuffer<BufferAlctEx64>              obuf64;
+
+typedef BufferAllocatorStackOrHeap<128>        AlctStackOrHeap128;
+typedef BufferAllocatorEx<AlctStackOrHeap128>  BufferAlctEx128;
+typedef OutBuffer<BufferAlctEx128>             obuf128;
+
+typedef BufferAllocatorStackOrHeap<256>        AlctStackOrHeap256;
+typedef BufferAllocatorEx<AlctStackOrHeap256>  BufferAlctEx256;
+typedef OutBuffer<BufferAlctEx256>             obuf256, obuf;
+
+
+/*
 typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<64>>>        obuf64;
 typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<128>>>       obuf128;
 typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<256>>>       obuf256, obuf;
@@ -687,14 +690,8 @@ typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<1024>>>      obuf
 typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<2048>>>      obuf2048;
 typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<4096>>>      obuf4096;
 typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<8192>>>      obuf8192;
+*/
 
 typedef OutBuffer<BufferAllocatorDummy>                                     ofixbuf;
-
-template <class Allocator>
-OutBuffer<Allocator>& _cdecl operator<<(OutBuffer<Allocator>& ob, const std::string& val)
-{
-	ob<<val.c_str();
-	return ob;
-}
 
 #endif // __BUFFER_H__

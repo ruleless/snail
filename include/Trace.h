@@ -1,7 +1,7 @@
 ﻿#ifndef __TRACE_H__
 #define __TRACE_H__
 
-#include "Common.h"
+#include "common.h"
 
 #ifdef SUPPORT_TRACE
 
@@ -61,7 +61,7 @@ public:
 
 		void setTraceLevel(int lvl)
 		{
-			mLevel = lvl; 
+			mLevel = lvl;
 		}
 
 		int getTraceLevel() const
@@ -121,7 +121,7 @@ public:
 	void output(const char* msg, TraceLevel level);
 
 #if PLATFORM == PLATFORM_WIN32
-	static unsigned __stdcall _traceProc(void *arg);	
+	static unsigned __stdcall _traceProc(void *arg);
 #else
 	static void* _traceProc(void* arg);
 #endif

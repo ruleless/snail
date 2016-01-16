@@ -1,8 +1,8 @@
 #include "IniTest.h"
-#include "thread/ThreadPool.h"
-#include "common/Ini.h"
-#include "common/Buffer.h"
-#include "common/timestamp.h"
+#include "ThreadPool.h"
+#include "Ini.h"
+#include "Buffer.h"
+#include "timestamp.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(IniTest);
 
@@ -30,7 +30,7 @@ void IniTest::testIniWrite()
 	printf("testIniWrite! ini read time:%.3lfms\n", (endT-begT)/1000.);
 
 	begT = timestamp();
-	static const int s_testTime = 200;
+	static const int s_testTime = 500;
 	for (int i = 0; i < s_testTime; ++i)
 	{
 		char sec[MAX_BUF];
@@ -54,7 +54,7 @@ void IniTest::testIniRead()
 	printf("testIniRead! ini read time:%.3lfms\n", (endT-begT)/1000.);
 
 	begT = timestamp();
-	static const int s_testTime = 200;
+	static const int s_testTime = 500;
 	for (int i = 0; i < s_testTime; ++i)
 	{
 		char sec[MAX_BUF];

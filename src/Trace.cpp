@@ -1,4 +1,4 @@
-#include "Common.h"
+#include "common.h"
 #include "Trace.h"
 
 #ifdef SUPPORT_TRACE
@@ -11,16 +11,16 @@
 STrace* gTrace = NULL;
 
 STrace::STrace()
-:mSinks()
-,mLevel(levelAll)
-,mHasTime(true)
-,limitFrequency(false)
-,mbExit(false)
-,mInited(false)
-,mMsgs1()
-,mMsgs2()
-,mInlist(NULL)
-,mOutlist(NULL)
+		:mSinks()
+		,mLevel(levelAll)
+		,mHasTime(true)
+		,limitFrequency(false)
+		,mbExit(false)
+		,mInited(false)
+		,mMsgs1()
+		,mMsgs2()
+		,mInlist(NULL)
+		,mOutlist(NULL)
 {
 }
 
@@ -54,9 +54,9 @@ bool STrace::initialise(int level, bool hasTime)
 		return false;
 	}
 
-	if (pthread_mutex_init (&mMutex, NULL) != 0)
+	if (pthread_mutex_init(&mMutex, NULL) != 0)
 	{
-		return false
+		return false;
 	}
 	if (pthread_cond_init(&mCond, NULL) != 0)
 	{
@@ -98,7 +98,7 @@ void STrace::finalise()
 #if PLATFORM == PLATFORM_WIN32
 unsigned __stdcall STrace::_traceProc(void *arg)
 #else
-void* STrace::_traceProc(void* arg)
+		void* STrace::_traceProc(void* arg)
 #endif
 {
 	STrace *pLog = (STrace *)arg;
@@ -142,7 +142,7 @@ void STrace::_flushOutlist()
 			{
 				struct tm *timeinfo = localtime(&msgnode.time);
 				__snprintf(timeStr, sizeof(timeStr), "[%04d/%02d/%d %02d:%02d:%02d]",
-					timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+						   timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
 				pTimeStr = timeStr;
 			}
 			else
@@ -166,7 +166,7 @@ void STrace::_flushOutlist()
 
 int STrace::getTraceLevel() const
 {
-	return mLevel; 
+	return mLevel;
 }
 
 int STrace::setTraceLevel(int level)
@@ -206,7 +206,7 @@ bool STrace::hasLimitFrequency() const
 
 void STrace::registerTrace(Listener* sink)
 {
-	if (NULL == sink) 
+	if (NULL == sink)
 		return;
 
 	mSinks.remove(sink);

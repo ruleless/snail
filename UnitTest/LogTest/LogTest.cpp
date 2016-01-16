@@ -1,5 +1,5 @@
 #include "LogTest.h"
-#include "common/Trace.h"
+#include "Trace.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(LogTest);
 
@@ -25,7 +25,7 @@ void LogTest::tearDown()
 
 void LogTest::printLog()
 {
-	for (int i = 0; i < 100000; ++i)
+	for (int i = 0; i < 100; ++i)
 	{
 		InfoLn("Info");
 		TraceLn("Trace");

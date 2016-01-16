@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	runner.addTest(CppUnit::TestFactoryRegistry::getRegistry().makeTest());
 	runner.run();
 
-	getchar();
-	getchar();
+	// getchar();
+	// getchar();
 	exit(0);
 }

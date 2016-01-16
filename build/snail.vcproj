@@ -104,7 +104,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../;../deps"
+				AdditionalIncludeDirectories="../include;../deps"
 				PreprocessorDefinitions="WIN32"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -148,122 +148,234 @@
 	</References>
 	<Files>
 		<Filter
-			Name="common"
+			Name="include"
 			>
 			<File
-				RelativePath="..\common\base64.cpp"
+				RelativePath="..\include\Address.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\base64.h"
+				RelativePath="..\include\base64.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Buffer.h"
+				RelativePath="..\include\Buffer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\common.cpp"
+				RelativePath="..\include\Bundle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\common.h"
+				RelativePath="..\include\Channel.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Ini.cpp"
+				RelativePath="..\include\common.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Ini.h"
+				RelativePath="..\include\concurrency.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\MemoryStream.cpp"
+				RelativePath="..\include\DelayedChannels.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\MemoryStream.h"
+				RelativePath="..\include\EndPoint.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\MemoryStreamConverter.h"
+				RelativePath="..\include\EndPoint.inl"
 				>
 			</File>
 			<File
-				RelativePath="..\common\ObjectPool.h"
+				RelativePath="..\include\EpollPoller.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\platform.h"
+				RelativePath="..\include\EventDispatcher.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\RefCountable.h"
+				RelativePath="..\include\EventPoller.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Singleton.h"
+				RelativePath="..\include\FlexibleArray.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\SmartPointer.h"
+				RelativePath="..\include\HttpUtility.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\StrBuffer.h"
+				RelativePath="..\include\Ini.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\StrConvertor.h"
+				RelativePath="..\include\Listener.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\strutil.cpp"
+				RelativePath="..\include\mathutil.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\strutil.h"
+				RelativePath="..\include\MemoryStream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Task.h"
+				RelativePath="..\include\MemoryStreamConverter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Tasks.cpp"
+				RelativePath="..\include\MessageHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Tasks.h"
+				RelativePath="..\include\Network.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Timer.h"
+				RelativePath="..\include\NetworkDef.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Timer.inl"
+				RelativePath="..\include\NetworkManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\timestamp.cpp"
+				RelativePath="..\include\NetworkStats.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\timestamp.h"
+				RelativePath="..\include\ObjectPool.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Trace.cpp"
+				RelativePath="..\include\Packet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\Trace.h"
+				RelativePath="..\include\PacketFilter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\common\TraceImpl.cpp"
+				RelativePath="..\include\PacketReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\PacketReceiver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\PacketSender.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\platform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Queue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\RefCountable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\SelectPoller.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Singleton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\SmartPointer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Stack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\StrBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\strconv.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\StrConvertor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\strutil.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Task.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Tasks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\TCPPacket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\TCPPacketReceiver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\TCPPacketSender.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ThreadGuard.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ThreadMutex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ThreadPool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\ThreadTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Timer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Timer.inl"
+				>
+			</File>
+			<File
+				RelativePath="..\include\timestamp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\Trace.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\UDPPacket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\UDPPacketReceiver.h"
 				>
 			</File>
 		</Filter>
@@ -292,246 +404,150 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="network"
+			Name="src"
 			>
 			<File
-				RelativePath="..\network\Address.cpp"
+				RelativePath="..\src\Address.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Address.h"
+				RelativePath="..\src\base64.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Bundle.cpp"
+				RelativePath="..\src\Bundle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Bundle.h"
+				RelativePath="..\src\Channel.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Channel.cpp"
+				RelativePath="..\src\common.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Channel.h"
+				RelativePath="..\src\concurrency.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\DelayedChannels.cpp"
+				RelativePath="..\src\DelayedChannels.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\DelayedChannels.h"
+				RelativePath="..\src\EndPoint.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EncryptionFilter.cpp"
+				RelativePath="..\src\EpollPoller.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EncryptionFilter.h"
+				RelativePath="..\src\EventDispatcher.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EndPoint.cpp"
+				RelativePath="..\src\EventPoller.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EndPoint.h"
+				RelativePath="..\src\Ini.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EndPoint.inl"
+				RelativePath="..\src\Listener.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EpollPoller.cpp"
+				RelativePath="..\src\math.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EpollPoller.h"
+				RelativePath="..\src\MemoryStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EventDispatcher.cpp"
+				RelativePath="..\src\MessageHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EventDispatcher.h"
+				RelativePath="..\src\NetworkDef.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EventPoller.cpp"
+				RelativePath="..\src\NetworkManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\EventPoller.h"
+				RelativePath="..\src\NetworkStats.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\HttpUtility.h"
+				RelativePath="..\src\PacketFilter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Listener.cpp"
+				RelativePath="..\src\PacketReader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Listener.h"
+				RelativePath="..\src\PacketReceiver.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\MessageHandler.cpp"
+				RelativePath="..\src\PacketSender.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\MessageHandler.h"
+				RelativePath="..\src\SelectPoller.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Network.h"
+				RelativePath="..\src\strconv.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\NetworkDef.cpp"
+				RelativePath="..\src\strutil.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\NetworkDef.h"
+				RelativePath="..\src\Tasks.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\NetworkManager.cpp"
+				RelativePath="..\src\TCPPacket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\NetworkManager.h"
+				RelativePath="..\src\TCPPacketReceiver.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\NetworkStats.cpp"
+				RelativePath="..\src\TCPPacketSender.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\NetworkStats.h"
+				RelativePath="..\src\ThreadPool.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\Packet.h"
+				RelativePath="..\src\timestamp.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\PacketFilter.cpp"
+				RelativePath="..\src\Trace.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\PacketFilter.h"
+				RelativePath="..\src\TraceImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\PacketReader.cpp"
+				RelativePath="..\src\UDPPacket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\network\PacketReader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\PacketReceiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\PacketReceiver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\PacketSender.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\PacketSender.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\SelectPoller.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\SelectPoller.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\TCPPacket.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\TCPPacket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\TCPPacketReceiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\TCPPacketReceiver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\TCPPacketSender.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\TCPPacketSender.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\UDPPacket.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\UDPPacket.h"
-				>
-			</File>
-			<File
-				RelativePath="..\network\UDPPacketReceiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\network\UDPPacketReceiver.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="thread"
-			>
-			<File
-				RelativePath="..\thread\concurrency.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\thread\concurrency.h"
-				>
-			</File>
-			<File
-				RelativePath="..\thread\ThreadGuard.h"
-				>
-			</File>
-			<File
-				RelativePath="..\thread\ThreadMutex.h"
-				>
-			</File>
-			<File
-				RelativePath="..\thread\ThreadPool.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\thread\ThreadPool.h"
-				>
-			</File>
-			<File
-				RelativePath="..\thread\ThreadTask.h"
+				RelativePath="..\src\UDPPacketReceiver.cpp"
 				>
 			</File>
 		</Filter>

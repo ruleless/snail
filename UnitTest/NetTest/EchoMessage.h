@@ -1,7 +1,7 @@
 #ifndef __ECHOMESSAGE_H__
 #define __ECHOMESSAGE_H__
 
-#include "network/MessageHandler.h"
+#include "MessageHandler.h"
 
 class EchoMessage : public MessageHandler
 {

@@ -4,13 +4,13 @@
 #include "cppunit/TestFixture.h"
 #include "cppunit/extensions/HelperMacros.h"
 
-#include "common/common.h"
-#include "common/Task.h"
-#include "network/NetworkManager.h"
-#include "network/EventDispatcher.h"
+#include "common.h"
+#include "Task.h"
+#include "NetworkManager.h"
+#include "EventDispatcher.h"
 
 #include "EchoMessage.h"
-#include "network/MessageHandler.h"
+#include "MessageHandler.h"
 
 class ServerTest : public CppUnit::TestFixture, public Task
 {

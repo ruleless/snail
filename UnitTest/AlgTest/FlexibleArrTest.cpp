@@ -1,3 +1,4 @@
+#include <math.h>
 #include "FlexibleArrTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FlexibleArrTest);
@@ -9,11 +10,11 @@ FlexibleArrTest::FlexibleArrTest()
 FlexibleArrTest::~FlexibleArrTest()
 {
 }
-	
+
 void FlexibleArrTest::setUp()
 {
 }
-	
+
 void FlexibleArrTest::tearDown()
 {
 }
@@ -32,7 +33,7 @@ void FlexibleArrTest::testRandom()
 void FlexibleArrTest::visitArray()
 {
 	FlexibleArray<int> arr;
-	
+
 	for (int i = 0; i < 1000000; ++i)
 	{
 		int low = 0;
@@ -40,7 +41,7 @@ void FlexibleArrTest::visitArray()
 		int key = math::random(low, high);
 		int val = math::random(low, high);
 		arr.set(key, val);
-		
+
 		const int *pval = arr.get(key);
 
 		char msg[256];

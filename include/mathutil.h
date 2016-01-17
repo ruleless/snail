@@ -22,9 +22,12 @@ inline int ceillog2(unsigned int x)
 	int l = 0;
 	x--;
 	while (x >= 256) { l += 8; x >>= 8; }
-	return l + log_2[x];	
+	return l + log_2[x];
 }
-		
+
+extern void srandom(int seed);
+extern int random(int low, int high);
+
 } // math
 
 #endif // __MATHUTIL_H__

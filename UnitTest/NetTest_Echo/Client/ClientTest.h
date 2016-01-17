@@ -1,15 +1,15 @@
 #include "cppunit/TestFixture.h"
 #include "cppunit/extensions/HelperMacros.h"
 
-#include "common/common.h"
-#include "common/Task.h"
-#include "network/EventDispatcher.h"
-#include "network/NetworkManager.h"
-#include "network/EndPoint.h"
-#include "network/Channel.h"
+#include "common.h"
+#include "Task.h"
+#include "EventDispatcher.h"
+#include "NetworkManager.h"
+#include "EndPoint.h"
+#include "Channel.h"
 
 #include "EchoMessage.h"
-#include "network/MessageHandler.h"
+#include "MessageHandler.h"
 
 class ClientTest : public CppUnit::TestFixture, public Task, public InputNotificationHandler
 {
@@ -19,9 +19,9 @@ class ClientTest : public CppUnit::TestFixture, public Task, public InputNotific
   public:
     ClientTest();
     virtual ~ClientTest();
-	
+
 	virtual void setUp();
-	
+
 	virtual void tearDown();
 
 	virtual bool process();
@@ -37,5 +37,5 @@ class ClientTest : public CppUnit::TestFixture, public Task, public InputNotific
 	Channel *mpChannel;
 
 	EchoMessage mEchoMessage;
-	MessageHandlers mMsgHandlers;	
+	MessageHandlers mMsgHandlers;
 };

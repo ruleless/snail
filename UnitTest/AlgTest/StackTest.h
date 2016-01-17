@@ -1,6 +1,6 @@
 #include "cppunit/TestFixture.h"
 #include "cppunit/extensions/HelperMacros.h"
-#include "algorithm/Stack.h"
+#include "Stack.h"
 
 class StackTest : public CppUnit::TestFixture
 {
@@ -13,13 +13,13 @@ class StackTest : public CppUnit::TestFixture
     virtual ~StackTest();
 
 	virtual void setUp();
-	
+
 	virtual void tearDown();
   protected:
 	void testOpt();
 	void _testOpt();
   private:
 	static const int N = 100;
-	
+
 	Stack<int, N> mIntStack;
 };

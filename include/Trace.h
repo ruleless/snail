@@ -87,7 +87,7 @@ protected:
 	ListenerList mSinks;
 	int	mLevel;
 	bool mHasTime;
-	bool limitFrequency;
+	bool mLimitFrequency;
 
 	volatile bool mbExit;
 	bool mInited;

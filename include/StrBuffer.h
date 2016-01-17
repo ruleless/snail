@@ -173,6 +173,10 @@ typedef StrBuffer<BufferAlctEx32>        ostrbuf32;
 typedef StrBuffer<BufferAlctEx64>        ostrbuf64;
 typedef StrBuffer<BufferAlctEx128>       ostrbuf128;
 typedef StrBuffer<BufferAlctEx256>       ostrbuf256, ostrbuf;
-
+typedef StrBuffer<BufferAlctEx512>       ostrbuf512;
+typedef StrBuffer<BufferAlctEx1024>      ostrbuf1024;
+typedef StrBuffer<BufferAlctEx2048>      ostrbuf2048;
+typedef StrBuffer<BufferAlctEx4096>      ostrbuf4096;
+typedef StrBuffer<BufferAlctEx8192>      ostrbuf8192;
 
 #endif // __STRBUFFER_H__

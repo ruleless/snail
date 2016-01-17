@@ -14,8 +14,8 @@ class BasicBuffer
 	};
   protected:
 	char*   _data;  // 存储区
-	size_t  _cur;   // 当前大小
 	size_t  _cap;   // 最大容量
+	size_t  _cur;   // 当前大小
 	int     _state; // 当前状态
   public:
 	BasicBuffer() : _data(0), _cap(0), _cur(0), _state(good)
@@ -245,7 +245,8 @@ class BufferAllocatorHeap
 
 	void free(void* ptr)
 	{
-		delete[] ptr;
+		char *buf = (char *)ptr;
+		delete[] buf;
 	}
 };
 
@@ -348,13 +349,12 @@ class BufferAllocatorEx : public Allocator
 
 	void* realloc(void* ptr, size_t old_size, size_t new_size, size_t& capacity)
 	{
-		assert((ptr && old_size) || (!ptr && old_size == 0) && new_size > 0);
+		// assert((ptr && old_size) || (!ptr && old_size == 0) && new_size > 0);
 		if (!ptr || new_size > capacity)
 		{
 			size_t good_size = capacity ? capacity : new_size;
 			while (good_size < new_size)
 				good_size += (good_size >> 1);
-			size_t align_size = good_size ? ((good_size + 7) & ~7) : 8;
 
 			return base::realloc(ptr, old_size, good_size, capacity);
 		}
@@ -680,18 +680,26 @@ typedef BufferAllocatorStackOrHeap<256>        AlctStackOrHeap256;
 typedef BufferAllocatorEx<AlctStackOrHeap256>  BufferAlctEx256;
 typedef OutBuffer<BufferAlctEx256>             obuf256, obuf;
 
+typedef BufferAllocatorStackOrHeap<512>        AlctStackOrHeap512;
+typedef BufferAllocatorEx<AlctStackOrHeap512>  BufferAlctEx512;
+typedef OutBuffer<BufferAlctEx512>             obuf512;
 
-/*
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<64>>>        obuf64;
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<128>>>       obuf128;
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<256>>>       obuf256, obuf;
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<512>>>       obuf512;
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<1024>>>      obuf1024;
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<2048>>>      obuf2048;
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<4096>>>      obuf4096;
-typedef OutBuffer<BufferAllocatorEx<BufferAllocatorStackOrHeap<8192>>>      obuf8192;
-*/
+typedef BufferAllocatorStackOrHeap<1024>        AlctStackOrHeap1024;
+typedef BufferAllocatorEx<AlctStackOrHeap1024>  BufferAlctEx1024;
+typedef OutBuffer<BufferAlctEx1024>             obuf1024;
 
-typedef OutBuffer<BufferAllocatorDummy>                                     ofixbuf;
+typedef BufferAllocatorStackOrHeap<2048>        AlctStackOrHeap2048;
+typedef BufferAllocatorEx<AlctStackOrHeap2048>  BufferAlctEx2048;
+typedef OutBuffer<BufferAlctEx2048>             obuf2048;
+
+typedef BufferAllocatorStackOrHeap<4096>        AlctStackOrHeap4096;
+typedef BufferAllocatorEx<AlctStackOrHeap4096>  BufferAlctEx4096;
+typedef OutBuffer<BufferAlctEx4096>             obuf4096;
+
+typedef BufferAllocatorStackOrHeap<8192>        AlctStackOrHeap8192;
+typedef BufferAllocatorEx<AlctStackOrHeap8192>  BufferAlctEx8192;
+typedef OutBuffer<BufferAlctEx8192>             obuf8192;
+
+typedef OutBuffer<BufferAllocatorDummy>         ofixbuf;
 
 #endif // __BUFFER_H__

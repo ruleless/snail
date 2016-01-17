@@ -14,7 +14,7 @@ STrace::STrace()
 		:mSinks()
 		,mLevel(levelAll)
 		,mHasTime(true)
-		,limitFrequency(false)
+		,mLimitFrequency(false)
 		,mbExit(false)
 		,mInited(false)
 		,mMsgs1()
@@ -192,8 +192,8 @@ bool STrace::hasTime(bool b)
 bool STrace::setTraceLimitFrequency(bool limitFrequency)
 {
 	THREAD_MUTEX_LOCK(mMutex);
-	bool old = limitFrequency;
-	limitFrequency = limitFrequency;
+	bool old = mLimitFrequency;
+	mLimitFrequency = limitFrequency;
 	THREAD_MUTEX_UNLOCK(mMutex);
 
 	return old;
@@ -201,7 +201,7 @@ bool STrace::setTraceLimitFrequency(bool limitFrequency)
 
 bool STrace::hasLimitFrequency() const
 {
-	return limitFrequency;
+	return mLimitFrequency;
 }
 
 void STrace::registerTrace(Listener* sink)

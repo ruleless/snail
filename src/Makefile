@@ -5,4 +5,4 @@ LIBPATH:=$(TOPDIR)/lib
 
 CXXFLAGS:=-I $(TOPDIR)/include -I $(TOPDIR)/deps
 
-include $(TOPDIR)/common.mak
+include $(TOPDIR)/build.mak

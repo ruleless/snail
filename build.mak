@@ -1,3 +1,5 @@
+phonyt?=allt
+
 CC=clang
 CXX=clang++
 MAKE=make
@@ -18,32 +20,43 @@ OBJS=$(SRCS:%.cpp=%.o)
 DEPENDS=$(SRCS:%.cpp=%.d)
 
 
-.PHONY:all fake
+# Phony Target
+.PHONY:allt objt fake
+default:$(phonyt)
+
+allt:$(EXEPATH) $(LIBPATH) $(TARGET) $(LIB) subdirs
+objt:$(OBJS) subdirs
+
+$(EXEPATH):
+	mkdir $(EXEPATH)
+$(LIBPATH):
+	mkdir $(LIBPATH)
+
 
 # First Layer
-all:subdirs $(TARGET) $(LIB)
-
-subdirs:$(SUBDIRS)
-	for dir in $(SUBDIRS); \
-		do $(MAKE) -C $$dir all||exit 1; \
-	done
-
 $(TARGET):$(OBJS)
 	$(CXX) -o $@ $^ $(LDFLAGS)
-ifdef $(EXEPATH)
+ifdef EXEPATH
 	cp $@ $(EXEPATH)
 endif
 
 $(LIB):$(OBJS)
 	$(AR)  $@  $^
+ifdef LIBPATH
 	cp $@ $(LIBPATH)
+endif
+
+subdirs:$(SUBDIRS)
+	for dir in $(SUBDIRS); \
+		do $(MAKE) -C $$dir||exit 1; \
+	done
 
 
 # Second Layer for object file deprule
 $(OBJS):%.o:%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
-# Second Layer for dependency file deprule
+## Second Layer for dependency file deprule
 -include $(DEPENDS)
 
 $(DEPENDS):%.d:%.cpp

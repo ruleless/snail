@@ -29,6 +29,13 @@ struct SIpcMessage
 	{
 		type = len = 0;
 	}
+
+	SIpcMessage& operator=(const SIpcMessage &msg)
+	{
+		this->type = msg.type;
+		this->len = min(msg.len, IpcMsg_MessageSize);
+		memcpy(this->buff, msg.buff, this->len);
+	}
 };
 
 #define IPC_COMP_ID pid_t

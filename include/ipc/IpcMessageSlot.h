@@ -9,25 +9,10 @@ class IpcMessageSlot : public IpcMessageHandler
   protected:
 	struct SMessageSlot
 	{
-		sem_t mutex;
-
 		IPC_COMP_ID comp;
 		int front, rear;
-		sem_t nEmpty, nStored, nProducer;
+		sem_t nEmpty, nStored, nProducer, bReadyToDispatch;
 		SIpcMessage msgs[IpcMsg_SlotSize];
-
-		bool lock()
-		{
-			if (sem_wait(&mutex) == 0)
-			{
-				return true;
-			}
-			return false;
-		}
-		void unlock()
-		{
-			sem_post(&mutex);
-		}
 	};
 
 	struct Shared
@@ -60,8 +45,8 @@ class IpcMessageSlot : public IpcMessageHandler
 	void subscribe(uint8 type, IpcMessageHandler *pHandler);
 	void unsubscribe(uint8 type);
 
-	void registerMe();
-	void unregisterMe();
+	void _registerMe();
+	void _unregisterMe();
 
 	bool _registerComponet(IPC_COMP_ID comp);
 	void _unregisterComponet(IPC_COMP_ID comp);
@@ -70,8 +55,10 @@ class IpcMessageSlot : public IpcMessageHandler
 
 	void process();
 
-	int _dispatcherMessage(SMessageSlot *slot);
-	void _processPendingMessage();
+	int _dispatchMessage(SMessageSlot *slot);
+	void _processPendingMessage(bool bBlock = false);
+
+	SMessageSlot* _findSlaveSlot(IPC_COMP_ID comp);
 
 	virtual void onRecv(uint8 type, uint8 len, const void *buf);
 };

@@ -9,10 +9,10 @@ class IpcMessageSlot : public IpcMessageHandler
   protected:
 	struct SMessageSlot
 	{
-		IPC_COMP_ID comp;
+		IPC_COMP_ID id;
 		int front, rear;
-		sem_t nEmpty, nStored, nProducer, bReadyToDispatch;
-		SIpcMessage msgs[IpcMsg_SlotSize];
+		sem_t nEmpty, nStored, nProducer;
+		SIpcMessageEx msgs[IpcMsg_SlotSize];
 	};
 
 	struct Shared
@@ -60,7 +60,7 @@ class IpcMessageSlot : public IpcMessageHandler
 
 	SMessageSlot* _findSlaveSlot(IPC_COMP_ID comp);
 
-	virtual void onRecv(uint8 type, uint8 len, const void *buf);
+	virtual void onRecv(IPC_COMP_ID compId, uint8 type, uint8 len, const void *buf);
 };
 
 #endif

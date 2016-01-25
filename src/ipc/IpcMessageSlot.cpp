@@ -41,21 +41,18 @@ bool IpcMessageSlot::open()
 			return false;
 		}
 
-		close(mShmFd);
-		mShmFd = 0;
-
 		// 初始化共享内存区中的变量
 		if (!_initASlot(&mShared->master))
 		{
 			ErrorLn("init master slot failed.");
 			return false;
 		}
-		mShared->master.comp = mCompId;
+		mShared->master.id = mCompId;
 
 		for (int i = 0; i < IpcMsg_MaxSlaves; ++i)
 		{
 			SMessageSlot *pSlot = &mShared->slave[i];
-			pSlot->comp = 0;
+			pSlot->id = 0;
 		}
 
 		// 注册回调
@@ -79,8 +76,8 @@ bool IpcMessageSlot::open()
 			return false;
 		}
 
-		close(mShmFd);
-		mShmFd = 0;
+		// 注册
+		_registerMe();
 	}
 
 	return true;
@@ -108,15 +105,6 @@ bool IpcMessageSlot::_initASlot(IpcMessageSlot::SMessageSlot *pSlot)
 		return false;
 	}
 
-	if (sem_init(&pSlot->bReadyToDispatch, 1, 1) != 0)
-	{
-		ErrorLn("init sem:pSlot->bReadyToDispatch failed.");
-		sem_destroy(&pSlot->nEmpty);
-		sem_destroy(&pSlot->nStored);
-		sem_destroy(&pSlot->nProducer);
-		return false;
-	}
-
 	return true;
 }
 
@@ -127,6 +115,10 @@ void IpcMessageSlot::close()
 		for (int i = 0; i < IpcMsg_MaxSlaves; ++i)
 		{
 			SMessageSlot *pSlot = &mShared->slave[i];
+			if (pSlot->id != 0)
+			{
+				ErrorLn("IpcMessageSlot::close()  there is a slave unreged! slave="<<pSlot->id);
+			}
 
 			_uninitASlot(pSlot);
 		}
@@ -144,15 +136,17 @@ void IpcMessageSlot::close()
 
 	munmap((void *)mShared, sizeof(Shared));
 	mShared = NULL;
+
+	::close(mShmFd);
+	mShmFd = 0;
 }
 
 void IpcMessageSlot::_uninitASlot(SMessageSlot *pSlot)
 {
-	if (pSlot->comp != 0)
+	if (pSlot->id != 0)
 	{
-		pSlot->comp = 0;
+		pSlot->id = 0;
 		pSlot->front = pSlot->rear = 0;
-		sem_destroy(&pSlot->bReadyToDispatch);
 		sem_destroy(&pSlot->nEmpty);
 		sem_destroy(&pSlot->nStored);
 		sem_destroy(&pSlot->nProducer);
@@ -179,9 +173,7 @@ void IpcMessageSlot::_registerMe()
 {
 	if (IpcComp_Slave == mCompType)
 	{
-		obuf ob;
-		ob<<(int)mCompId;
-		postMessage(0, IPC_MSGTYPE_REG, ob.data(), ob.size());
+		postMessage(0, IPC_MSGTYPE_REG, 0, NULL);
 	}
 }
 
@@ -189,9 +181,7 @@ void IpcMessageSlot::_unregisterMe()
 {
 	if (IpcComp_Slave == mCompType)
 	{
-		obuf ob;
-		ob<<(int)mCompId;
-		postMessage(0, IPC_MSGTYPE_UNREG, ob.data(), ob.size());
+		postMessage(0, IPC_MSGTYPE_UNREG, 0, NULL);
 	}
 }
 
@@ -206,10 +196,13 @@ bool IpcMessageSlot::_registerComponet(IPC_COMP_ID comp)
 	for (int i = 0; i < IpcMsg_MaxSlaves; ++i)
 	{
 		SMessageSlot *pSlot = &mShared->slave[i];
-		if (0 == pSlot->comp)
+		if (0 == pSlot->id)
 		{
-			pSlot->comp = comp;
-			return _initASlot(pSlot);
+			if (_initASlot(pSlot))
+			{
+				pSlot->id = comp;
+				return true;
+			}
 		}
 	}
 
@@ -228,7 +221,7 @@ void IpcMessageSlot::_unregisterComponet(IPC_COMP_ID comp)
 	for (int i = 0; i < IpcMsg_MaxSlaves; ++i)
 	{
 		SMessageSlot *pSlot = &mShared->slave[i];
-		if (comp == pSlot->comp)
+		if (comp == pSlot->id)
 		{
 			return _uninitASlot(pSlot);
 		}
@@ -238,7 +231,8 @@ void IpcMessageSlot::_unregisterComponet(IPC_COMP_ID comp)
 void IpcMessageSlot::postMessage(IPC_COMP_ID comp, uint8 type, uint8 len, const void *buf)
 {
 	SIpcMessageEx msg;
-	msg.comp = comp;
+	msg.source = mCompId;
+	msg.dest = comp;
 	msg.type = type;
 	msg.len = len;
 	memcpy(msg.buff, buf, len);
@@ -258,6 +252,11 @@ void IpcMessageSlot::process()
 	}
 	else
 	{
+		SMessageSlot *pSlot = _findSlaveSlot(mCompId);
+		if (pSlot)
+		{
+			_dispatchMessage(pSlot);
+		}
 	}
 }
 
@@ -266,10 +265,10 @@ int IpcMessageSlot::_dispatchMessage(SMessageSlot *slot)
 	int count = 0;
 	while (sem_trywait(&slot->nStored) == 0)
 	{
-		SIpcMessage *ipcMsg = &slot->msgs[slot->front];
+		SIpcMessageEx *ipcMsg = &slot->msgs[slot->front];
 		if (ipcMsg->type < IpcMsg_MaxType && mHandlers[ipcMsg->type])
 		{
-			mHandlers[ipcMsg->type]->onRecv(ipcMsg->type, ipcMsg->len, (void *)ipcMsg->buff);
+			mHandlers[ipcMsg->type]->onRecv(ipcMsg->source, ipcMsg->type, ipcMsg->len, (void *)ipcMsg->buff);
 		}
 
 		slot->front = (slot->front+1)%IpcMsg_SlotSize;
@@ -288,7 +287,7 @@ void IpcMessageSlot::_processPendingMessage(bool bBlock)
 		SMessageSlot *pSlot = NULL;
 		if (IpcComp_Master == mCompType) // 主进程可向所有从进程发送数据
 		{
-			pSlot = _findSlaveSlot(msg.comp);
+			pSlot = _findSlaveSlot(msg.dest);
 		}
 		else // 从进程只能向主进程发送数据
 		{
@@ -298,7 +297,7 @@ void IpcMessageSlot::_processPendingMessage(bool bBlock)
 		if (NULL == pSlot)
 		{
 			ostrbuf strLog;
-			strLog<<"Can' find component! compid="<<msg.comp;
+			strLog<<"Can' find component! compid="<<msg.dest;
 			ErrorLn(strLog.c_str());
 
 			it = mPendingMessage.erase(it);
@@ -322,9 +321,9 @@ void IpcMessageSlot::_processPendingMessage(bool bBlock)
 				pSlot->rear = (pSlot->rear+1)%IpcMsg_SlotSize;
 				sem_post(&pSlot->nProducer);
 
-				sem_post(pSlot->nStored);
+				sem_post(&pSlot->nStored);
 
-				it = mPendingMessage(it);
+				it = mPendingMessage.erase(it);
 			}
 			else
 			{
@@ -334,11 +333,11 @@ void IpcMessageSlot::_processPendingMessage(bool bBlock)
 	}
 }
 
-SMessageSlot* IpcMessageSlot::_findSlaveSlot(IPC_COMP_ID comp)
+IpcMessageSlot::SMessageSlot* IpcMessageSlot::_findSlaveSlot(IPC_COMP_ID comp)
 {
 	for (int i = 0; i < IpcMsg_MaxSlaves; ++i)
 	{
-		if (mShared->slave[i].comp == comp)
+		if (mShared->slave[i].id == comp)
 		{
 			return &mShared->slave[i];
 		}
@@ -346,5 +345,23 @@ SMessageSlot* IpcMessageSlot::_findSlaveSlot(IPC_COMP_ID comp)
 	return NULL;
 }
 
-void IpcMessageSlot::onRecv(uint8 type, uint8 len, const void *buf)
-{}
+void IpcMessageSlot::onRecv(IPC_COMP_ID compId, uint8 type, uint8 len, const void *buf)
+{
+	assert(compId != 0 && "compId != 0");
+
+	switch (type)
+	{
+	case IPC_MSGTYPE_REG:
+		{
+			_registerComponet(compId);
+		}
+		break;
+	case IPC_MSGTYPE_UNREG:
+		{
+			_unregisterComponet(compId);
+		}
+		break;
+	default:
+		break;
+	}
+}

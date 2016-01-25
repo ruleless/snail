@@ -1,7 +1,8 @@
+phonyt:=objt
+
 TOPDIR:=..
 
-LIB:=libsnail.a
-LIBPATH:=$(TOPDIR)/lib
+dirs:=ipc
 
 CXXFLAGS:=-I $(TOPDIR)/include -I $(TOPDIR)/deps
 

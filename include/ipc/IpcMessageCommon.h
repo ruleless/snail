@@ -2,6 +2,7 @@
 #define __IPCMESSAGECOMMON_H__
 
 #include "common.h"
+#include "semaphore.h"
 
 enum EIpcMessage
 {
@@ -35,17 +36,30 @@ struct SIpcMessage
 		this->type = msg.type;
 		this->len = min(msg.len, IpcMsg_MessageSize);
 		memcpy(this->buff, msg.buff, this->len);
+		return *this;
 	}
 };
 
 #define IPC_COMP_ID pid_t
 struct SIpcMessageEx : public SIpcMessage
 {
-	IPC_COMP_ID comp;
+	IPC_COMP_ID source;
+	IPC_COMP_ID dest;
 
 	SIpcMessageEx() : SIpcMessage()
 	{
-		comp = 0;
+		source = 0;
+		dest = 0;
+	}
+
+	SIpcMessageEx& operator=(const SIpcMessageEx &msg)
+	{
+		this->type = msg.type;
+		this->len = min(msg.len, IpcMsg_MessageSize);
+		memcpy(this->buff, msg.buff, this->len);
+		this->source = msg.source;
+		this->dest = msg.dest;
+		return *this;
 	}
 };
 
@@ -55,7 +69,7 @@ struct SIpcMessageEx : public SIpcMessage
 class IpcMessageHandler
 {
   public:
-	virtual void onRecv(uint8 type, uint8 len, const void *buf) = 0;
+	virtual void onRecv(IPC_COMP_ID compId, uint8 type, uint8 len, const void *buf) = 0;
 };
 
 #endif

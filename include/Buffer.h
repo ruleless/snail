@@ -664,25 +664,25 @@ class InBuffer : public BasicBuffer
 	}
 };
 
-typedef BufferAllocatorStackOrHeap<32>         AlctStackOrHeap32;
-typedef BufferAllocatorEx<AlctStackOrHeap32>   BufferAlctEx32;
-typedef OutBuffer<BufferAlctEx32>              obuf32;
+typedef BufferAllocatorStackOrHeap<32>          AlctStackOrHeap32;
+typedef BufferAllocatorEx<AlctStackOrHeap32>    BufferAlctEx32;
+typedef OutBuffer<BufferAlctEx32>               obuf32;
 
-typedef BufferAllocatorStackOrHeap<64>         AlctStackOrHeap64;
-typedef BufferAllocatorEx<AlctStackOrHeap64>   BufferAlctEx64;
-typedef OutBuffer<BufferAlctEx64>              obuf64;
+typedef BufferAllocatorStackOrHeap<64>          AlctStackOrHeap64;
+typedef BufferAllocatorEx<AlctStackOrHeap64>    BufferAlctEx64;
+typedef OutBuffer<BufferAlctEx64>               obuf64;
 
-typedef BufferAllocatorStackOrHeap<128>        AlctStackOrHeap128;
-typedef BufferAllocatorEx<AlctStackOrHeap128>  BufferAlctEx128;
-typedef OutBuffer<BufferAlctEx128>             obuf128;
+typedef BufferAllocatorStackOrHeap<128>         AlctStackOrHeap128;
+typedef BufferAllocatorEx<AlctStackOrHeap128>   BufferAlctEx128;
+typedef OutBuffer<BufferAlctEx128>              obuf128;
 
-typedef BufferAllocatorStackOrHeap<256>        AlctStackOrHeap256;
-typedef BufferAllocatorEx<AlctStackOrHeap256>  BufferAlctEx256;
-typedef OutBuffer<BufferAlctEx256>             obuf256, obuf;
+typedef BufferAllocatorStackOrHeap<256>         AlctStackOrHeap256;
+typedef BufferAllocatorEx<AlctStackOrHeap256>   BufferAlctEx256;
+typedef OutBuffer<BufferAlctEx256>              obuf256, obuf;
 
-typedef BufferAllocatorStackOrHeap<512>        AlctStackOrHeap512;
-typedef BufferAllocatorEx<AlctStackOrHeap512>  BufferAlctEx512;
-typedef OutBuffer<BufferAlctEx512>             obuf512;
+typedef BufferAllocatorStackOrHeap<512>         AlctStackOrHeap512;
+typedef BufferAllocatorEx<AlctStackOrHeap512>   BufferAlctEx512;
+typedef OutBuffer<BufferAlctEx512>              obuf512;
 
 typedef BufferAllocatorStackOrHeap<1024>        AlctStackOrHeap1024;
 typedef BufferAllocatorEx<AlctStackOrHeap1024>  BufferAlctEx1024;

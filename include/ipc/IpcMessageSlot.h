@@ -30,6 +30,7 @@ class IpcMessageSlot : public IpcMessageHandler
 	PendingMessage mPendingMessage;
 	IpcMessageHandler* mHandlers[IpcMsg_MaxType];
 
+	bool mbOpen;
 	int mShmFd;
 	Shared *mShared;
   public:
@@ -58,9 +59,9 @@ class IpcMessageSlot : public IpcMessageHandler
 	int _dispatchMessage(SMessageSlot *slot);
 	void _processPendingMessage(bool bBlock = false);
 
-	SMessageSlot* _findSlaveSlot(IPC_COMP_ID comp);
+	SMessageSlot* _findSlaveSlot(IPC_COMP_ID comp) const;
 
-	virtual void onRecv(IPC_COMP_ID compId, uint8 type, uint8 len, const void *buf);
+	virtual void onRecv(IPC_COMP_ID source, uint8 type, uint8 len, const void *buf);
 };
 
 #endif

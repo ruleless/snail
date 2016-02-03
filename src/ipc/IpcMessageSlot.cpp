@@ -33,10 +33,10 @@ bool IpcMessageSlot::open()
 	{
 		// 创建共享内存对象，并映射到当前进程的地址空间
 		shm_unlink(mName.c_str());
-		mShmFd = shm_open(mName.c_str(), O_RDWR|O_CREAT|O_EXCL, 0644);
+		mShmFd = shm_open(mName.c_str(), O_RDWR|O_CREAT|O_EXCL, 0666);
 		if (mShmFd < 0)
 		{
-			ErrorLn("Create share memory failed.");
+			ErrorLn("Create share memory failed. reason:"<<__strerror());
 			return false;
 		}
 

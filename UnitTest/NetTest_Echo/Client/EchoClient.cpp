@@ -1,4 +1,4 @@
-#include "EchoMessage.h"
+#include "../EchoMessage.h"
 #include "Channel.h"
 #include "Bundle.h"
 #include "MemoryStream.h"

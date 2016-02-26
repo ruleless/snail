@@ -8,7 +8,7 @@
 #include "EndPoint.h"
 #include "Channel.h"
 
-#include "EchoMessage.h"
+#include "../EchoMessage.h"
 #include "MessageHandler.h"
 
 class ClientTest : public CppUnit::TestFixture, public Task, public InputNotificationHandler

@@ -9,7 +9,7 @@
 #include "NetworkManager.h"
 #include "EventDispatcher.h"
 
-#include "EchoMessage.h"
+#include "../EchoMessage.h"
 #include "MessageHandler.h"
 
 class ServerTest : public CppUnit::TestFixture, public Task

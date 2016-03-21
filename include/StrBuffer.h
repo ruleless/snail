@@ -83,31 +83,41 @@ public:
 		return (*this);
 	}
 
-	template <class T>
-	ostrbuffer& operator<< (T value)
+	ostrbuffer& operator<< (int64 n)
 	{
-		if (sizeof(T) > base::right())
-		{
-			char* ret = (char*)alct::realloc(base::_data, base::_cur, base::_cur + sizeof(T), base::_cap);
-			if (!ret)
-			{
-				base::state(base::fail);
-				return (*this);
-			}
-			base::set_data(ret);
-		}
-
-		if (base::current() && sizeof(T) <= right())
-		{
-			*(T*)base::current() = value;
-			base::inc(sizeof(T));
-			base::check_eof();
-		}
-		else
-		{
-			base::state(base::fail);
-		}
-		return (*this);
+		char num[32] = {0};
+		__snprintf(num, sizeof(num), "%"PRI64, n);
+		return this->operator<<((const char *)num);
+	}
+	ostrbuffer& operator<< (uint64 n)
+	{
+		char num[32] = {0};
+		__snprintf(num, sizeof(num), "%"PRIu64, n);
+		return this->operator<<((const char *)num);
+	}
+	ostrbuffer& operator<< (int n)
+	{
+		char num[32] = {0};
+		__snprintf(num, sizeof(num), "%d", n);
+		return this->operator<<((const char *)num);
+	}
+	ostrbuffer& operator<< (uint n)
+	{
+		char num[32] = {0};
+		__snprintf(num, sizeof(num), "%u", n);
+		return this->operator<<((const char *)num);
+	}
+	ostrbuffer& operator<< (short n)
+	{
+		char num[32] = {0};
+		__snprintf(num, sizeof(num), "%d", n);
+		return this->operator<<((const char *)num);
+	}
+	ostrbuffer& operator<< (ushort n)
+	{
+		char num[32] = {0};
+		__snprintf(num, sizeof(num), "%u", n);
+		return this->operator<<((const char *)num);
 	}
 
 	ostrbuffer& operator<< (const char* value)

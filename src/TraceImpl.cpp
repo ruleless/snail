@@ -78,7 +78,7 @@ void unregisterTrace(STrace::Listener* sink)
 
 
 //--------------------------------------------------------------------------
-#define  STD_COLOR_NONE		"\033[m"
+#define  STD_COLOR_NONE		"\033[0m"
 #define  STD_COLOR_BLACK	"\033[30m"
 #define  STD_COLOR_GREEN	"\033[32m"
 #define  STD_COLOR_PURPLE	"\033[35m"

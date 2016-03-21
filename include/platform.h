@@ -1,7 +1,6 @@
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
-
 //--------------------------------------------------------------------------
 // common include	
 #include <stdio.h>
@@ -27,9 +26,7 @@
 #include <functional>
 #include <cctype>
 #include <iterator>
-#include "strutil.h"
 //--------------------------------------------------------------------------
-
 
 //--------------------------------------------------------------------------
 // windows include	
@@ -113,7 +110,6 @@
 #endif
 //--------------------------------------------------------------------------
 
-
 //--------------------------------------------------------------------------
 // 常量定义
 #ifndef NAME_PATH
@@ -141,7 +137,6 @@
 #endif
 //--------------------------------------------------------------------------
 
-
 //--------------------------------------------------------------------------
 // 字节序
 #ifndef LITTLE_ENDIAN
@@ -158,7 +153,6 @@
 #	endif 
 #endif
 //--------------------------------------------------------------------------
-
 
 //--------------------------------------------------------------------------
 // 平台定义
@@ -375,6 +369,40 @@ typedef int					SOCKET;
 #endif
 //--------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------
+// 常用字符串函数定义
+#if defined (unix)
+#define __isnan isnan
+#define __isinf isinf
+#define __snprintf snprintf
+#define __vsnprintf vsnprintf
+#define __vsnwprintf vsnwprintf
+#define __snwprintf swprintf
+#define __stricmp strcasecmp
+#define __strnicmp strncasecmp
+#define __fileno fileno
+#ifndef __va_copy
+#	define __va_copy va_copy
+#endif // __va_copy
+#else // unix
+#define __isnan _isnan
+#define __isinf(x) (!_finite(x) && !_isnan(x))
+#define __snprintf _snprintf
+#define __vsnprintf _vsnprintf
+#define __vsnwprintf _vsnwprintf
+#define __snwprintf _snwprintf
+#define __stricmp _stricmp
+#define __strnicmp _strnicmp
+#define __fileno _fileno
+#define __va_copy(dst, src) dst = src
+
+#define __strtoq _strtoi64
+#define __strtouq _strtoui64
+#define __strtoll _strtoi64
+#define __strtoull _strtoui64
+#define __atoll _atoi64
+#endif // unix
+//--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
 //线程定义
@@ -402,7 +430,6 @@ typedef int					SOCKET;
 #	define THREAD_MUTEX_UNLOCK(x)				pthread_mutex_unlock(&x)		
 #endif
 //--------------------------------------------------------------------------
-
 
 //--------------------------------------------------------------------------
 // 获得系统产生的最后一次错误描述

@@ -299,6 +299,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\SnailUnix.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\Stack.h"
 				>
 			</File>
@@ -419,10 +423,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\common.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\src\concurrency.cpp"
 				>
 			</File>
@@ -496,6 +496,10 @@
 			</File>
 			<File
 				RelativePath="..\src\SelectPoller.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SnailUnix.cpp"
 				>
 			</File>
 			<File

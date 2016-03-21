@@ -1,5 +1,4 @@
-#include "common.h"
-
+#include "SnailUnix.h"
 
 #if PLATFORM == PLATFORM_UNIX
 void errSys(const char *msg, bool bErrno)
@@ -72,7 +71,7 @@ int traverseDir(const char *pathname, FileHandler handler)
 				ent = readdir(dir);
 				continue;
 			}
-			
+
 			strncpy(ptr, ent->d_name, NAME_PATH-(int)(ptr-subpath));
 			*(ptr+strlen(ent->d_name)) = '\0';
 			traverseDir(subpath, handler);
